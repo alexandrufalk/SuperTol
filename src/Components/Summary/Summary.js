@@ -37,7 +37,7 @@ function OpenSideNav() {
     window.addEventListener("resize", handleResize);
   });
 
-  // finally you can render components conditionally if  is True or False
+  // finally you can render components conditionally if  is True or False ()
   console.log(isMinSize);
 
   return (
