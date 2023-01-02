@@ -27,6 +27,7 @@ function OpenSideNav() {
     } else {
       setIsMinSize(false);
       setShow(false);
+
       // console.log(window.innerWidth);
     }
   };
@@ -36,7 +37,7 @@ function OpenSideNav() {
     window.addEventListener("resize", handleResize);
   });
 
-  // finally you can render components conditionally if isMobile is True or False
+  // finally you can render components conditionally if  is True or False
   console.log(isMinSize);
 
   return (
