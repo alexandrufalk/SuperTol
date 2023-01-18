@@ -7,7 +7,7 @@ import Button from "react-bootstrap/Button";
 const Template = () => {
   return (
     <>
-      <p className="fs-3 border border-success-subtle m-2 rounded ">Template</p>
+      <p className="fs-3 border border-success-subtle  rounded p-2">Template</p>
       <Form className="p-2">
         <Row>
           <Form.Group className="mb-3" controlId="formBasicEmail">

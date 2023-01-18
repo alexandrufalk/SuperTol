@@ -13,6 +13,7 @@ import Col from "react-bootstrap/esm/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/esm/Button";
 import Canvas from "../Canvas/Canvas";
+// import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 
 const Case = () => {
@@ -124,16 +125,10 @@ const Case = () => {
     setHistBinData(histBinNum);
     setPdfData(PDFdataGraph);
   };
-  const draw = (ctx, frameCount) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "#000000";
-    ctx.beginPath();
-    ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
-    ctx.fill();
-  };
+
   return (
     <>
-      <p className="fs-3 border border-success-subtle m-2 rounded ">Case nr.</p>
+      <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
       <button onClick={generateStatistic}>Generate Statistic</button>
       <div className="d-flex shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85">
         <Container fluid>
@@ -301,6 +296,7 @@ const Case = () => {
         Add component
       </Button>
       <Canvas />
+      {/* <Canvas2 /> */}
     </>
   );
 };

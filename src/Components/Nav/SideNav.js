@@ -9,9 +9,9 @@ const SideNav = () => {
     <>
       <Col
         md="auto"
-        className="p-4 shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85"
+        className=" shadow-lg p-1 mb-5 bg-body-tertiary rounded opacity-85 sticky"
       >
-        <Figure style={{ width: 57, height: "auto" }}>
+        <Figure style={{ width: 47, height: "auto" }}>
           <Figure.Image
             width={85}
             height={45}
@@ -20,7 +20,7 @@ const SideNav = () => {
             className="rounded"
           />
         </Figure>
-        <Nav defaultActiveKey="/home" className="flex-column p-2 gap-3">
+        <Nav defaultActiveKey="/home" className="flex-column  gap-4 fs-5">
           <Button variant="success">Template</Button>{" "}
           <Button variant="primary">Database</Button>{" "}
           <Button variant="secondary">Edit Case Sheet</Button>{" "}

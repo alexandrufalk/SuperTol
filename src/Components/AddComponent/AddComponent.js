@@ -7,10 +7,10 @@ import Dropdown from "react-bootstrap/Dropdown";
 const AddComponent = () => {
   return (
     <>
-      <p className="fs-3 border border-success-subtle m-2 rounded">
+      <p className="fs-3 border border-success-subtle p-2 rounded">
         Add Component
       </p>
-      <p className="fs-4 border border-success-subtle m-2 rounded">
+      <p className="fs-4 border border-success-subtle p-2 rounded">
         Project Name
       </p>
       <Form className="p-2">

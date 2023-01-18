@@ -65,3 +65,9 @@
 .col-xs-4:nth-child(2n+2) {
   background: black;
 }
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
