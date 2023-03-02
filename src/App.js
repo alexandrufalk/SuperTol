@@ -39,7 +39,7 @@ function App() {
         </Col>
         <Col className="col-12  col-md-9 col-lg-10 p-2 col-xl-10 ">
           <Row className="sticky-top p-4">
-            <NaviBar />
+            <NaviBar isMinSize2={isMinSize2} />
           </Row>
           <Row className="p-4">
             <Summary />

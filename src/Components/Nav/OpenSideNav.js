@@ -34,8 +34,8 @@ const OpenSideNav = () => {
   return (
     <>
       {isMinSize && (
-        <Button variant="primary" onClick={handleShow}>
-          SideBar
+        <Button variant="secondary" onClick={handleShow}>
+          SBar
         </Button>
       )}
 

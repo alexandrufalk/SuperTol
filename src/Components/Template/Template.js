@@ -5,6 +5,47 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
 const Template = () => {
+  const DatabaseTest = [
+    {
+      TemplateName: "Test",
+      Data: [
+        {
+          Index: 1,
+          ComponentName: "Housing",
+          Color: "Blue",
+        },
+        {
+          Index: 2,
+          ComponentName: "Cover",
+          Color: "Red",
+        },
+        {
+          Index: 3,
+          ComponentName: "PCB",
+          Color: "Green",
+        },
+      ],
+    },
+  ];
+
+  const DatabaseTemplate = [
+    {
+      Index: 1,
+      ComponentName: "Housing",
+      Color: "Blue",
+    },
+    {
+      Index: 2,
+      ComponentName: "Cover",
+      Color: "Red",
+    },
+    {
+      Index: 3,
+      ComponentName: "PCB",
+      Color: "Green",
+    },
+  ];
+
   return (
     <>
       <p className="fs-3 border border-success-subtle  rounded p-2">Template</p>
@@ -27,7 +68,22 @@ const Template = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
+              {DatabaseTemplate.map((n) => (
+                <tr key={n.Index}>
+                  <td key={n.Index}> {n.Index}</td>
+                  <td key={n.Index + n.ComponentName}> {n.ComponentName}</td>
+                  <td key={n.Index + n.Color}> {n.Color}</td>
+                </tr>
+              ))}
+              {DatabaseTest[0].Data.map((n) => (
+                <tr key={n.Index + "test"}>
+                  <td key={n.Index + "test"}> {n.Index}</td>
+                  <td key={n.ComponentName + n.Index}> {n.ComponentName}</td>
+                  <td key={n.Color + n.Index}> {n.Color}</td>
+                </tr>
+              ))}
+
+              {/* <tr>
                 <td>1</td>
                 <td>Housing</td>
                 <td>Blue</td>
@@ -41,14 +97,16 @@ const Template = () => {
                 <td>3</td>
                 <td>PCB</td>
                 <td>Green</td>
-              </tr>
+              </tr> */}
             </tbody>
           </Table>
         </Container>
       </Row>
-      <Button variant="secondary" type="submit">
-        Save
-      </Button>
+      <div className="container fluid p-2">
+        <Button variant="secondary" type="submit">
+          Save
+        </Button>
+      </div>
     </>
   );
 };

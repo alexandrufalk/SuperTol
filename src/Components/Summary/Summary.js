@@ -9,6 +9,30 @@ import Col from "react-bootstrap/Col";
 // import Logo from "./Logo.png";
 
 function Summary() {
+  const DatabaseSummry = [
+    {
+      ID: 1,
+      Description: "Case1",
+      SheetName: "Gap housing-cover",
+      Author: "Alex",
+      Date: "Data",
+    },
+    {
+      ID: 2,
+      Description: "Case2",
+      SheetName: "Gap housing-PCB",
+      Author: "Alex",
+      Date: "Data",
+    },
+    {
+      ID: 3,
+      Description: "Case3",
+      SheetName: "Gap PCB-cover",
+      Author: "Alex",
+      Date: "Data",
+    },
+  ];
+
   return (
     <>
       <Row>
@@ -16,7 +40,7 @@ function Summary() {
           <Form className="p-2">
             <Row>
               <Col>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Group className="mb-3 " controlId="formBasicEmail">
                   <Form.Label>Project Name</Form.Label>
                   <Form.Control type="text" placeholder="Enter project name" />
                 </Form.Group>
@@ -47,7 +71,16 @@ function Summary() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                {DatabaseSummry.map((n) => (
+                  <tr key={n.ID}>
+                    <td key={n.ID}> {n.ID}</td>
+                    <td key={n.ID + n.Description}> {n.Description}</td>
+                    <td key={n.ID + n.SheetName}> {n.SheetName}</td>
+                    <td key={n.ID + n.Author}> {n.Author}</td>
+                    <td key={n.ID + n.Date}> {n.Date}</td>
+                  </tr>
+                ))}
+                {/* <tr>
                   <td>1</td>
                   <td>Case1</td>
                   <td>Gap housing-cover</td>
@@ -60,7 +93,7 @@ function Summary() {
                   <td>Gap housing-connector</td>
                   <td>Alex</td>
                   <td>data</td>
-                </tr>
+                </tr> */}
               </tbody>
             </Table>
           </Container>

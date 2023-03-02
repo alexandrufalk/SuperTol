@@ -4,6 +4,42 @@ import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
 
 const Database = () => {
+  const Database = [
+    {
+      Index: 1,
+      Name: "Housing",
+      UniqueIdentifier: "D1",
+      DrwNr: "123",
+      NominalValue: 10,
+      UpperTolerance: 0.4,
+      LowerTolerance: -0.4,
+      DistributionType: "Normal Cpk 1.66",
+      ToleranceType: "General Tol.",
+    },
+    {
+      Index: 10,
+      Name: "Cover",
+      UniqueIdentifier: "D1",
+      DrwNr: "123",
+      NominalValue: 2,
+      UpperTolerance: 1,
+      LowerTolerance: -1,
+      DistributionType: "Normal Cpk 1.33",
+      ToleranceType: "General Tol.",
+    },
+    {
+      Index: 12,
+      Name: "Connector",
+      UniqueIdentifier: "D1",
+      DrwNr: "123",
+      NominalValue: 10,
+      UpperTolerance: 0.2,
+      LowerTolerance: -0.2,
+      DistributionType: "Normal Cpk 1.66",
+      ToleranceType: "General Tol.",
+    },
+  ];
+  console.log("Database", Database[0].Index);
   return (
     <>
       <p className="fs-3 ">Database</p>
@@ -15,87 +51,105 @@ const Database = () => {
                 <thead>
                   <tr>
                     <th>Index</th>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.Index}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Name</th>
-                    <td>Housing</td>
-                    <td>Cover</td>
-                    <td>PCB</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.Name}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Unique Identifier</th>
-                    <td>D1</td>
-                    <td>D2</td>
-                    <td>D3</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.UniqueIdentifier}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Drw. nr.</th>
-                    <td>123</td>
-                    <td>456</td>
-                    <td>789</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.DrwNr}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Nominal Value</th>
-                    <td>10</td>
-                    <td>9</td>
-                    <td>8</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.NominalValue}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Upper Tolerance</th>
-                    <td>0.2</td>
-                    <td>0.25</td>
-                    <td>0.15</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.UpperTolerance}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Lower Tolerance</th>
-                    <td>-0.2</td>
-                    <td>-0.25</td>
-                    <td>-0.15</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.LowerTolerance}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Upper Limit</th>
-                    <td>10.2</td>
-                    <td>9.25</td>
-                    <td>8.15</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>{n.NominalValue + n.UpperTolerance}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Lower Limit</th>
-                    <td>9.8</td>
-                    <td>8.75</td>
-                    <td>7.85</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>{n.NominalValue + n.LowerTolerance}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Tolerance Range</th>
-                    <td>0.4</td>
-                    <td>0.5</td>
-                    <td>0.3</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>
+                        {n.UpperTolerance - n.LowerTolerance}
+                      </td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Distribution Type</th>
-                    <td>Normal Cpk 1.66</td>
-                    <td>Normal Cpk 1.66</td>
-                    <td>Normal Cpk 1.66</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.DistributionType}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Tolerance Type</th>
-                    <td>General Tol.</td>
-                    <td>General Tol.</td>
-                    <td>General Tol.</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}> {n.ToleranceType}</td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Standard Deviation</th>
-                    <td>0.25</td>
-                    <td>0.1</td>
-                    <td>0.06</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>
+                        {Math.round(
+                          ((n.UpperTolerance - n.LowerTolerance) /
+                            (6 *
+                              parseFloat(
+                                n.DistributionType.replace(/[^\d.]*/g, "")
+                              )) +
+                            Number.EPSILON) *
+                            100
+                        ) / 100}
+                      </td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Mean</th>
-                    <td>2</td>
-                    <td>2</td>
-                    <td>4</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>
+                        {(n.NominalValue +
+                          n.UpperTolerance +
+                          n.NominalValue +
+                          n.LowerTolerance) /
+                          2}
+                      </td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Drawing</th>
@@ -116,20 +170,21 @@ const Database = () => {
           </div>
         </div>
       </Row>
-      <div className="d-flex justify-content-between">
-        <Button variant="secondary" type="submit" className="px-2">
+
+      <div className="container fluid  text-center ">
+        <Button variant="secondary" type="submit" className="m-2">
           Add component
         </Button>
-        <Button variant="secondary" type="submit" className="px-2">
+        <Button variant="secondary" type="submit" className="m-2">
           Add Drawing
         </Button>
-        <Button variant="info" type="submit" className="px-2">
+        <Button variant="info" type="submit" className="m-2">
           Edit
         </Button>
-        <Button variant="danger" type="submit" className="px-2">
+        <Button variant="danger" type="submit" className="m-2">
           Delete
         </Button>
-        <Button variant="danger" type="submit" className="px-2">
+        <Button variant="danger" type="submit" className="m-2">
           Clear Database
         </Button>
       </div>

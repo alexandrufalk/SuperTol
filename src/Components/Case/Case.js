@@ -129,7 +129,9 @@ const Case = () => {
   return (
     <>
       <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
-      <button onClick={generateStatistic}>Generate Statistic</button>
+      <div className="container fluid p-2">
+        <button onClick={generateStatistic}>Generate Statistic</button>
+      </div>
       <div className="d-flex shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85">
         <Container fluid>
           <Row>
@@ -292,9 +294,12 @@ const Case = () => {
           </div>
         </div>
       </Row>
-      <Button variant="secondary" type="submit" className="px-2">
-        Add component
-      </Button>
+      <div className="container fluid p-2">
+        <Button variant="secondary" type="submit" className="p-2">
+          Add component
+        </Button>
+      </div>
+
       <Canvas />
       {/* <Canvas2 /> */}
     </>
