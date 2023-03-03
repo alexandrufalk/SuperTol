@@ -15,6 +15,7 @@ import NaviBar from "./Components/Nav/NaviBar";
 
 function App() {
   const [isMinSize2, setIsMinSize2] = useState(true);
+
   const handleResize2 = () => {
     if (window.innerWidth > 770) {
       setIsMinSize2(true);

@@ -5,7 +5,7 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
 const Template = () => {
-  const DatabaseTest = [
+  const DatabaseTemplateName = [
     {
       TemplateName: "Test",
       Data: [
@@ -22,6 +22,26 @@ const Template = () => {
         {
           Index: 3,
           ComponentName: "PCB",
+          Color: "Green",
+        },
+      ],
+    },
+    {
+      TemplateName: "Test2",
+      Data: [
+        {
+          Index: 1,
+          ComponentName: "Cover",
+          Color: "Blue",
+        },
+        {
+          Index: 2,
+          ComponentName: "Housing",
+          Color: "Red",
+        },
+        {
+          Index: 3,
+          ComponentName: "Connector",
           Color: "Green",
         },
       ],
@@ -75,7 +95,7 @@ const Template = () => {
                   <td key={n.Index + n.Color}> {n.Color}</td>
                 </tr>
               ))}
-              {DatabaseTest[0].Data.map((n) => (
+              {DatabaseTemplateName[0].Data.map((n) => (
                 <tr key={n.Index + "test"}>
                   <td key={n.Index + "test"}> {n.Index}</td>
                   <td key={n.ComponentName + n.Index}> {n.ComponentName}</td>
