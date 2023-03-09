@@ -3,6 +3,10 @@ import Table from "react-bootstrap/esm/Table";
 import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
 
+import "./database.css";
+
+import ImportImage from "../ImportImage/ImportImage.tsx";
+
 const Database = () => {
   const Database = [
     {
@@ -39,10 +43,13 @@ const Database = () => {
       ToleranceType: "General Tol.",
     },
   ];
+
   console.log("Database", Database[0].Index);
+
   return (
     <>
       <p className="fs-3 ">Database</p>
+
       <Row>
         <div className="container horizontal-scrollable">
           <div className="row text-center">
@@ -153,9 +160,20 @@ const Database = () => {
                   </tr>
                   <tr>
                     <th>Drawing</th>
-                    <td>img1</td>
-                    <td>img2</td>
-                    <td>img3</td>
+                    {Database.map((n) => (
+                      <td key={n.Index}>
+                        <div className="addImage">
+                          {/* <AddImage index={n.Index} /> */}
+                          {/* <Image
+                            width={150}
+                            src={
+                              "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
+                            }
+                          /> */}
+                          <ImportImage />
+                        </div>
+                      </td>
+                    ))}
                   </tr>
                   <tr>
                     <th>Distribution Graph</th>

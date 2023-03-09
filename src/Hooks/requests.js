@@ -1,9 +1,9 @@
 const API_URL = "";
-async function httpGetxxx() {
+async function httpGetSummary() {
   // TODO: Once API is ready.
-  const response = await fetch(`${API_URL}/xxxx`);
+  const response = await fetch(`${API_URL}/summary`);
   return await response.json();
-  // Load planets and return as JSON.
+  // Load summary and return as JSON.
 }
 
-export { httpGetxxx };
+export { httpGetSummary };

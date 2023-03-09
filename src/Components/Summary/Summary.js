@@ -16,27 +16,37 @@ const Summary = () => {
   const [projectTemplate, setProjectTemplate] = useState(
     "Select project template"
   );
+  const [selectProject, setSelectproject] = useState("Select project name");
+
+  const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
+  const [projectSelected, setProjectSelected] = useState(false);
+
   const DatabaseSummry = [
     {
-      ID: 1,
-      Description: "Case1",
-      SheetName: "Gap housing-cover",
-      Author: "Alex",
-      Date: "Data",
-    },
-    {
-      ID: 2,
-      Description: "Case2",
-      SheetName: "Gap housing-PCB",
-      Author: "Alex",
-      Date: "Data",
-    },
-    {
-      ID: 3,
-      Description: "Case3",
-      SheetName: "Gap PCB-cover",
-      Author: "Alex",
-      Date: "Data",
+      ProjectName: "Test Name1",
+      DataCase: [
+        {
+          ID: 1,
+          Description: "Case1",
+          SheetName: "Gap housing-cover",
+          Author: "Alex",
+          Date: "Data",
+        },
+        {
+          ID: 2,
+          Description: "Case2",
+          SheetName: "Gap housing-PCB",
+          Author: "Alex",
+          Date: "Data",
+        },
+        {
+          ID: 3,
+          Description: "Case3",
+          SheetName: "Gap PCB-cover",
+          Author: "Alex",
+          Date: "Data",
+        },
+      ],
     },
   ];
   const DatabaseTemplateName = [
@@ -116,6 +126,14 @@ const Summary = () => {
   const handeleProjectTemplate = (e) => {
     setProjectTemplate(e);
   };
+
+  const handleSelectProjectname = (e) => {
+    setSelectproject(e);
+  };
+
+  console.log("DatabaseSummryFiltered", databaseSummryFiltered);
+  console.log("projectSelected", projectSelected);
+
   console.log("Project Name", projectName);
   console.log("Template Name", projectTemplate);
 
@@ -123,6 +141,15 @@ const Summary = () => {
   //   e.preventDefault();
   //   console.log(projectName, "+", projectTemplate);
   // }
+
+  const DatabaseFilter = (e) => {
+    if (e !== "Select project name") {
+      setDatabaseSummryFiltered(
+        DatabaseSummry.filter((data) => data.ProjectName === e)
+      );
+      setProjectSelected(true);
+    }
+  };
 
   return (
     <>
@@ -183,6 +210,29 @@ const Summary = () => {
             </Button>
             {/* <button onClick={alertHi}>Test</button> */}
           </Form>
+          <DropdownButton
+            title={selectProject}
+            onSelect={(e) => {
+              DatabaseFilter(e);
+              handleSelectProjectname(e);
+            }}
+            variant="secondary"
+          >
+            {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                      {projectTemplate}
+                    </Dropdown.Toggle> */}
+
+            {DatabaseProject.map((n) => (
+              <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
+                {n.ProjectName}
+              </Dropdown.Item>
+            ))}
+            {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">Screw</Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
+          </DropdownButton>
           <Container className="p-3">
             <Table striped bordered hover variant="dark">
               <thead>
@@ -195,15 +245,16 @@ const Summary = () => {
                 </tr>
               </thead>
               <tbody>
-                {DatabaseSummry.map((n) => (
-                  <tr key={n.ID}>
-                    <td key={n.ID}> {n.ID}</td>
-                    <td key={n.ID + n.Description}> {n.Description}</td>
-                    <td key={n.ID + n.SheetName}> {n.SheetName}</td>
-                    <td key={n.ID + n.Author}> {n.Author}</td>
-                    <td key={n.ID + n.Date}> {n.Date}</td>
-                  </tr>
-                ))}
+                {projectSelected &&
+                  databaseSummryFiltered[0].DataCase.map((n) => (
+                    <tr key={n.ID}>
+                      <td key={n.ID}> {n.ID}</td>
+                      <td key={n.ID + n.Description}> {n.Description}</td>
+                      <td key={n.ID + n.SheetName}> {n.SheetName}</td>
+                      <td key={n.ID + n.Author}> {n.Author}</td>
+                      <td key={n.ID + n.Date}> {n.Date}</td>
+                    </tr>
+                  ))}
                 {/* <tr>
                   <td>1</td>
                   <td>Case1</td>
