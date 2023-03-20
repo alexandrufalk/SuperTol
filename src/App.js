@@ -15,6 +15,7 @@ import NaviBar from "./Components/Nav/NaviBar";
 
 function App() {
   const [isMinSize2, setIsMinSize2] = useState(true);
+  const [viewAddTemplate, setViewAddTemplate] = useState(false);
 
   const handleResize2 = () => {
     if (window.innerWidth > 770) {
@@ -32,6 +33,12 @@ function App() {
     window.addEventListener("resize", handleResize2);
   });
 
+  const NewTemplate = (e) => {
+    if (e === "New Template") {
+      setViewAddTemplate(true);
+    }
+  };
+
   return (
     <>
       <Row>
@@ -43,8 +50,8 @@ function App() {
             <NaviBar isMinSize2={isMinSize2} />
           </Row>
           <Row className="p-4">
-            <Summary />
-            <Template />
+            <Summary NewTemplate={NewTemplate} />
+            {viewAddTemplate && <Template />}
             <Database />
             <AddComponent />
             <Case />

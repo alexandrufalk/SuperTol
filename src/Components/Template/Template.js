@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -5,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 
 const Template = () => {
+  const [viewAddComponent, setViewAddComponent] = useState(true);
   const DatabaseTemplateName = [
     {
       TemplateName: "Test",
@@ -76,6 +79,26 @@ const Template = () => {
             <Form.Control type="text" placeholder="Enter template name" />
           </Form.Group>
         </Row>
+        {viewAddComponent && (
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Description"
+                // onChange={handleDescriptionChange}
+              />
+            </Form.Group>
+
+            <Button
+              type="button"
+              variant="secondary"
+              // onClick={(e) => AddComponent(e)}
+            >
+              Add Component
+            </Button>
+          </Form>
+        )}
       </Form>
       <Row>
         <Container className="p-3">

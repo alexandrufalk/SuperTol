@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 // import Figure from "react-bootstrap/Figure";
 // import Logo from "./Logo.png";
 
-const Summary = () => {
+const Summary = ({ NewTemplate }) => {
   const [projectName, setProjectName] = useState("Enter project name");
   const [projectTemplate, setProjectTemplate] = useState(
     "Select project template"
@@ -24,11 +24,11 @@ const Summary = () => {
   const [newProject, setNewProject] = useState(false);
   const [viewAddCase, setViewAddCase] = useState(false);
   const [caseDescription, setCaseDescription] = useState("");
-  // const storedValue = localStorage.getItem("databaseSummryUpdate");
 
   const DatabaseSummry = [
     {
       ProjectName: "Test Name1",
+      TemplateName: "Test Template1",
       DataCase: [
         {
           ID: 1,
@@ -55,6 +55,7 @@ const Summary = () => {
     },
     {
       ProjectName: "Test Name2",
+      TemplateName: "Test Template2",
       DataCase: [
         {
           ID: 1,
@@ -80,76 +81,6 @@ const Summary = () => {
       ],
     },
   ];
-
-  // if (databaseSummryUpdate === []) {
-  //   setDatabaseSummryUpdate(DatabaseSummry);
-  // }
-
-  // useEffect(() => {
-  //   localStorage.setItem("databaseSummryUpdate", databaseSummryUpdate);
-  // }, [databaseSummryUpdate]);
-
-  // useEffect(() => {
-  //   const storedSelectedOption = parseInt(
-  //     sessionStorage.getItem("databaseSummryUpdate") || []
-  //   );
-  //   setDatabaseSummryUpdate(storedSelectedOption);
-  // }, []);
-  const [databaseSummryUpdate, setDatabaseSummryUpdate] =
-    useState(DatabaseSummry);
-  console.log("databaseSummryUpdate", databaseSummryUpdate);
-
-  useEffect(() => {
-    const data = JSON.parse(
-      window.localStorage.getItem("databaseSummryUpdate")
-    );
-    console.log("data", data);
-    if (data) setDatabaseSummryUpdate(data);
-  }, []);
-  console.log("useEffect DatabaseSummryUpdate", databaseSummryUpdate);
-
-  useEffect(() => {
-    window.localStorage.setItem(
-      "databaseSummryUpdate",
-      JSON.stringify(databaseSummryUpdate)
-    );
-  }, [databaseSummryUpdate]);
-
-  const AddCase = (e) => {
-    e.preventDefault();
-    if (caseDescription !== "") {
-      const index = databaseSummryUpdate.findIndex(
-        (x) => x.ProjectName === selectProject
-      );
-      const lastID = Math.max(
-        ...databaseSummryUpdate[index].DataCase.map((o) => o.ID)
-      );
-      const newID = lastID + 1;
-      console.log("lastID", lastID);
-      console.log("index", index);
-      const nCase = {
-        ID: newID,
-        Description: `Case${newID}`,
-        SheetName: caseDescription,
-        Author: "Alex",
-        Date: "Date",
-      };
-
-      databaseSummryUpdate[index].DataCase.push(nCase);
-      const DatabaseUpdate = databaseSummryUpdate;
-
-      setDatabaseSummryUpdate(DatabaseUpdate);
-      console.log("test output", DatabaseUpdate);
-      setViewAddCase(false);
-      setCaseDescription("");
-
-      // console.log("caseDescription", caseDescription);
-      console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
-    } else {
-      alert("Add description");
-    }
-  };
-
   const DatabaseTemplateName = [
     {
       TemplateName: "Test Template1",
@@ -193,17 +124,73 @@ const Summary = () => {
     },
   ];
 
-  const DatabaseProject = [
-    {
-      ProjectName: "Test Name1",
-      ProjectTemplate: "Test Template1",
-    },
-    {
-      ProjectName: "Test Name2",
-      ProjectTemplate: "Test Template2",
-    },
-  ];
-  console.log("DatabaseProject", DatabaseProject);
+  // const DatabaseProject = [
+  //   {
+  //     ProjectName: "Test Name1",
+  //     ProjectTemplate: "Test Template1",
+  //   },
+  //   {
+  //     ProjectName: "Test Name2",
+  //     ProjectTemplate: "Test Template2",
+  //   },
+  // ];
+
+  const [databaseSummryUpdate, setDatabaseSummryUpdate] =
+    useState(DatabaseSummry);
+  console.log("databaseSummryUpdate", databaseSummryUpdate);
+
+  // const [databaseProjectUpdate, setDatabaseProjectUpdate] =
+  //   useState(DatabaseProject);
+
+  useEffect(() => {
+    const data = JSON.parse(window.localStorage.getItem("databases"));
+    console.log("data", data);
+    if (data) {
+      setDatabaseSummryUpdate(data[0]);
+      // setDatabaseProjectUpdate(data[1]);
+    }
+  }, []);
+  console.log("useEffect DatabaseSummryUpdate", databaseSummryUpdate);
+
+  useEffect(() => {
+    const databases = [databaseSummryUpdate];
+    window.localStorage.setItem("databases", JSON.stringify(databases));
+  }, [databaseSummryUpdate]);
+
+  const AddCase = (e) => {
+    e.preventDefault();
+    if (caseDescription !== "") {
+      const index = databaseSummryUpdate.findIndex(
+        (x) => x.ProjectName === selectProject
+      );
+      const lastID = Math.max(
+        ...databaseSummryUpdate[index].DataCase.map((o) => o.ID)
+      );
+      const newID = lastID + 1;
+      console.log("lastID", lastID);
+      console.log("index", index);
+      const nCase = {
+        ID: newID,
+        Description: `Case${newID}`,
+        SheetName: caseDescription,
+        Author: "Alex",
+        Date: "Date",
+      };
+
+      databaseSummryUpdate[index].DataCase.push(nCase);
+      const DatabaseUpdate = databaseSummryUpdate;
+
+      setDatabaseSummryUpdate(DatabaseUpdate);
+      console.log("test output", DatabaseUpdate);
+      setViewAddCase(false);
+      setCaseDescription("");
+
+      // console.log("caseDescription", caseDescription);
+      console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
+    } else {
+      alert("Add description");
+    }
+  };
 
   const saveData = (e) => {
     e.preventDefault();
@@ -215,11 +202,14 @@ const Summary = () => {
       alert("Project name and template are missing");
     } else {
       e.preventDefault();
-      DatabaseProject.push({
+      databaseSummryUpdate.push({
         ProjectName: projectName,
         ProjectTemplate: projectTemplate,
+        DataCase: [],
       });
-      console.log("DatabaseProject", DatabaseProject);
+      const DatabaseUpdate2 = databaseSummryUpdate;
+      setDatabaseSummryUpdate(DatabaseUpdate2);
+      console.log("DatabaseUpdate2", DatabaseUpdate2);
       setProjectName("Enter project name");
       setProjectTemplate("Select project template");
       setNewProject(false);
@@ -243,15 +233,10 @@ const Summary = () => {
   console.log("Project Name", projectName);
   console.log("Template Name", projectTemplate);
 
-  // function alertHi(e) {
-  //   e.preventDefault();
-  //   console.log(projectName, "+", projectTemplate);
-  // }
-
   const DatabaseFilter = (e) => {
     if (e !== "Select project name" && e !== "New Project") {
       setDatabaseSummryFiltered(
-        DatabaseSummry.filter((data) => data.ProjectName === e)
+        databaseSummryUpdate.filter((data) => data.ProjectName === e)
       );
       setProjectSelected(true);
       setNewProject(false);
@@ -303,7 +288,10 @@ const Summary = () => {
                   /> */}
                     <DropdownButton
                       title={projectTemplate}
-                      onSelect={handeleProjectTemplate}
+                      onSelect={(e) => {
+                        handeleProjectTemplate(e);
+                        NewTemplate(e);
+                      }}
                       variant="secondary"
                     >
                       {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -318,6 +306,12 @@ const Summary = () => {
                           {n.TemplateName}
                         </Dropdown.Item>
                       ))}
+                      <Dropdown.Item
+                        eventKey={"New Template"}
+                        key={"New Template"}
+                      >
+                        New Template
+                      </Dropdown.Item>
                       {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
@@ -349,7 +343,7 @@ const Summary = () => {
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-            {DatabaseProject.map((n) => (
+            {databaseSummryUpdate.map((n) => (
               <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
                 {n.ProjectName}
               </Dropdown.Item>
