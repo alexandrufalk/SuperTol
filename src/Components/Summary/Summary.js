@@ -1,3 +1,4 @@
+import React from "react";
 import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 
@@ -18,6 +19,10 @@ const Summary = ({ NewTemplate }) => {
     "Select project template"
   );
   const [selectProject, setSelectproject] = useState("Select project name");
+
+  //to update cases when one is removed
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
   const [projectSelected, setProjectSelected] = useState(false);
@@ -166,7 +171,13 @@ const Summary = ({ NewTemplate }) => {
       const lastID = Math.max(
         ...databaseSummryUpdate[index].DataCase.map((o) => o.ID)
       );
-      const newID = lastID + 1;
+      let newID = 0;
+      if (lastID === -Infinity) {
+        newID = 1;
+      } else {
+        newID = lastID + 1;
+      }
+
       console.log("lastID", lastID);
       console.log("index", index);
       const nCase = {
@@ -191,6 +202,25 @@ const Summary = ({ NewTemplate }) => {
       alert("Add description");
     }
   };
+
+  const RemoveCase = (e) => {
+    let obj = databaseSummryFiltered[0].DataCase.find((o) => o.ID === e);
+    let index = databaseSummryFiltered[0].DataCase.indexOf(obj);
+    let update = databaseSummryFiltered;
+
+    if (index > -1) {
+      update[0].DataCase.splice(index, 1);
+    }
+
+    console.log("update", update);
+
+    console.log("index", index);
+    // alert(`Case ${e} removed`);
+    console.log("remove obj", obj);
+    setDatabaseSummryFiltered(update);
+  };
+
+  console.log("databaseSummryFiltered after Revmove", databaseSummryFiltered);
 
   const saveData = (e) => {
     e.preventDefault();
@@ -260,6 +290,10 @@ const Summary = ({ NewTemplate }) => {
     setCaseDescription(e.target.value);
   };
   // console.log("caseDescription", caseDescription);
+
+  // useEffect(() => {
+  //   setDatabaseSummryFiltered(databaseSummryFiltered);
+  // }, [databaseSummryFiltered]);
 
   return (
     <>
@@ -366,6 +400,7 @@ const Summary = ({ NewTemplate }) => {
                   <th>Description</th>
                   <th>Author</th>
                   <th>Date</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -377,6 +412,18 @@ const Summary = ({ NewTemplate }) => {
                       <td key={n.ID + n.SheetName}> {n.SheetName}</td>
                       <td key={n.ID + n.Author}> {n.Author}</td>
                       <td key={n.ID + n.Date}> {n.Date}</td>
+                      <td key={n.ID + "Remove"}>
+                        <Button
+                          type="button"
+                          variant="outline-danger"
+                          onClick={() => {
+                            RemoveCase(n.ID);
+                            forceUpdate();
+                          }}
+                        >
+                          X
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 {/* <tr>
