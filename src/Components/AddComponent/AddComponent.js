@@ -3,33 +3,114 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import { useState } from "react";
 
-const AddComponent = () => {
+const AddComponent = ({ Database }) => {
+  console.log("Database from ADDComponent", Database);
+  const [viewComponents, setViewComponents] = useState("Name of component");
+  const [selectedColor, SetSelectedColor] = useState("");
+  const [testDatabase, setTestDatabase] = useState(Database);
+  const DatabaseTemplateName = [
+    {
+      TemplateName: "Test Template1",
+      Data: [
+        {
+          Index: 1,
+          ComponentName: "Housing1",
+          Color: "Blue",
+        },
+        {
+          Index: 2,
+          ComponentName: "Cover1",
+          Color: "Red",
+        },
+        {
+          Index: 3,
+          ComponentName: "PCB1",
+          Color: "Green",
+        },
+      ],
+    },
+    {
+      TemplateName: "Test Template2",
+      Data: [
+        {
+          Index: 1,
+          ComponentName: "Cover2",
+          Color: "Blue",
+        },
+        {
+          Index: 2,
+          ComponentName: "Housing2",
+          Color: "Red",
+        },
+        {
+          Index: 3,
+          ComponentName: "Connector2",
+          Color: "Green",
+        },
+      ],
+    },
+    {
+      TemplateName: "Test Template3",
+      Data: [],
+    },
+  ];
+  const TemplateDatabaseFilter = (e) => {
+    if (e !== "New Component" && e !== "Name of component") {
+      console.log("test select");
+      SetSelectedColor(
+        DatabaseTemplateName.filter((data) => data.TemplateName === e)
+      );
+      // setTemplateSelected(true);
+      // setViewAddTemplateName(false);
+    } else {
+      console.log("New template selected");
+      // setTemplateSelected(false);
+      // setViewAddTemplateName(true);
+      // setViewSelectTemplate(false);
+      // setSelectTemplate("Select template name");
+    }
+  };
+
   return (
     <>
       <p className="fs-3 border border-success-subtle p-2 rounded">
         Add Component
       </p>
       <p className="fs-4 border border-success-subtle p-2 rounded">
-        Project Name
+        Project Name:{testDatabase[0].ProjectName}
       </p>
       <Form className="p-2">
         <Row>
           <Col>
             <Row>
               <Col>
-                <Dropdown>
-                  <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                    Name of component
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Screw</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <DropdownButton
+                  title={viewComponents}
+                  onSelect={(e) => {
+                    TemplateDatabaseFilter(e);
+                    // handleSelectTemplate(e);
+                  }}
+                  variant="secondary"
+                >
+                  {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                      {projectTemplate}
+                    </Dropdown.Toggle> */}
+
+                  {DatabaseTemplateName[0].Data.map((n) => (
+                    <Dropdown.Item
+                      eventKey={n.ComponentName}
+                      key={n.ComponentName}
+                    >
+                      {n.ComponentName}
+                    </Dropdown.Item>
+                  ))}
+                  <Dropdown.Item eventKey={"New Template"} key={"New Template"}>
+                    New Component
+                  </Dropdown.Item>
+                </DropdownButton>
               </Col>
               <Col>
                 <p>Color (from database)</p>

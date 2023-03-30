@@ -1,5 +1,5 @@
 import "./App.css";
-import AddComponent from "./Components/AddComponent/AddComponent";
+// import AddComponent from "./Components/AddComponent/AddComponent";
 import Case from "./Components/Case/Case";
 import Database from "./Components/Database/Database";
 import Summary from "./Components/Summary/Summary";
@@ -53,7 +53,7 @@ function App() {
             <Summary NewTemplate={NewTemplate} />
             {viewAddTemplate && <Template />}
             <Database />
-            <AddComponent />
+            {/* <AddComponent /> */}
             <Case />
           </Row>
         </Col>
