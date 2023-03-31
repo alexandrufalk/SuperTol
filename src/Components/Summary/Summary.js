@@ -9,6 +9,8 @@ import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { useState, useEffect } from "react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // import Figure from "react-bootstrap/Figure";
 // import Logo from "./Logo.png";
@@ -199,7 +201,10 @@ const Summary = ({ NewTemplate }) => {
       // console.log("caseDescription", caseDescription);
       console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
     } else {
-      alert("Add description");
+      toast("Add description", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     }
   };
 
@@ -229,7 +234,10 @@ const Summary = ({ NewTemplate }) => {
       projectName === "" ||
       projectTemplate === "Select project template"
     ) {
-      alert("Project name and template are missing");
+      toast("Project name and template are missing", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     } else {
       e.preventDefault();
       databaseSummryUpdate.push({
@@ -282,7 +290,10 @@ const Summary = ({ NewTemplate }) => {
     if (projectSelected) {
       setViewAddCase(true);
     } else {
-      alert("Select project");
+      toast("Select project name!", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     }
   };
   const handleDescriptionChange = (e) => {
@@ -365,6 +376,7 @@ const Summary = ({ NewTemplate }) => {
               {/* <button onClick={alertHi}>Test</button> */}
             </Form>
           )}
+          <ToastContainer transition={Bounce} autoClose={2000} />
           <DropdownButton
             title={selectProject}
             onSelect={(e) => {

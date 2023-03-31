@@ -5,7 +5,8 @@ import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./database.css";
 
 import ImportImage from "../ImportImage/ImportImage.tsx";
@@ -13,9 +14,12 @@ import AddComponent from "../AddComponent/AddComponent";
 
 const Database = () => {
   const [viewAddComponentData, setViewAddComponentData] = useState(false);
-  const [selectProject, setSelectProject] = useState("Select project name");
+
   const [databaseFiltered, setDatabaseFiltered] = useState([]);
   const [projectSelected, setProjectSelected] = useState(false);
+  const [selectProjectData, setSelectprojectData] = useState(
+    "Select project name"
+  );
   const Database = [
     {
       ProjectName: "Test Name1",
@@ -140,11 +144,18 @@ const Database = () => {
   ];
 
   const SetViewAdd = () => {
-    setViewAddComponentData(true);
+    if (selectProjectData !== "Select project name") {
+      setViewAddComponentData(true);
+    } else {
+      toast("Select Project Name!", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
+    }
   };
   console.log("Database", Database[0].Data);
 
-  const DatabaseFilter = (e) => {
+  const DatabasesFilter = (e) => {
     if (e !== "Select project name" && e !== "New Project") {
       setDatabaseFiltered(Database.filter((data) => data.ProjectName === e));
       setProjectSelected(true);
@@ -153,15 +164,19 @@ const Database = () => {
       console.log("Error");
     }
   };
+  const handleSelectProjectnameData = (e) => {
+    setSelectprojectData(e);
+  };
 
   return (
     <>
       <p className="fs-3 ">Database</p>
       <DropdownButton
-        title={selectProject}
+        title={selectProjectData}
         onSelect={(e) => {
-          DatabaseFilter(e);
-          // handleSelectProjectname(e);
+          DatabasesFilter(e);
+
+          handleSelectProjectnameData(e);
         }}
         variant="secondary"
       >
@@ -178,6 +193,7 @@ const Database = () => {
           New Project
         </Dropdown.Item> */}
       </DropdownButton>
+      <ToastContainer transition={Bounce} autoClose={2000} />
 
       {projectSelected && (
         <Row>

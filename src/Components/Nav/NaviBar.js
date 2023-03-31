@@ -8,8 +8,8 @@ const NaviBar = (isMinSize2) => {
   return (
     <>
       <Navbar
-        bg="light"
-        variant="light"
+        bg="dark"
+        variant="dark"
         className="rounded shadow-lg  p-2 bg-body-tertiary rounded  "
       >
         <Container className="ms-1">

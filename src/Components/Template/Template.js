@@ -8,6 +8,8 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Template = () => {
   const [viewAddComponent, setViewAddComponent] = useState(false);
@@ -96,7 +98,10 @@ const Template = () => {
   const AddTemplate = (e) => {
     e.preventDefault();
     if (templateName === "Enter Template Name" || templateName === "") {
-      alert("Project name and template are missing");
+      toast("Project name and template are missing", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     } else {
       console.log("test");
       e.preventDefault();
@@ -172,7 +177,10 @@ const Template = () => {
       console.log("test new component");
       setViewAddComponent(false);
     } else {
-      alert("Add description and color");
+      toast("Add description and color", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     }
   };
   const RemoveCase = (e) => {
@@ -197,7 +205,10 @@ const Template = () => {
     if (templateSelected) {
       setViewAddComponent(true);
     } else {
-      alert("Select project");
+      toast("Select Project Name!", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
     }
   };
   const handleCaseDescriptionChange = (e) => {
@@ -222,6 +233,7 @@ const Template = () => {
               onChange={handleTemplateName}
             />
           </Form.Group>
+          <ToastContainer transition={Bounce} autoClose={2000} />
 
           <Button
             type="button"

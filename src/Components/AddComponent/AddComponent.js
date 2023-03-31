@@ -4,13 +4,31 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddComponent = ({ Database }) => {
   console.log("Database from ADDComponent", Database);
+
   const [viewComponents, setViewComponents] = useState("Name of component");
   const [selectedColor, SetSelectedColor] = useState("");
-  const [testDatabase, setTestDatabase] = useState(Database);
+  const [databaseAdd, setdatabaseAdd] = useState(Database);
+  const [componentData, setComponentData] = useState([]);
+  const [viewDropDownComponents, setViewDropDownComponents] = useState(false);
+  const [componentDescription, setComponentDescription] = useState("");
+  const [drwNr, setDrwNr] = useState("");
+  const [nominalVal, setNominalVal] = useState("");
+  const [upperlimit, setUpperlimit] = useState("");
+  const [lowerlimit, setLowerlimit] = useState("");
+  const [numberOfsamples, setNumberOfSamples] = useState("");
+  const [selectToleranceType, setSelectToleranceType] = useState(
+    "Select tolerance type"
+  );
+  const [distributionType, setSelectDistributionType] = useState(
+    "Select distribution type"
+  );
+  const [viewCustomCpk, setViewCustomCpk] = useState(false);
   const DatabaseTemplateName = [
     {
       TemplateName: "Test Template1",
@@ -57,12 +75,32 @@ const AddComponent = ({ Database }) => {
       Data: [],
     },
   ];
+
+  useEffect(() => {
+    TemplateComponentFiltered();
+  }, [Database]);
+
+  const TemplateComponentFiltered = () => {
+    const TemplateN = Database[0].TemplateName;
+    console.log("TemplateN", TemplateN);
+    setComponentData(
+      DatabaseTemplateName.filter((data) => data.TemplateName === TemplateN)
+    );
+    setViewDropDownComponents(true);
+  };
+  console.log("componentData", componentData);
+
   const TemplateDatabaseFilter = (e) => {
     if (e !== "New Component" && e !== "Name of component") {
-      console.log("test select");
-      SetSelectedColor(
-        DatabaseTemplateName.filter((data) => data.TemplateName === e)
+      console.log("e", e);
+      console.log(componentData[0].Data);
+      const index = componentData[0].Data.findIndex(
+        (x) => x.ComponentName === e
       );
+      // console.log("index", index);
+
+      SetSelectedColor(componentData[0].Data[index].Color);
+
       // setTemplateSelected(true);
       // setViewAddTemplateName(false);
     } else {
@@ -74,111 +112,222 @@ const AddComponent = ({ Database }) => {
     }
   };
 
+  const handleSelectTemplate = (e) => {
+    setViewComponents(e);
+  };
+  const handleComponentDescripion = (e) => {
+    setComponentDescription(e.target.value);
+  };
+  const handleDrwNr = (e) => {
+    setDrwNr(e.target.value);
+  };
+  const handleNominalVal = (e) => {
+    setNominalVal(e.target.value);
+  };
+  const handleUpperlimit = (e) => {
+    setUpperlimit(e.target.value);
+  };
+  const handleLowerlimit = (e) => {
+    setLowerlimit(e.target.value);
+  };
+  const handleNumberOfSamples = (e) => {
+    setNumberOfSamples(e.target.value);
+  };
+  const handleSelectToleranceType = (e) => {
+    setSelectToleranceType(e);
+  };
+
+  const handleDistributionType = (e) => {
+    setSelectDistributionType(e);
+  };
+  const handleCustomCpK = (e) => {
+    if (e === "Normal Cpk Custom") {
+      setViewCustomCpk(true);
+      console.log("Normal Cpk Custom");
+    }
+  };
+  const handleCustomCpKValue = (e) => {
+    if (e !== "Enter Cpk" && e !== "") {
+      setSelectDistributionType(e.target.value);
+    } else {
+      toast("Enter Cpk value", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
+    }
+  };
+
   return (
     <>
       <p className="fs-3 border border-success-subtle p-2 rounded">
         Add Component
       </p>
       <p className="fs-4 border border-success-subtle p-2 rounded">
-        Project Name:{testDatabase[0].ProjectName}
+        Project Name:{databaseAdd[0].ProjectName}
       </p>
       <Form className="p-2">
         <Row>
           <Col>
             <Row>
               <Col>
-                <DropdownButton
-                  title={viewComponents}
-                  onSelect={(e) => {
-                    TemplateDatabaseFilter(e);
-                    // handleSelectTemplate(e);
-                  }}
-                  variant="secondary"
-                >
-                  {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                {viewDropDownComponents && (
+                  <DropdownButton
+                    title={viewComponents}
+                    onSelect={(e) => {
+                      TemplateDatabaseFilter(e);
+                      handleSelectTemplate(e);
+                    }}
+                    variant="secondary"
+                  >
+                    {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-                  {DatabaseTemplateName[0].Data.map((n) => (
+                    {componentData[0].Data.map((n) => (
+                      <Dropdown.Item
+                        eventKey={n.ComponentName}
+                        key={n.ComponentName}
+                      >
+                        {n.ComponentName}
+                      </Dropdown.Item>
+                    ))}
                     <Dropdown.Item
-                      eventKey={n.ComponentName}
-                      key={n.ComponentName}
+                      eventKey={"New Template"}
+                      key={"New Template"}
                     >
-                      {n.ComponentName}
+                      New Component
                     </Dropdown.Item>
-                  ))}
-                  <Dropdown.Item eventKey={"New Template"} key={"New Template"}>
-                    New Component
-                  </Dropdown.Item>
-                </DropdownButton>
+                  </DropdownButton>
+                )}
               </Col>
               <Col>
-                <p>Color (from database)</p>
+                <p>Color {selectedColor}</p>
               </Col>
             </Row>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
-              <Form.Control type="text" placeholder="Enter description" />
+              <Form.Control
+                type="text"
+                placeholder="Enter description"
+                onChange={(e) => handleComponentDescripion(e)}
+              />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Group className="mb-3">
               <Form.Label>Drw. nr.</Form.Label>
-              <Form.Control type="text" placeholder="Enter drawing number" />
+              <Form.Control
+                type="text"
+                placeholder="Enter drawing number"
+                onChange={handleDrwNr}
+              />
             </Form.Group>
             <Row>
               <Col>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3">
                   <Form.Label>Nominal Value</Form.Label>
-                  <Form.Control type="text" placeholder="Enter nominal value" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter nominal value"
+                    onChange={handleNominalVal}
+                  />
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3">
                   <Form.Label>Upper Limit</Form.Label>
-                  <Form.Control type="text" placeholder="Enter upper limit" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter upper limit"
+                    onChange={handleUpperlimit}
+                  />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group className="mb-3">
                   <Form.Label>Lower Limit</Form.Label>
-                  <Form.Control type="text" placeholder="Enter lower Limit" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter lower Limit"
+                    onChange={handleLowerlimit}
+                  />
                 </Form.Group>
               </Col>
             </Row>
 
-            <Dropdown>
+            <DropdownButton
+              title={selectToleranceType}
+              onSelect={(e) => {
+                handleSelectToleranceType(e);
+              }}
+              variant="secondary"
+            >
+              <Dropdown.Item
+                eventKey={"General Tolerance"}
+                key={"General Tolerance"}
+              >
+                General Tolerance
+              </Dropdown.Item>
+              <Dropdown.Item
+                eventKey={"Imposed Tolerance"}
+                key={"Imposed Tolerance"}
+              >
+                Imposed Tolerance
+              </Dropdown.Item>
+            </DropdownButton>
+            <Dropdown
+              onSelect={(e) => {
+                handleDistributionType(e);
+                handleCustomCpK(e);
+              }}
+            >
               <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                Tolerance Type
+                {distributionType}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">
-                  General Tolerance
+                <Dropdown.Item eventKey={"Normal Cpk 1"} key={"Normal Cpk 1"}>
+                  Normal Cpk 1
                 </Dropdown.Item>
-                <Dropdown.Item href="#/action-2">
-                  Imposed Tolerance
+                <Dropdown.Item
+                  eventKey={"Normal Cpk 1.33"}
+                  key={"Normal Cpk 1.33t"}
+                >
+                  Normal Cpk 1.33
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey={"Normal Cpk 1.66"}
+                  key={"Normal Cpk 1.66t"}
+                >
+                  Normal Cpk 1.66
+                </Dropdown.Item>
+                <Dropdown.Item eventKey={"Normal Cpk 2"} key={"Normal Cpk 2"}>
+                  Normal Cpk 2
+                </Dropdown.Item>
+
+                <Dropdown.Item eventKey={"Uniform"} key={"Uniform"}>
+                  Uniform
+                </Dropdown.Item>
+                <Dropdown.Item
+                  eventKey={"Normal Cpk Custom"}
+                  key={"Normal Cpk Custom"}
+                >
+                  Normal Cpk Custom
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <Dropdown>
-              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                Distribution Type
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">Normal Cpk 1</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Normal Cpk 1.33</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Normal Cpk 1.66</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Normal Cpk 2</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Normal Cpk 1.33</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Uniform</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">
-                  Normal Cpk Custom:
-                </Dropdown.Item>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Control type="text" placeholder="Enter Cpk" />
-                </Form.Group>
-              </Dropdown.Menu>
-            </Dropdown>
+            {viewCustomCpk && (
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Control
+                  type="text"
+                  placeholder="Enter Cpk"
+                  onChange={(e) => handleCustomCpKValue(e)}
+                />
+              </Form.Group>
+            )}
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Samples</Form.Label>
-              <Form.Control type="text" placeholder="Enter number of samples" />
+              <Form.Control
+                type="text"
+                placeholder="Enter number of samples"
+                onChange={(e) => handleNumberOfSamples(e)}
+              />
             </Form.Group>
           </Col>
         </Row>
