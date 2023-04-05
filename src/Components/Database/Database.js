@@ -142,6 +142,7 @@ const Database = () => {
       ],
     },
   ];
+  console.log("Database", Database);
 
   const SetViewAdd = () => {
     if (selectProjectData !== "Select project name") {
@@ -339,7 +340,9 @@ const Database = () => {
           </div>
         </Row>
       )}
-      {viewAddComponentData && <AddComponent Database={databaseFiltered} />}
+      {viewAddComponentData && (
+        <AddComponent databaseFiltered={databaseFiltered} Database={Database} />
+      )}
 
       <div className="container fluid  text-center ">
         <Button
