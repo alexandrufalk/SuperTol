@@ -28,6 +28,7 @@ const Database = () => {
         {
           Index: 1,
           Name: "Housing",
+          Description: "Dim1",
           UniqueIdentifier: "D1",
           DrwNr: "123",
           NominalValue: 10,
@@ -35,10 +36,12 @@ const Database = () => {
           LowerTolerance: -0.4,
           DistributionType: "Normal Cpk 1.66",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
         {
           Index: 2,
           Name: "Cover",
+          Description: "Dim2",
           UniqueIdentifier: "D2",
           DrwNr: "123",
           NominalValue: 2,
@@ -46,10 +49,12 @@ const Database = () => {
           LowerTolerance: -1,
           DistributionType: "Normal Cpk 1.33",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
         {
           Index: 3,
           Name: "Connector",
+          Description: "Dim3",
           UniqueIdentifier: "D3",
           DrwNr: "123",
           NominalValue: 10,
@@ -57,6 +62,7 @@ const Database = () => {
           LowerTolerance: -0.2,
           DistributionType: "Normal Cpk 1.66",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
       ],
     },
@@ -67,6 +73,7 @@ const Database = () => {
         {
           Index: 1,
           Name: "Housing2",
+          Description: "Dim21",
           UniqueIdentifier: "D1",
           DrwNr: "123",
           NominalValue: 10,
@@ -74,10 +81,12 @@ const Database = () => {
           LowerTolerance: -0.4,
           DistributionType: "Normal Cpk 1.66",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
         {
           Index: 2,
           Name: "Cover2",
+          Description: "Dim22",
           UniqueIdentifier: "D2",
           DrwNr: "123",
           NominalValue: 2,
@@ -85,10 +94,12 @@ const Database = () => {
           LowerTolerance: -1,
           DistributionType: "Normal Cpk 1.33",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
         {
           Index: 3,
           Name: "Connector2",
+          Description: "Dim23",
           UniqueIdentifier: "D3",
           DrwNr: "123",
           NominalValue: 10,
@@ -96,6 +107,7 @@ const Database = () => {
           LowerTolerance: -0.2,
           DistributionType: "Normal Cpk 1.66",
           ToleranceType: "General Tol.",
+          Samples: 1000,
         },
       ],
     },
@@ -144,6 +156,23 @@ const Database = () => {
   ];
   console.log("Database", Database);
 
+  const [DatabaseUpdate, setDatabaseUpdate] = useState(Database);
+
+  useEffect(() => {
+    const dataU = JSON.parse(window.localStorage.getItem("DatabasesU"));
+    console.log("dataU", dataU);
+    if (dataU) {
+      setDatabaseUpdate(dataU[0]);
+      // setDatabaseProjectUpdate(data[1]);
+    }
+  }, []);
+  console.log("useEffect DatabaseUpdate", DatabaseUpdate);
+
+  useEffect(() => {
+    const DatabasesU = [DatabaseUpdate];
+    window.localStorage.setItem("DatabasesU", JSON.stringify(DatabasesU));
+  }, [DatabaseUpdate]);
+
   const SetViewAdd = () => {
     if (selectProjectData !== "Select project name") {
       setViewAddComponentData(true);
@@ -154,11 +183,13 @@ const Database = () => {
       });
     }
   };
-  console.log("Database", Database[0].Data);
+  console.log("DatabaseUpdate", DatabaseUpdate[0].Data);
 
   const DatabasesFilter = (e) => {
     if (e !== "Select project name" && e !== "New Project") {
-      setDatabaseFiltered(Database.filter((data) => data.ProjectName === e));
+      setDatabaseFiltered(
+        DatabaseUpdate.filter((data) => data.ProjectName === e)
+      );
       setProjectSelected(true);
       // setNewProject(false);
     } else {
@@ -185,7 +216,7 @@ const Database = () => {
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-        {Database.map((n) => (
+        {DatabaseUpdate.map((n) => (
           <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
             {n.ProjectName}
           </Dropdown.Item>
@@ -213,6 +244,12 @@ const Database = () => {
                       <th>Name</th>
                       {databaseFiltered[0].Data.map((n) => (
                         <td key={n.Index}> {n.Name}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <th>Description</th>
+                      {databaseFiltered[0].Data.map((n) => (
+                        <td key={n.Index}> {n.Description}</td>
                       ))}
                     </tr>
                     <tr>
@@ -341,7 +378,10 @@ const Database = () => {
         </Row>
       )}
       {viewAddComponentData && (
-        <AddComponent databaseFiltered={databaseFiltered} Database={Database} />
+        <AddComponent
+          databaseFiltered={databaseFiltered}
+          Database={DatabaseUpdate}
+        />
       )}
 
       <div className="container fluid  text-center ">

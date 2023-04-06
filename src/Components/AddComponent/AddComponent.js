@@ -68,6 +68,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
 
   const [form, setForm] = useState({
     Name: "",
+    Description: "",
     DrwNr: "",
     NominalValue: "",
     UpperTolerance: "",
@@ -92,11 +93,14 @@ const AddComponent = ({ databaseFiltered, Database }) => {
   console.log("componentData", componentData);
 
   const TemplateDatabaseFilter = (e) => {
-    if (e !== "New Component" && e !== "Name of component") {
-      console.log("e", e);
+    if (
+      e.target.value !== "New Component" &&
+      e.target.value !== "Name of component"
+    ) {
+      console.log("e", e.target.value);
       console.log(componentData[0].Data);
       const index = componentData[0].Data.findIndex(
-        (x) => x.ComponentName === e
+        (x) => x.ComponentName === e.target.value
       );
       // console.log("index", index);
 
@@ -105,7 +109,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       // setTemplateSelected(true);
       // setViewAddTemplateName(false);
     } else {
-      console.log("New template selected");
+      console.log("New component selected");
       // setTemplateSelected(false);
       // setViewAddTemplateName(true);
       // setViewSelectTemplate(false);
@@ -129,41 +133,72 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     e.preventDefault();
     console.log("form", form);
     setViewCustomCpk(false);
-    resetButton();
+
     if (
       form.Name !== "" &&
+      form.Name !== "Select Component" &&
+      form.Description !== "" &&
       form.DrwNr !== "" &&
       form.NominalValue !== "" &&
       form.UpperTolerance !== "" &&
       form.LowerTolerance !== "" &&
       form.DistributionType !== "" &&
+      form.DistributionType !== "Distribution type" &&
+      form.ToleranceType !== "" &&
       form.ToleranceType !== "" &&
       form.Samples !== ""
-      // componentDescription !== "" &&
-      // drwNr !== "" &&
-      // nominalVal !== "" &&
-      // upperlimit !== "" &&
-      // lowerlimit !== "" &&
-      // distributionType !== "Select distribution type" &&
-      // selectToleranceType !== "Select distribution type"
     ) {
-      Database.push({
-        ProjectName: databaseAdd[0].ProjectName,
-        TemplateName: databaseAdd[0].TemplateName,
-        Data: [
-          {
-            Index: 1,
-            Name: form.Name,
-            UniqueIdentifier: "test",
-            DrwNr: form.DrwNr,
-            NominalValue: form.NominalValue,
-            UpperTolerance: form.UpperTolerance,
-            LowerTolerance: form.LowerTolerance,
-            DistributionType: form.DistributionType,
-            ToleranceType: form.ToleranceType,
-          },
-        ],
-      });
+      console.log("Database", databaseFiltered[0].ProjectName);
+      const index = Database.findIndex(
+        (x) => x.ProjectName === databaseFiltered[0].ProjectName
+      );
+      console.log("index", index);
+      const lastID = Math.max(...Database[index].Data.map((o) => o.Index));
+      let newID = 0;
+      if (lastID === -Infinity) {
+        newID = 1;
+      } else {
+        newID = lastID + 1;
+      }
+      console.log("lastID", lastID);
+      const nComponent = {
+        Index: newID,
+        Name: form.Name,
+        Description: form.Description,
+        UniqueIdentifier: `D${newID}`,
+        DrwNr: form.DrwNr,
+        NominalValue: Number(form.NominalValue),
+        UpperTolerance: Number(form.UpperTolerance),
+        LowerTolerance: Number(form.LowerTolerance),
+        DistributionType: form.DistributionType,
+        ToleranceType: form.ToleranceType,
+        Samples: Number(form.Samples),
+      };
+
+      Database[index].Data.push(nComponent);
+
+      console.log("Database Updated", Database);
+
+      resetButton();
+
+      // Database.push({
+      //   ProjectName: databaseAdd[0].ProjectName,
+      //   TemplateName: databaseAdd[0].TemplateName,
+      //   Data: [
+      //     {
+      //       Index: 1,
+      //       Name: form.Name,
+      //       Description: form.Description,
+      //       UniqueIdentifier: "test",
+      //       DrwNr: form.DrwNr,
+      //       NominalValue: form.NominalValue,
+      //       UpperTolerance: form.UpperTolerance,
+      //       LowerTolerance: form.LowerTolerance,
+      //       DistributionType: form.DistributionType,
+      //       ToleranceType: form.ToleranceType,
+      //     },
+      //   ],
+      // });
     } else {
       toast("Add all informations!", {
         position: toast.POSITION.TOP_CENTER,
@@ -179,6 +214,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
   };
 
   const handleChange = (e) => {
+    // console.log("event", e.target.value);
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const submitButton = (e) => {
@@ -190,6 +226,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
   const resetButton = () => {
     setForm({
       Name: "",
+      Description: "",
       DrwNr: "",
       NominalValue: "",
       UpperTolerance: "",
@@ -214,33 +251,59 @@ const AddComponent = ({ databaseFiltered, Database }) => {
             <Row>
               <Col>
                 {viewDropDownComponents && (
-                  <DropdownButton
-                    title={viewComponents}
-                    onSelect={(e) => {
-                      TemplateDatabaseFilter(e);
-                      handleSelectTemplate(e);
-                    }}
-                    variant="secondary"
+                  <Form.Group
+                    controlId="formGridState"
+                    className="col col-sm-6"
                   >
-                    {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                      {projectTemplate}
-                    </Dropdown.Toggle> */}
-
-                    {componentData[0].Data.map((n) => (
-                      <Dropdown.Item
-                        eventKey={n.ComponentName}
-                        key={n.ComponentName}
-                      >
-                        {n.ComponentName}
-                      </Dropdown.Item>
-                    ))}
-                    <Dropdown.Item
-                      eventKey={"New Template"}
-                      key={"New Template"}
+                    <Form.Label>Select Component</Form.Label>
+                    <Form.Select
+                      defaultValue="Select Component"
+                      className="form-control"
+                      name="Name"
+                      value={form.Name}
+                      onChange={(e) => {
+                        handleChange(e);
+                        TemplateDatabaseFilter(e);
+                        handleSelectTemplate(e);
+                      }}
                     >
-                      New Component
-                    </Dropdown.Item>
-                  </DropdownButton>
+                      <option value="Select Component">Select Component</option>
+                      {componentData[0].Data.map((n) => (
+                        <option value={n.ComponentName}>
+                          {n.ComponentName}
+                        </option>
+                      ))}
+                      <option value="New Component">New Component</option>
+                    </Form.Select>
+                  </Form.Group>
+
+                  // <DropdownButton
+                  //   title={viewComponents}
+                  //   onSelect={(e) => {
+                  //     TemplateDatabaseFilter(e);
+                  //     handleSelectTemplate(e);
+                  //   }}
+                  //   variant="secondary"
+                  // >
+                  //   {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                  //     {projectTemplate}
+                  //   </Dropdown.Toggle> */}
+
+                  //   {componentData[0].Data.map((n) => (
+                  //     <Dropdown.Item
+                  //       eventKey={n.ComponentName}
+                  //       key={n.ComponentName}
+                  //     >
+                  //       {n.ComponentName}
+                  //     </Dropdown.Item>
+                  //   ))}
+                  //   <Dropdown.Item
+                  //     eventKey={"New Template"}
+                  //     key={"New Template"}
+                  //   >
+                  //     New Component
+                  //   </Dropdown.Item>
+                  // </DropdownButton>
                 )}
               </Col>
               <Col>
@@ -253,15 +316,15 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                 <Form.Label>Description</Form.Label>
                 <Form.Control
                   type="description"
-                  name="Name"
+                  name="Description"
                   placeholder="Enter description"
-                  value={form.Name}
+                  value={form.Description}
                   onChange={handleChange}
                   className="form-control"
                 />
               </Form.Group>
               <Form.Group controlId="formBasicEmail" className="col col-sm-6">
-                <Form.Label>Last Name</Form.Label>
+                <Form.Label>Drawing number</Form.Label>
                 <Form.Control
                   type="name"
                   name="DrwNr"
@@ -334,12 +397,13 @@ const AddComponent = ({ databaseFiltered, Database }) => {
               <Form.Group controlId="formGridState" className="col col-sm-6">
                 <Form.Label>Select tolerance type</Form.Label>
                 <Form.Select
-                  defaultValue="General Tolerance"
+                  defaultValue="Select tolerance"
                   className="form-control"
                   name="ToleranceType"
                   value={form.ToleranceType}
-                  onChange={handleChange}
+                  onChange={(e) => handleChange(e)}
                 >
+                  <option value="Select tolerance">Select tolerance</option>
                   <option value="General Tolerance">General Tolerance</option>
                   <option value="Imposed Tolerance">Imposed Tolerance</option>
                 </Form.Select>
@@ -357,6 +421,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                       handleCustomCpK(e);
                     }}
                   >
+                    <option value="Distribution type">Distribution type</option>
                     <option value="Normal Cpk 1">Normal Cpk 1</option>
                     <option value="Normal Cpk 1.33">Normal Cpk 1.33</option>
                     <option value="Normal Cpk 1.66">Normal Cpk 1.66</option>
@@ -487,171 +552,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
           </Form.Group>
         </Row>
       </Form>
-
-      {/* form example */}
-
-      <form className="container mt-3 mb-3">
-        <Row className="mb-3">
-          <Form.Group controlId="formBasicEmail" className="col col-sm-6">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control
-              type="name"
-              name="first_name"
-              value="{form.first_name}"
-              onChange="{handleChange}"
-              className="form-control"
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicEmail" className="col col-sm-6">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control
-              type="name"
-              name="last_name"
-              value="{form.last_name}"
-              onChange="{handleChange}"
-              className="form-control"
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group controlId="formBasicMobile" className="col col-sm-6">
-            <Form.Label>Mobile Number</Form.Label>
-            <InputGroup>
-              <InputGroup.Text id="basic-addon1">+91</InputGroup.Text>
-              <Form.Control
-                aria-label="Mobile Number"
-                type="mobile"
-                aria-describedby="basic-addon1"
-                className="form-control"
-                name="mobile"
-                value="{form.mobile}"
-                onChange="{handleChange}"
-              />
-            </InputGroup>
-          </Form.Group>
-          <Form.Group controlId="formBasicEmail" className="col col-sm-6">
-            <Form.Label>Email</Form.Label>
-            <InputGroup>
-              <Form.Control
-                aria-label="Recipient's username"
-                aria-describedby="basic-addon2"
-                type="email"
-                name="email"
-                value="{form.email}"
-                onChange="{handleChange}"
-              />
-              <InputGroup.Text id="basic-addon2">@gmail.com</InputGroup.Text>
-            </InputGroup>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group className=" col col-sm-6" controlId="formGridAddress1">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              className="form-control"
-              type="text"
-              name="address1"
-              value="{form.address1}"
-              onChange="{handleChange}"
-            />
-          </Form.Group>
-          <Form.Group className="col col-sm-6" controlId="formGridAddress2">
-            <Form.Label>Address 2</Form.Label>
-            <Form.Control
-              className="form-control"
-              name="address2"
-              value="{form.address2}"
-              onChange="{handleChange}"
-              type="text"
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group controlId="formGridCity" className="col col-sm-4">
-            <Form.Label>City</Form.Label>
-            <Form.Control
-              className="form-control"
-              type="text"
-              name="city"
-              value="{form.city}"
-              onChange="{handleChange}"
-            />
-          </Form.Group>
-          <Form.Group controlId="formGridState" className="col col-sm-4">
-            <Form.Label>State</Form.Label>
-            <Form.Select
-              defaultValue="Choose..."
-              className="form-control"
-              name="a_state"
-              value="{form.a_state}"
-              onChange="{handleChange}"
-            >
-              <option value="Choose...">Choose...</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Bombay">Bommbay</option>
-              <option value="New York">New York</option>
-              <option value="Kashmir">Kashmir</option>
-            </Form.Select>
-          </Form.Group>
-          <Form.Group controlId="formGridpin" className="col col-sm-4">
-            <Form.Label>Pin Code</Form.Label>
-            <Form.Control
-              className="form-control"
-              type="pin"
-              name="pin"
-              value="{form.pin}"
-              onChange="{handleChange}"
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group controlId="formGridCheckbox" className="col col-sm-6">
-            <Form.Label>Menu</Form.Label>
-            <Form.Select
-              defaultValue="Choose..."
-              className="form-control"
-              name="menu"
-              value="{form.menu}"
-              onChange="{handleChange}"
-            >
-              <option value="Choose...">Choose...</option>
-              <option value="Veg Biryani">Veg Biryani</option>
-              <option value="BBQ Chicken Wings">BBQ Chicken Wings</option>
-              <option value="Rasmalai">Rasmalai</option>
-              <option value="Beer">Beer</option>
-            </Form.Select>
-          </Form.Group>
-          <Form.Group controlId="formGridlabel" className="col col-sm-6">
-            <Form.Label>Order Details</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows="{3}"
-              className="form-control"
-              name="order"
-              value="{form.order}"
-              onChange="{handleChange}"
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group controlId="formGridCheckbox" className="col col-sm-6">
-            <button
-              type="submit"
-              onClick="{submitButton}"
-              className="me-4 btn btn-success btn-lg btn-block"
-            >
-              Submit
-            </button>
-            <button
-              type="reset"
-              onClick="{resetButton}"
-              className="me-4 btn btn-danger btn-lg btn-block"
-            >
-              Cancel
-            </button>
-          </Form.Group>
-        </Row>
-      </form>
     </>
   );
 };
