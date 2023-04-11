@@ -529,11 +529,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
           >
             Add
           </Button>
-          <Button variant="danger" type="submit" className="px-2">
-            Cancel
-          </Button>
         </div>
-        <Row className="mb-3">
+        {/* <Row className="mb-3">
           <Form.Group controlId="formGridCheckbox" className="col col-sm-6">
             <button
               type="submit"
@@ -550,7 +547,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
               Cancel
             </button>
           </Form.Group>
-        </Row>
+        </Row> */}
       </Form>
     </>
   );

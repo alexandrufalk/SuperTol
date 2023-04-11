@@ -20,6 +20,8 @@ const Database = () => {
   const [selectProjectData, setSelectprojectData] = useState(
     "Select project name"
   );
+  const [viewCancel, setViewCancel] = useState(false);
+  const [viewAddComponent, setViewAddComponent] = useState(true);
   const Database = [
     {
       ProjectName: "Test Name1",
@@ -171,17 +173,25 @@ const Database = () => {
   useEffect(() => {
     const DatabasesU = [DatabaseUpdate];
     window.localStorage.setItem("DatabasesU", JSON.stringify(DatabasesU));
+    console.log("Database was updated");
   }, [DatabaseUpdate]);
 
   const SetViewAdd = () => {
     if (selectProjectData !== "Select project name") {
       setViewAddComponentData(true);
+      setViewCancel(true);
+      setViewAddComponent(false);
     } else {
       toast("Select Project Name!", {
         position: toast.POSITION.TOP_CENTER,
         theme: "dark",
       });
     }
+  };
+
+  const SetViewAddCancel = () => {
+    setViewAddComponentData(false);
+    setViewAddComponent(true);
   };
   console.log("DatabaseUpdate", DatabaseUpdate[0].Data);
 
@@ -378,34 +388,38 @@ const Database = () => {
         </Row>
       )}
       {viewAddComponentData && (
-        <AddComponent
-          databaseFiltered={databaseFiltered}
-          Database={DatabaseUpdate}
-        />
+        <Row>
+          <AddComponent
+            databaseFiltered={databaseFiltered}
+            Database={DatabaseUpdate}
+            viewAddComponentData={viewAddComponentData}
+          />
+          {viewCancel && (
+            <div className="d-flex justify-content-between">
+              <Button
+                variant="danger"
+                className="px-2"
+                onClick={SetViewAddCancel}
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+        </Row>
       )}
 
-      <div className="container fluid  text-center ">
-        <Button
-          variant="secondary"
-          type="submit"
-          className="m-2"
-          onClick={SetViewAdd}
-        >
-          Add component
-        </Button>
-        <Button variant="secondary" type="submit" className="m-2">
-          Add Drawing
-        </Button>
-        <Button variant="info" type="submit" className="m-2">
-          Edit
-        </Button>
-        <Button variant="danger" type="submit" className="m-2">
-          Delete
-        </Button>
-        <Button variant="danger" type="submit" className="m-2">
-          Clear Database
-        </Button>
-      </div>
+      {viewAddComponent && (
+        <div className="container fluid  text-center ">
+          <Button
+            variant="secondary"
+            type="submit"
+            className="m-2"
+            onClick={SetViewAdd}
+          >
+            Add component
+          </Button>
+        </div>
+      )}
     </>
   );
 };

@@ -21,6 +21,127 @@ const Case = () => {
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
 
+  const DatabaseCases = [
+    {
+      ProjectName: "Test Name1",
+      Data: [
+        {
+          CaseName: "Case1",
+          CaseData: [
+            {
+              ID: 1,
+              Name: "Housing",
+              Description: "Dim1",
+              UniqueIdentifier: "D1",
+              NominalValue: 16,
+              UpperTolerance: 0.4,
+              LowerTolerance: -0.2,
+              Sign: "+",
+              DistributionType: "Normal Cpk 1.66",
+              ToleranceType: "General Tol.",
+              Influence: "40",
+              Formula: "",
+            },
+            {
+              ID: 2,
+              Name: "Cover",
+              Description: "Dim2",
+              UniqueIdentifier: "D2",
+              NominalValue: 2,
+              UpperTolerance: 1,
+              LowerTolerance: -1,
+              Sign: "-",
+              DistributionType: "Normal Cpk 1.33",
+              ToleranceType: "General Tol.",
+              Influence: 30,
+              Formula: "",
+            },
+            {
+              ID: 3,
+              Name: "Connector",
+              Description: "Dim3",
+              UniqueIdentifier: "D3",
+              NominalValue: 10,
+              UpperTolerance: 0.2,
+              LowerTolerance: -0.2,
+              Sign: "+",
+              DistributionType: "Normal Cpk 1.66",
+              ToleranceType: "General Tol.",
+              Influence: 30,
+              Formula: "",
+            },
+          ],
+        },
+        {
+          CaseName: "Case2",
+          CaseData: [
+            {
+              ID: 1,
+              Name: "Housing2",
+              Description: "Dim1",
+              UniqueIdentifier: "D1",
+              NominalValue: 6,
+              UpperTolerance: 0.4,
+              LowerTolerance: -0.4,
+              Sign: "-",
+              DistributionType: "Normal Cpk 1.66",
+              ToleranceType: "General Tol.",
+              Influence: "40",
+              Formula: "",
+            },
+            {
+              ID: 2,
+              Name: "Cover2",
+              Description: "Dim2",
+              UniqueIdentifier: "D2",
+              NominalValue: 6,
+              UpperTolerance: 1,
+              LowerTolerance: -1,
+              Sign: "+",
+              DistributionType: "Normal Cpk 1.33",
+              ToleranceType: "General Tol.",
+              Influence: 30,
+              Formula: "",
+            },
+            {
+              ID: 3,
+              Name: "Connector3",
+              Description: "Dim3",
+              UniqueIdentifier: "D3",
+              NominalValue: 16,
+              UpperTolerance: 0.2,
+              LowerTolerance: -0.2,
+              Sign: "+",
+              DistributionType: "Normal Cpk 1.66",
+              ToleranceType: "General Tol.",
+              Influence: 30,
+              Formula: "",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
+
+  //Worst case nominal
+  const WorstCaseNominal = DatabaseCalculation.map((n) =>
+    Number(
+      n.Sign + (n.NominalValue + (n.LowerTolerance + n.UpperTolerance) / 2)
+    )
+  ).reduce((accumulator, current) => accumulator + current, 0);
+
+  //worst case  tolerance
+
+  const WorstCaseTolerance = DatabaseCalculation.map(
+    (n) => (n.UpperTolerance - n.LowerTolerance) / 2
+  ).reduce((accumulator, current) => accumulator + current, 0);
+  console.log("WorstCaseNominal", WorstCaseNominal);
+  console.log("WorstCaseTolerance", WorstCaseTolerance);
+  console.log("DatabaseCalculation", DatabaseCalculation);
+  console.log("DatabaseCases", DatabaseCases[0].Data[0].CaseData);
+
   console.log("histData", histData);
   console.log("histBinData", histBinData);
   console.log("pdfData", pdfData);
@@ -202,14 +323,20 @@ const Case = () => {
                     <h3>Worst Case</h3>
                     <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75">
                       <ListGroup.Item className="fs-5">
-                        Nominal: 0
+                        {`Nominal:${WorstCaseNominal}`}
                       </ListGroup.Item>
-                      <ListGroup.Item>Upper Tolerance: 1.8</ListGroup.Item>
-                      <ListGroup.Item>Lower Tolerance: -1.8</ListGroup.Item>
-                      <ListGroup.Item>Upper Limit: 1.8</ListGroup.Item>
-                      <ListGroup.Item>Lower Limit: -1.8</ListGroup.Item>
-                      <ListGroup.Item>Range: 3.6</ListGroup.Item>
-                      <ListGroup.Item>Symmetric: ±1.8</ListGroup.Item>
+                      <ListGroup.Item>{`Upper Tolerance: ${WorstCaseTolerance}`}</ListGroup.Item>
+                      <ListGroup.Item>{`Lower Tolerance: ${-WorstCaseTolerance}`}</ListGroup.Item>
+                      <ListGroup.Item>{`Upper Limit: ${
+                        WorstCaseNominal + WorstCaseTolerance
+                      }`}</ListGroup.Item>
+                      <ListGroup.Item>{`Lower Limit: ${
+                        WorstCaseNominal - WorstCaseTolerance
+                      }`}</ListGroup.Item>
+                      <ListGroup.Item>{`Range: ${
+                        2 * WorstCaseTolerance
+                      }`}</ListGroup.Item>
+                      <ListGroup.Item>{`Symmetric:${WorstCaseNominal} ±${WorstCaseTolerance}`}</ListGroup.Item>
                     </ListGroup>
                   </div>
                 </Col>
@@ -257,37 +384,43 @@ const Case = () => {
                     <th>Tolerance Type</th>
                     <th>Influence %</th>
                     <th>Formula</th>
+                    <th>Remove</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Housing</td>
-                    <td>Dim.1</td>
-                    <td>D1</td>
-                    <td>10</td>
-                    <td>0.2</td>
-                    <td>-0.2</td>
-                    <td>+</td>
-                    <td>Normal Cpk 1.66</td>
-                    <td>General Tol.</td>
-                    <td>40</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>Cover</td>
-                    <td>Dim.2</td>
-                    <td>D2</td>
-                    <td>9</td>
-                    <td>0.25</td>
-                    <td>-0.25</td>
-                    <td>-</td>
-                    <td>Normal Cpk 1.66</td>
-                    <td>General Tol.</td>
-                    <td>30</td>
-                    <td></td>
-                  </tr>
+                  {DatabaseCases[0].Data[0].CaseData.map((n) => (
+                    <tr key={n.ID + "test"}>
+                      <td key={n.ID + "test"}> {n.ID}</td>
+                      <td key={n.Name + n.ID}> {n.Name}</td>
+                      <td key={n.Description + n.ID}>{n.Description}</td>
+                      <td key={n.UniqueIdentifier + n.ID}>
+                        {n.UniqueIdentifier}
+                      </td>
+                      <td key={n.NominalValue + n.ID}> {n.NominalValue}</td>
+                      <td key={n.UpperTolerance + n.ID}> {n.UpperTolerance}</td>
+                      <td key={n.LowerTolerance + n.ID}> {n.LowerTolerance}</td>
+                      <td key={n.Sign + n.ID}> {n.Sign}</td>
+                      <td key={n.DistributionType + n.ID}>
+                        {" "}
+                        {n.DistributionType}
+                      </td>
+                      <td key={n.ToleranceType + n.ID}> {n.ToleranceType}</td>
+                      <td key={n.Influence + n.ID}> {n.Influence}</td>
+                      <td key={n.Formula + n.ID}> {n.Formula}</td>
+                      <td key={n.Index + "Remove"}>
+                        <Button
+                          type="button"
+                          variant="outline-danger"
+                          // onClick={() => {
+                          //   RemoveCase(n.Index);
+                          //   forceUpdate();
+                          // }}
+                        >
+                          X
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </Container>
