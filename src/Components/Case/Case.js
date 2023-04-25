@@ -13,6 +13,8 @@ import Col from "react-bootstrap/esm/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/esm/Button";
 import Canvas from "../Canvas/Canvas";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 
@@ -20,6 +22,8 @@ const Case = () => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
+  const [addComponent, setAddComponent] = useState("Select Component");
+  const [meanStatistic, setMeanStatistic] = useState("");
 
   const DatabaseCases = [
     {
@@ -122,6 +126,98 @@ const Case = () => {
       ],
     },
   ];
+  const Database = [
+    {
+      ProjectName: "Test Name1",
+      TemplateName: "Test Template1",
+      Data: [
+        {
+          Index: 1,
+          Name: "Housing",
+          Description: "Dim1",
+          UniqueIdentifier: "D1",
+          DrwNr: "123",
+          NominalValue: 10,
+          UpperTolerance: 0.4,
+          LowerTolerance: -0.4,
+          DistributionType: "Normal Cpk 1.66",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+        {
+          Index: 2,
+          Name: "Cover",
+          Description: "Dim2",
+          UniqueIdentifier: "D2",
+          DrwNr: "123",
+          NominalValue: 2,
+          UpperTolerance: 1,
+          LowerTolerance: -1,
+          DistributionType: "Normal Cpk 1.33",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+        {
+          Index: 3,
+          Name: "Connector",
+          Description: "Dim3",
+          UniqueIdentifier: "D3",
+          DrwNr: "123",
+          NominalValue: 10,
+          UpperTolerance: 0.2,
+          LowerTolerance: -0.2,
+          DistributionType: "Normal Cpk 1.66",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+      ],
+    },
+    {
+      ProjectName: "Test Name2",
+      TemplateName: "Test Template2",
+      Data: [
+        {
+          Index: 1,
+          Name: "Housing2",
+          Description: "Dim21",
+          UniqueIdentifier: "D1",
+          DrwNr: "123",
+          NominalValue: 10,
+          UpperTolerance: 0.4,
+          LowerTolerance: -0.4,
+          DistributionType: "Normal Cpk 1.66",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+        {
+          Index: 2,
+          Name: "Cover2",
+          Description: "Dim22",
+          UniqueIdentifier: "D2",
+          DrwNr: "123",
+          NominalValue: 2,
+          UpperTolerance: 1,
+          LowerTolerance: -1,
+          DistributionType: "Normal Cpk 1.33",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+        {
+          Index: 3,
+          Name: "Connector2",
+          Description: "Dim23",
+          UniqueIdentifier: "D3",
+          DrwNr: "123",
+          NominalValue: 10,
+          UpperTolerance: 0.2,
+          LowerTolerance: -0.2,
+          DistributionType: "Normal Cpk 1.66",
+          ToleranceType: "General Tol.",
+          Samples: 1000,
+        },
+      ],
+    },
+  ];
 
   const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
 
@@ -145,6 +241,27 @@ const Case = () => {
   console.log("histData", histData);
   console.log("histBinData", histBinData);
   console.log("pdfData", pdfData);
+
+  //Standard  deviation calculation
+  const StandardDeviation = Math.sqrt(
+    DatabaseCalculation.map((n) =>
+      Math.pow(
+        Math.round(
+          ((n.UpperTolerance - n.LowerTolerance) /
+            (6 * parseFloat(n.DistributionType.replace(/[^\d.]*/g, ""))) +
+            Number.EPSILON) *
+            100
+        ) / 100,
+        2
+      )
+    ).reduce((accumulator, current) => accumulator + current, 0)
+  );
+
+  console.log("StandardDeviation", StandardDeviation);
+  //Statistical toerance
+  const statisticalTol = 6 * StandardDeviation * 1.33;
+
+  console.log("Statistical tolerance", statisticalTol);
 
   const generateStatistic = () => {
     console.log("Click to genereate statistic");
@@ -207,6 +324,7 @@ const Case = () => {
     const sum = genNum.reduce((acc, i) => (acc += i));
     const count = genNum.length;
     const calculatedMean = sum / count;
+    setMeanStatistic(calculatedMean);
     let stddevupp = 0;
 
     for (let i = 0; i < genNum.length; i += 1) {
@@ -345,7 +463,7 @@ const Case = () => {
                     <h3>Statistic</h3>
                     <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75">
                       <ListGroup.Item className="fs-5">
-                        Mean: 0.01
+                        {`Mean: ${meanStatistic}`}`
                       </ListGroup.Item>
                       <ListGroup.Item>Upper Tolerance: 1.1</ListGroup.Item>
                       <ListGroup.Item>Lower Tolerance: -1.05</ListGroup.Item>
@@ -405,7 +523,15 @@ const Case = () => {
                         {n.DistributionType}
                       </td>
                       <td key={n.ToleranceType + n.ID}> {n.ToleranceType}</td>
-                      <td key={n.Influence + n.ID}> {n.Influence}</td>
+                      <td key={n.Influence + n.ID}>
+                        {" "}
+                        {Math.round(
+                          ((((n.UpperTolerance - n.LowerTolerance) / 2) * 100) /
+                            WorstCaseTolerance +
+                            Number.EPSILON) *
+                            100
+                        ) / 100}
+                      </td>
                       <td key={n.Formula + n.ID}> {n.Formula}</td>
                       <td key={n.Index + "Remove"}>
                         <Button
@@ -431,6 +557,28 @@ const Case = () => {
         <Button variant="secondary" type="submit" className="p-2">
           Add component
         </Button>
+        <DropdownButton
+          title={addComponent}
+          // onSelect={(e) => {
+          //   DatabasesFilter(e);
+
+          //   handleSelectProjectnameData(e);
+          // }}
+          variant="secondary"
+        >
+          {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                      {projectTemplate}
+                    </Dropdown.Toggle> */}
+
+          {Database[0].Data.map((n) => (
+            <Dropdown.Item eventKey={n.Name} key={n.Name}>
+              {n.Name}
+            </Dropdown.Item>
+          ))}
+          {/* <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
+          New Project
+        </Dropdown.Item> */}
+        </DropdownButton>
       </div>
 
       <Canvas />
