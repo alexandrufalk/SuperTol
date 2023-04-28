@@ -15,6 +15,7 @@ import Button from "react-bootstrap/esm/Button";
 import Canvas from "../Canvas/Canvas";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import Form from "react-bootstrap/Form";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 
@@ -242,6 +243,8 @@ const Case = () => {
   console.log("histBinData", histBinData);
   console.log("pdfData", pdfData);
 
+  // console.log("min", Math.min(...genNum), "max", Math.max(...genNum));
+
   //Standard  deviation calculation
   const StandardDeviation = Math.sqrt(
     DatabaseCalculation.map((n) =>
@@ -258,9 +261,28 @@ const Case = () => {
   );
 
   console.log("StandardDeviation", StandardDeviation);
+  // Statistical Cpk
+
   //Statistical toerance
   const statisticalTol = 6 * StandardDeviation * 1.33;
 
+  //Pp Pp = (USL – LSL) / 6 * s :; See min and max generated numbers!
+  const Pp = (2 * WorstCaseTolerance) / (6 * StandardDeviation);
+  console.log("Pp", Pp);
+
+  //Ppk
+  const PpkU =
+    (WorstCaseNominal + WorstCaseTolerance - meanStatistic) /
+    (3 * StandardDeviation);
+  const PpkL =
+    (meanStatistic - WorstCaseNominal - WorstCaseTolerance) /
+    (3 * StandardDeviation);
+
+  const Ppk = Math.min(PpkU, PpkL);
+  console.log("PpkL,PpkU", PpkL, PpkU);
+
+  //Sigma interval Tolerance range/standard deviation
+  const sigmaintv = (2 * WorstCaseTolerance) / StandardDeviation;
   console.log("Statistical tolerance", statisticalTol);
 
   const generateStatistic = () => {
@@ -268,9 +290,9 @@ const Case = () => {
 
     //const inputs
     const samplenum = 100000;
-    const mean = 14;
-    const UT = 0.1;
-    const LT = -0.1;
+    const mean = WorstCaseNominal;
+    const UT = WorstCaseTolerance;
+    const LT = -WorstCaseTolerance;
     const Cpk = 1.33;
     const stddev =
       Math.round(((UT - LT) / (6 * Cpk) + Number.EPSILON) * 1000) / 1000;
@@ -368,6 +390,25 @@ const Case = () => {
   return (
     <>
       <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
+      <Form.Group controlId="formGridState" className="col col-sm-6">
+        <Form.Label>Select gap Cpk</Form.Label>
+        <Form.Select
+          defaultValue="Distribution type"
+          className="form-control"
+          name="DistributionType"
+          // value={form.DistributionType}
+          // onChange={(e) => {
+          //   handleChange(e);
+
+          // }}
+        >
+          <option value="Distribution type">Distribution type</option>
+          <option value="1">Normal Cpk 1</option>
+          <option value="1.33">Normal Cpk 1.33</option>
+          <option value="1.66">Normal Cpk 1.66</option>
+          <option value="2">Normal Cpk 2</option>
+        </Form.Select>
+      </Form.Group>
       <div className="container fluid p-2">
         <button onClick={generateStatistic}>Generate Statistic</button>
       </div>
@@ -463,16 +504,22 @@ const Case = () => {
                     <h3>Statistic</h3>
                     <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75">
                       <ListGroup.Item className="fs-5">
-                        {`Mean: ${meanStatistic}`}`
+                        {`Mean: ${meanStatistic}`}
                       </ListGroup.Item>
-                      <ListGroup.Item>Upper Tolerance: 1.1</ListGroup.Item>
-                      <ListGroup.Item>Lower Tolerance: -1.05</ListGroup.Item>
-                      <ListGroup.Item>Samples: 1000</ListGroup.Item>
-                      <ListGroup.Item>Range: 2.15</ListGroup.Item>
-                      <ListGroup.Item>Pp:2.17</ListGroup.Item>
-                      <ListGroup.Item>Ppk:2.17</ListGroup.Item>
-                      <ListGroup.Item>St.Dev[σ]</ListGroup.Item>
-                      <ListGroup.Item>Sigma intv.</ListGroup.Item>
+                      <ListGroup.Item>{`Upper Tolerance:${
+                        statisticalTol / 2
+                      } `}</ListGroup.Item>
+                      <ListGroup.Item>{`Lower Tolerance:${
+                        -statisticalTol / 2
+                      } `}</ListGroup.Item>
+                      <ListGroup.Item>Samples: 100000</ListGroup.Item>
+                      <ListGroup.Item>{`Range: ${statisticalTol}`}</ListGroup.Item>
+                      <ListGroup.Item>Pp:{Pp}</ListGroup.Item>
+                      <ListGroup.Item>Ppk:{Ppk}</ListGroup.Item>
+                      <ListGroup.Item>
+                        St.Dev[σ]:{StandardDeviation}
+                      </ListGroup.Item>
+                      <ListGroup.Item>Sigma intv.: {sigmaintv}</ListGroup.Item>
                       <ListGroup.Item>Parts less LSL </ListGroup.Item>
                       <ListGroup.Item>Parts more USL</ListGroup.Item>
                     </ListGroup>
