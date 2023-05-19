@@ -7,6 +7,7 @@ import {
   VictoryAxis,
   VictoryHistogram,
   VictoryLine,
+  VictoryArea,
 } from "victory";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -16,6 +17,8 @@ import Canvas from "../Canvas/Canvas";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Form from "react-bootstrap/Form";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 
@@ -25,6 +28,23 @@ const Case = () => {
   const [pdfData, setPdfData] = useState([]);
   const [addComponent, setAddComponent] = useState("Select Component");
   const [meanStatistic, setMeanStatistic] = useState("");
+  const [gapCpk, setGapCpk] = useState("Gap Cpk");
+
+  const [statisticalForm, setStatisticalForm] = useState({
+    meanS: "",
+    UTS: "",
+    LTS: "",
+    Samples: "",
+    Range: "",
+    Pp: "",
+    PpK: "",
+    StDev: "",
+    SigmaInt: "",
+    PartsLess: "",
+    PartsMore: "",
+    Max: "",
+  });
+  console.log("statisticalForm", statisticalForm);
 
   const DatabaseCases = [
     {
@@ -245,58 +265,43 @@ const Case = () => {
 
   // console.log("min", Math.min(...genNum), "max", Math.max(...genNum));
 
-  //Standard  deviation calculation
-  const StandardDeviation = Math.sqrt(
-    DatabaseCalculation.map((n) =>
-      Math.pow(
-        Math.round(
-          ((n.UpperTolerance - n.LowerTolerance) /
-            (6 * parseFloat(n.DistributionType.replace(/[^\d.]*/g, ""))) +
-            Number.EPSILON) *
-            100
-        ) / 100,
-        2
-      )
-    ).reduce((accumulator, current) => accumulator + current, 0)
-  );
-
-  console.log("StandardDeviation", StandardDeviation);
-  // Statistical Cpk
-
-  //Statistical toerance
-  const statisticalTol = 6 * StandardDeviation * 1.33;
-
-  //Pp Pp = (USL – LSL) / 6 * s :; See min and max generated numbers!
-  const Pp = (2 * WorstCaseTolerance) / (6 * StandardDeviation);
-  console.log("Pp", Pp);
-
-  //Ppk
-  const PpkU =
-    (WorstCaseNominal + WorstCaseTolerance - meanStatistic) /
-    (3 * StandardDeviation);
-  const PpkL =
-    (meanStatistic - WorstCaseNominal - WorstCaseTolerance) /
-    (3 * StandardDeviation);
-
-  const Ppk = Math.min(PpkU, PpkL);
-  console.log("PpkL,PpkU", PpkL, PpkU);
-
-  //Sigma interval Tolerance range/standard deviation
-  const sigmaintv = (2 * WorstCaseTolerance) / StandardDeviation;
-  console.log("Statistical tolerance", statisticalTol);
-
   const generateStatistic = () => {
+    if (gapCpk === "Gap Cpk") {
+      toast("Select Cpk gap!", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
+      return;
+    }
     console.log("Click to genereate statistic");
+
+    //Standard  deviation calculation
+    const StandardDeviation = Math.sqrt(
+      DatabaseCalculation.map((n) =>
+        Math.pow(
+          Math.round(
+            ((n.UpperTolerance - n.LowerTolerance) /
+              (6 * parseFloat(n.DistributionType.replace(/[^\d.]*/g, ""))) +
+              Number.EPSILON) *
+              100
+          ) / 100,
+          2
+        )
+      ).reduce((accumulator, current) => accumulator + current, 0)
+    );
+
+    console.log("StandardDeviation", StandardDeviation);
 
     //const inputs
     const samplenum = 100000;
     const mean = WorstCaseNominal;
-    const UT = WorstCaseTolerance;
-    const LT = -WorstCaseTolerance;
-    const Cpk = 1.33;
-    const stddev =
-      Math.round(((UT - LT) / (6 * Cpk) + Number.EPSILON) * 1000) / 1000;
-    console.log("stddev", stddev);
+    // const UT = WorstCaseTolerance;
+    // const LT = -WorstCaseTolerance;
+    let Cpk = gapCpk;
+    const stddev = StandardDeviation;
+    // const stddev =
+    //   Math.round(((UT - LT) / (6 * Cpk) + Number.EPSILON) * 1000) / 1000;
+    // console.log("stddev", stddev);
 
     //generate random number using Box Muller Transform
     const boxMullerTransform = () => {
@@ -346,8 +351,20 @@ const Case = () => {
     const sum = genNum.reduce((acc, i) => (acc += i));
     const count = genNum.length;
     const calculatedMean = sum / count;
+    console.log("calculatedMean", calculatedMean);
     setMeanStatistic(calculatedMean);
     let stddevupp = 0;
+
+    let countN = {};
+    genNum.forEach(function (i) {
+      countN[i] = (countN[i] || 0) + 1;
+    });
+    console.log("countN", countN);
+    let arr = Object.values(countN);
+    let min = Math.min(...arr);
+    let max = Math.max(...arr);
+
+    console.log(`Min value: ${min}, max value: ${max}`);
 
     for (let i = 0; i < genNum.length; i += 1) {
       stddevupp = stddevupp + Math.pow(genNum[i] - calculatedMean, 2);
@@ -356,6 +373,50 @@ const Case = () => {
 
     const calculatedstddev = Math.sqrt(stddevupp / (count - 1));
     console.log("calculatedstddev", calculatedstddev);
+
+    // setStatisticalForm({ ...statisticalForm, StDev: calculatedstddev });
+
+    const statisticalTol = 6 * calculatedstddev * Cpk;
+    console.log("Statistical tolerance", statisticalTol);
+    // setStatisticalForm({ ...statisticalForm, UTS: statisticalTol / 2 });
+    // setStatisticalForm({ ...statisticalForm, LTS: -statisticalTol / 2 });
+
+    //Statistical toerance
+
+    //Pp Pp = (USL – LSL) / 6 * s :; See min and max generated numbers!
+    const Pp = (2 * WorstCaseTolerance) / (6 * calculatedstddev);
+    console.log("Pp", Pp);
+    // setStatisticalForm({ ...statisticalForm, Pp: Pp });
+
+    //Ppk
+    const PpkU =
+      (WorstCaseNominal + WorstCaseTolerance - calculatedMean) /
+      (3 * calculatedstddev);
+    const PpkL =
+      (calculatedMean - (WorstCaseNominal - WorstCaseTolerance)) /
+      (3 * calculatedstddev);
+
+    const Ppk = Math.min(PpkU, PpkL);
+    console.log("PpkL,PpkU", PpkL, PpkU);
+    // setStatisticalForm({ ...statisticalForm, Ppk: Ppk });
+
+    //Sigma interval Tolerance range/standard deviation
+    const sigmaintv = (2 * WorstCaseTolerance) / calculatedstddev;
+    // setStatisticalForm({ ...statisticalForm, SigmaInt: sigmaintv });
+    setStatisticalForm({
+      meanS: calculatedMean,
+      UTS: statisticalTol / 2,
+      LTS: -statisticalTol / 2,
+      Samples: 100000,
+      Range: statisticalTol,
+      Pp: Pp,
+      PpK: Ppk,
+      StDev: calculatedstddev,
+      SigmaInt: sigmaintv,
+      PartsLess: "",
+      PartsMore: "",
+      Max: max,
+    });
 
     //generate bin number array
     const histBinNum = genNum
@@ -387,27 +448,32 @@ const Case = () => {
     setPdfData(PDFdataGraph);
   };
 
+  const handleCpkChange = (e) => {
+    setGapCpk(e.target.value);
+  };
+  console.log("Gap Cpk:", gapCpk);
+
   return (
     <>
       <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
       <Form.Group controlId="formGridState" className="col col-sm-6">
         <Form.Label>Select gap Cpk</Form.Label>
         <Form.Select
-          defaultValue="Distribution type"
+          defaultValue="Gap Cpk"
           className="form-control"
-          name="DistributionType"
-          // value={form.DistributionType}
-          // onChange={(e) => {
-          //   handleChange(e);
-
-          // }}
+          name="Gap Cpk"
+          value={gapCpk}
+          onChange={(e) => {
+            handleCpkChange(e);
+          }}
         >
-          <option value="Distribution type">Distribution type</option>
+          <option value="Gap Cpk">Gap Cpk</option>
           <option value="1">Normal Cpk 1</option>
           <option value="1.33">Normal Cpk 1.33</option>
           <option value="1.66">Normal Cpk 1.66</option>
           <option value="2">Normal Cpk 2</option>
         </Form.Select>
+        <ToastContainer transition={Bounce} autoClose={2000} />
       </Form.Group>
       <div className="container fluid p-2">
         <button onClick={generateStatistic}>Generate Statistic</button>
@@ -436,6 +502,7 @@ const Case = () => {
               <div className="boxgraph overlaygraph ">
                 <VictoryChart domainPadding={{ x: 50, y: 25 }}>
                   <VictoryLine data={pdfData} />
+
                   <VictoryAxis
                   // style={{
                   //   axis: { stroke: "transparent" },
@@ -446,6 +513,93 @@ const Case = () => {
                   />
                 </VictoryChart>
               </div>
+              <div className="boxgraph overlaygraph ">
+                <VictoryChart domainPadding={{ x: 50, y: 25 }}>
+                  <VictoryLine data={pdfData} />
+                  <VictoryArea
+                    style={{
+                      data: {
+                        fill: "#2d7d44",
+                        fillOpacity: 0.4,
+                      },
+                    }}
+                    data={[
+                      {
+                        x:
+                          ((statisticalForm.meanS +
+                            statisticalForm.LTS +
+                            Number.EPSILON) *
+                            1000) /
+                          1000,
+                        y: statisticalForm.Max,
+                        y0: 0,
+                      },
+                      {
+                        x:
+                          ((statisticalForm.meanS +
+                            statisticalForm.UTS +
+                            Number.EPSILON) *
+                            1000) /
+                          1000,
+                        y: statisticalForm.Max,
+                        y0: 0,
+                      },
+                    ]}
+                  />
+
+                  <VictoryAxis
+                    style={{
+                      axis: { stroke: "transparent" },
+                      ticks: { stroke: "transparent" },
+                      tickLabels: { fill: "transparent" },
+                    }}
+                  />
+                </VictoryChart>
+              </div>
+              {/* <div className="boxgraph overlaygraph ">
+                <VictoryChart>
+                  <VictoryArea
+                    data={[
+                      {
+                        x: 23,
+                        y: statisticalForm.Max,
+                        y0: 0,
+                      },
+                      {
+                        x: 25,
+                        y: statisticalForm.Max,
+                        y0: 0,
+                      },
+                    ]}
+                  />
+                  <VictoryAxis
+                    domain={histBinData}
+                    // theme={VictoryTheme.material}
+
+                    standalone={false}
+                  />
+                </VictoryChart>
+              </div> */}
+
+              {/* <div className="boxgraph overlaygraph ">
+                <VictoryChart domainPadding={{ x: 50, y: 25 }}>
+                  <VictoryLine
+                    data={[
+                      { x: statisticalForm.meanS - statisticalForm.LTS, y: 0 },
+                      {
+                        x: statisticalForm.meanS - statisticalForm.LTS,
+                        y: statisticalForm.Max,
+                      },
+                    ]}
+                  />
+                  <VictoryAxis
+                    domain={histBinData}
+                    // theme={VictoryTheme.material}
+
+                    standalone={false}
+                  />
+                </VictoryChart>
+              </div> */}
             </div>
             {/* <Col xs={12} md={6}>
               <VictoryChart
@@ -506,20 +660,20 @@ const Case = () => {
                       <ListGroup.Item className="fs-5">
                         {`Mean: ${meanStatistic}`}
                       </ListGroup.Item>
-                      <ListGroup.Item>{`Upper Tolerance:${
-                        statisticalTol / 2
-                      } `}</ListGroup.Item>
-                      <ListGroup.Item>{`Lower Tolerance:${
-                        -statisticalTol / 2
-                      } `}</ListGroup.Item>
+                      <ListGroup.Item>{`Upper Tolerance:${statisticalForm.UTS} `}</ListGroup.Item>
+                      <ListGroup.Item>{`Lower Tolerance:${statisticalForm.LTS} `}</ListGroup.Item>
                       <ListGroup.Item>Samples: 100000</ListGroup.Item>
-                      <ListGroup.Item>{`Range: ${statisticalTol}`}</ListGroup.Item>
-                      <ListGroup.Item>Pp:{Pp}</ListGroup.Item>
-                      <ListGroup.Item>Ppk:{Ppk}</ListGroup.Item>
+                      <ListGroup.Item>{`Range: ${
+                        statisticalForm.UTS - statisticalForm.LTS
+                      }`}</ListGroup.Item>
+                      <ListGroup.Item>Pp:{statisticalForm.Pp}</ListGroup.Item>
+                      <ListGroup.Item>Ppk:{statisticalForm.PpK}</ListGroup.Item>
                       <ListGroup.Item>
-                        St.Dev[σ]:{StandardDeviation}
+                        St.Dev[σ]:{statisticalForm.StDev}
                       </ListGroup.Item>
-                      <ListGroup.Item>Sigma intv.: {sigmaintv}</ListGroup.Item>
+                      <ListGroup.Item>
+                        Sigma intv.: {statisticalForm.SigmaInt}
+                      </ListGroup.Item>
                       <ListGroup.Item>Parts less LSL </ListGroup.Item>
                       <ListGroup.Item>Parts more USL</ListGroup.Item>
                     </ListGroup>
