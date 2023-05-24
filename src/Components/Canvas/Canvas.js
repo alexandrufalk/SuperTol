@@ -1,15 +1,50 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { ContinuousColorLegend } from "react-vis";
 
-const Canvas = (props) => {
+const Canvas = (canvasDatabse) => {
+  const [canvaswidth, setCanvaswidth] = useState(window.innerWidth);
   const canvas = useRef(null);
   let ctx = null;
+
+  console.log(
+    "CanvasDatabase",
+    canvasDatabse.canvasDatabse,
+    typeof canvasDatabse
+  );
+  const handleResizeCanvas = () => {
+    setCanvaswidth(window.innerWidth);
+  };
+
+  // create an event listener
+  useEffect(() => {
+    window.addEventListener("resize", handleResizeCanvas);
+  });
+  // console.log("canvaswidth", canvaswidth);
+
+  const plusValues = canvasDatabse.canvasDatabse
+    .map((n) => (n.Sign === "+" ? Number(n.NominalValue) : 0))
+    .reduce((accumulator, current) => accumulator + current, 0);
+
+  const minusValues = canvasDatabse.canvasDatabse
+    .map((n) => (n.Sign === "-" ? Number(n.NominalValue) : 0))
+    .reduce((accumulator, current) => accumulator + current, 0);
+
+  const referanceValue = Math.max(plusValues, minusValues);
+
+  console.log("referanceValue", referanceValue);
+
+  console.log("plusValues", plusValues);
+  console.log("minusValues", minusValues);
 
   // initialize the canvas context
   useEffect(() => {
     // dynamically assign the width and height to canvas
     const canvasEle = canvas.current;
-    canvasEle.width = canvasEle.clientWidth;
-    canvasEle.height = canvasEle.clientHeight;
+    canvasEle.width = 0.8 * canvaswidth;
+    // canvasEle.height = canvasEle.clientHeight;
+
+    // canvasEle.width = window.innerWidth;
+    canvasEle.height = window.innerHeight;
 
     // get context of the canvas
 
@@ -18,25 +53,87 @@ const Canvas = (props) => {
     // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   }, []);
 
+  // useEffect(() => {
+  //   drawLine({
+  //     x: 20,
+  //     y: 20,
+  //     x1: 100,
+  //     y1: 20,
+  //     t: "D1",
+  //   });
+  //   drawLine2({ x: 100, y: 20, x1: 100, y1: 50 });
+  //   drawLine({ x: 100, y: 50, x1: 200, y1: 50, t: "D2" }, { color: "red" });
+  //   drawLine2({ x: 200, y: 50, x1: 200, y1: 80 });
+  //   drawLine(
+  //     { x: 200, y: 80, x1: 260, y1: 80, t: "D3" },
+  //     { color: "green", width: 5 }
+  //   );
+  //   drawLine2({ x: 260, y: 80, x1: 260, y1: 110 });
+  //   drawLine({ x: 260, y: 110, x1: 40, y1: 110, t: "D4" }, { color: "blue" });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+
+  //Maping lines
+
   useEffect(() => {
-    drawLine({
-      x: 20,
-      y: 20,
-      x1: 100,
-      y1: 20,
-      t: "D1",
-    });
-    drawLine2({ x: 100, y: 20, x1: 100, y1: 50 });
-    drawLine({ x: 100, y: 50, x1: 200, y1: 50, t: "D2" }, { color: "red" });
-    drawLine2({ x: 200, y: 50, x1: 200, y1: 80 });
-    drawLine(
-      { x: 200, y: 80, x1: 260, y1: 80, t: "D3" },
-      { color: "green", width: 5 }
+    let acumCanvas = canvaswidth / 4;
+    let ymax = 0;
+    let id = 1;
+    canvasDatabse.canvasDatabse.map(
+      (n) => (
+        drawLine({
+          x: acumCanvas,
+          y: 40 * id,
+          x1: eval(
+            acumCanvas +
+              n.Sign +
+              (n.NominalValue * canvaswidth) / (4 * referanceValue)
+          ),
+          y1: 40 * id,
+          t:
+            n.UniqueIdentifier +
+            "-> " +
+            n.NominalValue +
+            "±" +
+            n.UpperTolerance,
+        }),
+        drawLine2({
+          x: eval(
+            acumCanvas +
+              n.Sign +
+              (n.NominalValue * canvaswidth) / (4 * referanceValue)
+          ),
+          y: 40 * id,
+          x1: eval(
+            acumCanvas +
+              n.Sign +
+              (n.NominalValue * canvaswidth) / (4 * referanceValue)
+          ),
+          y1: 40 * id + 40,
+        }),
+        (acumCanvas = eval(
+          acumCanvas +
+            n.Sign +
+            (n.NominalValue * canvaswidth) / (4 * referanceValue)
+        )),
+        (ymax = 40 * id + 40),
+        (id = id + 1),
+        console.log("acumCanvas", acumCanvas),
+        console.log("ymax", ymax)
+      )
     );
-    drawLine2({ x: 260, y: 80, x1: 260, y1: 110 });
-    drawLine({ x: 260, y: 110, x1: 40, y1: 110, t: "D4" }, { color: "blue" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    drawLine(
+      { x: acumCanvas, y: ymax, x1: canvaswidth / 4, y1: ymax, t: "CL" },
+      { color: "red" }
+    );
+    drawLine2(
+      { x: canvaswidth / 4, y: ymax, x1: canvaswidth / 4, y1: 40 },
+      { color: "red" }
+    );
   }, []);
+  // canvasDatabse.map((n) =>
+  //   drawLine({ x: 0, y: 200 * n.ID, x1: 100, y1: 20, t: "D1" })
+  // );
 
   // draw a line
   const drawLine = (info, style = {}) => {

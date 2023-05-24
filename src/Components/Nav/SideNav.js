@@ -21,12 +21,11 @@ const SideNav = () => {
           />
         </Figure>
         <Nav defaultActiveKey="/home" className="flex-column  gap-4 fs-5">
-          <Button variant="success">Template</Button>{" "}
-          <Button variant="primary">Database</Button>{" "}
-          <Button variant="secondary">Edit Case Sheet</Button>{" "}
-          <Button variant="danger">Delete Case</Button>{" "}
-          <Button variant="success">Add Case</Button>{" "}
-          <Button variant="info">Generate report(pdf)</Button>{" "}
+          <Button variant="info">Summary</Button>
+          <Button variant="success">Template</Button>
+          <Button variant="primary">Database</Button>
+          <Button variant="success">Add Case</Button>
+          <Button variant="info">Generate report(pdf)</Button>
         </Nav>
       </Col>
     </>
