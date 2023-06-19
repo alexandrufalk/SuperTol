@@ -11,6 +11,8 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import { useBetween } from "use-between";
+import { useSharable } from "../../App";
 
 // import Figure from "react-bootstrap/Figure";
 // import Logo from "./Logo.png";
@@ -26,11 +28,17 @@ const Summary = ({ NewTemplate }) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
-  const [projectSelected, setProjectSelected] = useState(false);
+  // const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
+  const {
+    databaseSummryFiltered,
+    setDatabaseSummryFiltered,
+    projectSelected,
+    setProjectSelected,
+  } = useSharable();
+  // const [projectSelected, setProjectSelected] = useState(false);
   const [newProject, setNewProject] = useState(false);
   const [viewAddCase, setViewAddCase] = useState(false);
-  const [caseDescription, setCaseDescription] = useState("");
+  const [caseCaseName, setCaseCaseName] = useState("");
 
   const DatabaseSummry = [
     {
@@ -39,22 +47,22 @@ const Summary = ({ NewTemplate }) => {
       DataCase: [
         {
           ID: 1,
-          Description: "Case1",
-          SheetName: "Gap housing-cover",
+          CaseName: "Case1",
+          Description: "Gap housing-cover",
           Author: "Alex",
           Date: "Data",
         },
         {
           ID: 2,
-          Description: "Case2",
-          SheetName: "Gap housing-PCB",
+          CaseName: "Case2",
+          Description: "Gap housing-PCB",
           Author: "Alex",
           Date: "Data",
         },
         {
           ID: 3,
-          Description: "Case3",
-          SheetName: "Gap PCB-cover",
+          CaseName: "Case3",
+          Description: "Gap PCB-cover",
           Author: "Alex",
           Date: "Data",
         },
@@ -66,22 +74,22 @@ const Summary = ({ NewTemplate }) => {
       DataCase: [
         {
           ID: 1,
-          Description: "Case1",
-          SheetName: "Gap housing-cover",
+          CaseName: "Case1",
+          Description: "Gap housing-cover",
           Author: "Alex",
           Date: "Data",
         },
         {
           ID: 2,
-          Description: "Case2",
-          SheetName: "Gap housing-PCB",
+          CaseName: "Case2",
+          Description: "Gap housing-PCB",
           Author: "Alex",
           Date: "Data",
         },
         {
           ID: 3,
-          Description: "Case3",
-          SheetName: "Gap PCB-cover",
+          CaseName: "Case3",
+          Description: "Gap PCB-cover",
           Author: "Alex",
           Date: "Data",
         },
@@ -166,7 +174,7 @@ const Summary = ({ NewTemplate }) => {
 
   const AddCase = (e) => {
     e.preventDefault();
-    if (caseDescription !== "") {
+    if (caseCaseName !== "") {
       const index = databaseSummryUpdate.findIndex(
         (x) => x.ProjectName === selectProject
       );
@@ -184,8 +192,8 @@ const Summary = ({ NewTemplate }) => {
       console.log("index", index);
       const nCase = {
         ID: newID,
-        Description: `Case${newID}`,
-        SheetName: caseDescription,
+        CaseName: `Case${newID}`,
+        Description: caseCaseName,
         Author: "Alex",
         Date: "Date",
       };
@@ -196,12 +204,12 @@ const Summary = ({ NewTemplate }) => {
       setDatabaseSummryUpdate(DatabaseUpdate);
       console.log("test output", DatabaseUpdate);
       setViewAddCase(false);
-      setCaseDescription("");
+      setCaseCaseName("");
 
-      // console.log("caseDescription", caseDescription);
+      // console.log("caseCaseName", caseCaseName);
       console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
     } else {
-      toast("Add description", {
+      toast("Add CaseName", {
         position: toast.POSITION.TOP_CENTER,
         theme: "dark",
       });
@@ -296,11 +304,11 @@ const Summary = ({ NewTemplate }) => {
       });
     }
   };
-  const handleDescriptionChange = (e) => {
+  const handleCaseNameChange = (e) => {
     e.preventDefault();
-    setCaseDescription(e.target.value);
+    setCaseCaseName(e.target.value);
   };
-  // console.log("caseDescription", caseDescription);
+  // console.log("caseCaseName", caseCaseName);
 
   // useEffect(() => {
   //   setDatabaseSummryFiltered(databaseSummryFiltered);
@@ -409,7 +417,7 @@ const Summary = ({ NewTemplate }) => {
                 <tr>
                   <th>ID</th>
                   <th>Case Name</th>
-                  <th>Description</th>
+                  <th>CaseName</th>
                   <th>Author</th>
                   <th>Date</th>
                   <th>Delete</th>
@@ -420,8 +428,8 @@ const Summary = ({ NewTemplate }) => {
                   databaseSummryFiltered[0].DataCase.map((n) => (
                     <tr key={n.ID}>
                       <td key={n.ID}> {n.ID}</td>
+                      <td key={n.ID + n.CaseName}> {n.CaseName}</td>
                       <td key={n.ID + n.Description}> {n.Description}</td>
-                      <td key={n.ID + n.SheetName}> {n.SheetName}</td>
                       <td key={n.ID + n.Author}> {n.Author}</td>
                       <td key={n.ID + n.Date}> {n.Date}</td>
                       <td key={n.ID + "Remove"}>
@@ -470,11 +478,11 @@ const Summary = ({ NewTemplate }) => {
       {viewAddCase && (
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Description</Form.Label>
+            <Form.Label>CaseName</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter Description"
-              onChange={handleDescriptionChange}
+              placeholder="Enter CaseName"
+              onChange={handleCaseNameChange}
             />
           </Form.Group>
 

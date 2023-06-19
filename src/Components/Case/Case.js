@@ -29,6 +29,7 @@ const Case = () => {
   const [addComponent, setAddComponent] = useState("Select Component");
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
+  const [nrSamples, setNrSamples] = useState("Select Nr. of samples ");
 
   const [statisticalForm, setStatisticalForm] = useState({
     meanS: "",
@@ -58,10 +59,10 @@ const Case = () => {
               Name: "Housing",
               Description: "Dim1",
               UniqueIdentifier: "D1",
-              NominalValue: 0.9,
-              UpperTolerance: 0.025,
-              LowerTolerance: -0.025,
-              Sign: "-",
+              NominalValue: 7.7,
+              UpperTolerance: 0.05,
+              LowerTolerance: -0.05,
+              Sign: "+",
               DistributionType: "Normal Cpk 1.33",
               ToleranceType: "General Tol.",
               Influence: "40",
@@ -72,11 +73,11 @@ const Case = () => {
               Name: "Cover",
               Description: "Dim2",
               UniqueIdentifier: "D2",
-              NominalValue: 8.2,
-              UpperTolerance: 0.06,
-              LowerTolerance: -0.06,
+              NominalValue: 0,
+              UpperTolerance: 0.1,
+              LowerTolerance: -0.1,
               Sign: "-",
-              DistributionType: "Normal Cpk 1.66",
+              DistributionType: "Normal Cpk 1.33",
               ToleranceType: "General Tol.",
               Influence: 30,
               Formula: "",
@@ -86,7 +87,7 @@ const Case = () => {
               Name: "Connector",
               Description: "Dim3",
               UniqueIdentifier: "D3",
-              NominalValue: 8.8,
+              NominalValue: 8.2,
               UpperTolerance: 0.06,
               LowerTolerance: -0.06,
               Sign: "-",
@@ -100,7 +101,7 @@ const Case = () => {
               Name: "Connector",
               Description: "Dim4",
               UniqueIdentifier: "D4",
-              NominalValue: 17,
+              NominalValue: 8.2,
               UpperTolerance: 0.075,
               LowerTolerance: -0.075,
               Sign: "+",
@@ -114,11 +115,25 @@ const Case = () => {
               Name: "Connector",
               Description: "Dim5",
               UniqueIdentifier: "D5",
-              NominalValue: 1,
-              UpperTolerance: 0.05,
-              LowerTolerance: -0,
+              NominalValue: 0,
+              UpperTolerance: 0.15,
+              LowerTolerance: -0.15,
               Sign: "+",
               DistributionType: "Normal Cpk 1.66",
+              ToleranceType: "General Tol.",
+              Influence: 30,
+              Formula: "",
+            },
+            {
+              ID: 6,
+              Name: "Connector",
+              Description: "Dim6",
+              UniqueIdentifier: "D6",
+              NominalValue: 7,
+              UpperTolerance: 0.05,
+              LowerTolerance: -0.05,
+              Sign: "-",
+              DistributionType: "Normal Cpk 1.33",
               ToleranceType: "General Tol.",
               Influence: 30,
               Formula: "",
@@ -294,8 +309,8 @@ const Case = () => {
   // console.log("min", Math.min(...genNum), "max", Math.max(...genNum));
 
   const generateStatistic = () => {
-    if (gapCpk === "Gap Cpk") {
-      toast("Select Cpk gap!", {
+    if (gapCpk === "Gap Cpk" || nrSamples === "Select Nr. of samples ") {
+      toast("Select Cpk gap and Nr. of samples!", {
         position: toast.POSITION.TOP_CENTER,
         theme: "dark",
       });
@@ -321,7 +336,7 @@ const Case = () => {
     console.log("StandardDeviation", StandardDeviation);
 
     //const inputs
-    const samplenum = 100000;
+    const samplenum = nrSamples;
     const mean = WorstCaseNominal;
     // const UT = WorstCaseTolerance;
     // const LT = -WorstCaseTolerance;
@@ -479,6 +494,9 @@ const Case = () => {
   const handleCpkChange = (e) => {
     setGapCpk(e.target.value);
   };
+  const handleNrSamples = (e) => {
+    setNrSamples(e.target.value);
+  };
   console.log("Gap Cpk:", gapCpk);
 
   return (
@@ -500,6 +518,21 @@ const Case = () => {
           <option value="1.33">Normal Cpk 1.33</option>
           <option value="1.66">Normal Cpk 1.66</option>
           <option value="2">Normal Cpk 2</option>
+        </Form.Select>
+        <Form.Select
+          defaultValue="Select Nr. of samples "
+          className="form-control"
+          name="Select Nr. of samples "
+          value={nrSamples}
+          onChange={(e) => {
+            handleNrSamples(e);
+          }}
+        >
+          <option value="Select Nr. of samples ">Select Nr. of samples </option>
+          <option value="10000">10000</option>
+          <option value="25000">25000</option>
+          <option value="50000">50000</option>
+          <option value="100000">100000</option>
         </Form.Select>
         <ToastContainer transition={Bounce} autoClose={2000} />
       </Form.Group>
@@ -783,9 +816,9 @@ const Case = () => {
         </div>
       </Row>
       <div className="container fluid p-2">
-        <Button variant="secondary" type="submit" className="p-2">
+        {/* <Button variant="secondary" type="submit" className="p-2">
           Add component
-        </Button>
+        </Button> */}
         <DropdownButton
           title={addComponent}
           // onSelect={(e) => {
