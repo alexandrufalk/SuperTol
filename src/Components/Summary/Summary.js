@@ -11,13 +11,17 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 // import { useBetween } from "use-between";
-import { useSharable } from "../../App";
+// import { useSharable } from "../../App";
 
 // import Figure from "react-bootstrap/Figure";
 // import Logo from "./Logo.png";
 
 const Summary = ({ NewTemplate }) => {
+  const { databaseProjects } = useDatabaseProjects();
+  const [isDatabaseProjects, setIsdatabaseProjects] = useState(false);
+  console.log("databaseProjects", databaseProjects);
   const [projectName, setProjectName] = useState("Enter project name");
   const [projectTemplate, setProjectTemplate] = useState(
     "Select project template"
@@ -28,14 +32,14 @@ const Summary = ({ NewTemplate }) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  // const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
-  const {
-    databaseSummryFiltered,
-    setDatabaseSummryFiltered,
-    projectSelected,
-    setProjectSelected,
-  } = useSharable();
-  // const [projectSelected, setProjectSelected] = useState(false);
+  const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
+  // const {
+  //   databaseSummryFiltered,
+  //   setDatabaseSummryFiltered,
+  //   projectSelected,
+  //   setProjectSelected,
+  // } = useSharable();
+  const [projectSelected, setProjectSelected] = useState(false);
   const [newProject, setNewProject] = useState(false);
   const [viewAddCase, setViewAddCase] = useState(false);
   const [caseCaseName, setCaseCaseName] = useState("");
@@ -151,7 +155,7 @@ const Summary = ({ NewTemplate }) => {
   // ];
 
   const [databaseSummryUpdate, setDatabaseSummryUpdate] =
-    useState(DatabaseSummry);
+    useState(databaseProjects);
   console.log("databaseSummryUpdate", databaseSummryUpdate);
 
   // const [databaseProjectUpdate, setDatabaseProjectUpdate] =
@@ -166,6 +170,16 @@ const Summary = ({ NewTemplate }) => {
     }
   }, []);
   console.log("useEffect DatabaseSummryUpdate", databaseSummryUpdate);
+
+  const databaseProjectIsupdate = () => {
+    if (databaseProjects.length > 0) {
+      setIsdatabaseProjects(true);
+      setDatabaseSummryUpdate(databaseProjects);
+    }
+  };
+  useEffect(() => {
+    databaseProjectIsupdate();
+  }, [databaseProjects]);
 
   useEffect(() => {
     const databases = [databaseSummryUpdate];
@@ -385,32 +399,34 @@ const Summary = ({ NewTemplate }) => {
             </Form>
           )}
           <ToastContainer transition={Bounce} autoClose={2000} />
-          <DropdownButton
-            title={selectProject}
-            onSelect={(e) => {
-              DatabaseFilter(e);
-              handleSelectProjectname(e);
-            }}
-            variant="secondary"
-          >
-            {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+          {isDatabaseProjects && (
+            <DropdownButton
+              title={selectProject}
+              onSelect={(e) => {
+                DatabaseFilter(e);
+                handleSelectProjectname(e);
+              }}
+              variant="secondary"
+            >
+              {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-            {databaseSummryUpdate.map((n) => (
-              <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
-                {n.ProjectName}
+              {databaseSummryUpdate.map((n) => (
+                <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
+                  {n.ProjectName}
+                </Dropdown.Item>
+              ))}
+              <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
+                New Project
               </Dropdown.Item>
-            ))}
-            <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
-              New Project
-            </Dropdown.Item>
-            {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
+              {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Screw</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
-          </DropdownButton>
+            </DropdownButton>
+          )}
           <Container className="p-3">
             <Table striped bordered hover variant="dark">
               <thead>
