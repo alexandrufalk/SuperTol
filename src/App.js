@@ -12,356 +12,21 @@ import SideNav from "./Components/Nav/SideNav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import NaviBar from "./Components/Nav/NaviBar";
-// import Dropdown from "react-bootstrap/Dropdown";
-// import DropdownButton from "react-bootstrap/DropdownButton";
-// import { useBetween } from "use-between";
-// import useDatabaseProjects from "./Hooks/useDatabaseProject";
-
-// const useShareableState = () => {
-//   const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
-//   const [projectSelected, setProjectSelected] = useState(false);
-//   return {
-//     databaseSummryFiltered,
-//     setDatabaseSummryFiltered,
-//     projectSelected,
-//     setProjectSelected,
-//   };
-// };
-// export const useSharable = () => useBetween(useShareableState);
+import NavBarS from "./Components/Nav/NavBarS";
+import { Container } from "react-bootstrap";
+import NavBarSMenu from "./Components/Nav/NavBarSMenu";
 
 function App() {
-  // const { databaseProjects, addNewProject, removeProject } =
-  //   useDatabaseProjects;
-  // const [selectProject, setSelectproject] = useState("Select project name");
   const [isMinSize2, setIsMinSize2] = useState(true);
   const [viewAddTemplate, setViewAddTemplate] = useState(false);
-  // const [databaseSummryFiltered, setDatabaseSummryFiltered] = useState([]);
-  // const [projectSelected, setProjectSelected] = useState(false);
-  // const [newProject, setNewProject] = useState(false);
-  // const [viewAddCase, setViewAddCase] = useState(false);
-  // const [caseDescription, setCaseDescription] = useState("");
-  // const {
-  //   databaseSummryFiltered,
-  //   setDatabaseSummryFiltered,
-  //   projectSelected,
-  //   setProjectSelected,
-  // } = useBetween(useShareableState);
-
-  // const databaseTest = databaseProjects;
-
-  // const DatabaseProject = [
-  //   {
-  //     ProjectName: "Test Name1",
-  //     TemplateName: "Test Template1",
-  //     DataCase: [
-  //       {
-  //         ID: 1,
-  //         CaseName: "Case1",
-  //         Description: "Gap housing-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //         CaseData: [
-  //           {
-  //             ID: 1,
-  //             Name: "Housing",
-  //             Description: "Dim1",
-  //             UniqueIdentifier: "D1",
-  //             NominalValue: 7.7,
-  //             UpperTolerance: 0.05,
-  //             LowerTolerance: -0.05,
-  //             Sign: "+",
-  //             DistributionType: "Normal Cpk 1.33",
-  //             ToleranceType: "General Tol.",
-  //             Influence: "40",
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 2,
-  //             Name: "Cover",
-  //             Description: "Dim2",
-  //             UniqueIdentifier: "D2",
-  //             NominalValue: 0,
-  //             UpperTolerance: 0.1,
-  //             LowerTolerance: -0.1,
-  //             Sign: "-",
-  //             DistributionType: "Normal Cpk 1.33",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 3,
-  //             Name: "Connector",
-  //             Description: "Dim3",
-  //             UniqueIdentifier: "D3",
-  //             NominalValue: 8.2,
-  //             UpperTolerance: 0.06,
-  //             LowerTolerance: -0.06,
-  //             Sign: "-",
-  //             DistributionType: "Normal Cpk 1.66",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 4,
-  //             Name: "Connector",
-  //             Description: "Dim4",
-  //             UniqueIdentifier: "D4",
-  //             NominalValue: 8.2,
-  //             UpperTolerance: 0.075,
-  //             LowerTolerance: -0.075,
-  //             Sign: "+",
-  //             DistributionType: "Normal Cpk 1.33",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 5,
-  //             Name: "Connector",
-  //             Description: "Dim5",
-  //             UniqueIdentifier: "D5",
-  //             NominalValue: 0,
-  //             UpperTolerance: 0.15,
-  //             LowerTolerance: -0.15,
-  //             Sign: "+",
-  //             DistributionType: "Normal Cpk 1.66",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 6,
-  //             Name: "Connector",
-  //             Description: "Dim6",
-  //             UniqueIdentifier: "D6",
-  //             NominalValue: 7,
-  //             UpperTolerance: 0.05,
-  //             LowerTolerance: -0.05,
-  //             Sign: "-",
-  //             DistributionType: "Normal Cpk 1.33",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         ID: 2,
-  //         CaseName: "Case2",
-  //         Description: "Gap housing-PCB",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //         CaseData: [
-  //           {
-  //             ID: 4,
-  //             Name: "Housing2",
-  //             Description: "Dim1",
-  //             UniqueIdentifier: "D1",
-  //             NominalValue: 6,
-  //             UpperTolerance: 0.4,
-  //             LowerTolerance: -0.4,
-  //             Sign: "-",
-  //             DistributionType: "Normal Cpk 1.66",
-  //             ToleranceType: "General Tol.",
-  //             Influence: "40",
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 2,
-  //             Name: "Cover2",
-  //             Description: "Dim2",
-  //             UniqueIdentifier: "D2",
-  //             NominalValue: 6,
-  //             UpperTolerance: 1,
-  //             LowerTolerance: -1,
-  //             Sign: "+",
-  //             DistributionType: "Normal Cpk 1.33",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //           {
-  //             ID: 3,
-  //             Name: "Connector3",
-  //             Description: "Dim3",
-  //             UniqueIdentifier: "D3",
-  //             NominalValue: 16,
-  //             UpperTolerance: 0.2,
-  //             LowerTolerance: -0.2,
-  //             Sign: "+",
-  //             DistributionType: "Normal Cpk 1.66",
-  //             ToleranceType: "General Tol.",
-  //             Influence: 30,
-  //             Formula: "",
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         ID: 3,
-  //         CaseName: "Case3",
-  //         Description: "Gap PCB-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //     ],
-  //     DatabaseDim: [
-  //       {
-  //         ID: 1,
-  //         Name: "Housing",
-  //         Description: "Dim1",
-  //         UniqueIdentifier: "D1",
-  //         NominalValue: 7.7,
-  //         UpperTolerance: 0.05,
-  //         LowerTolerance: -0.05,
-  //         Sign: "+",
-  //         DistributionType: "Normal Cpk 1.33",
-  //         ToleranceType: "General Tol.",
-  //         Influence: "40",
-  //         Formula: "",
-  //       },
-  //       {
-  //         ID: 2,
-  //         Name: "Cover",
-  //         Description: "Dim2",
-  //         UniqueIdentifier: "D2",
-  //         NominalValue: 0,
-  //         UpperTolerance: 0.1,
-  //         LowerTolerance: -0.1,
-  //         Sign: "-",
-  //         DistributionType: "Normal Cpk 1.33",
-  //         ToleranceType: "General Tol.",
-  //         Influence: 30,
-  //         Formula: "",
-  //       },
-  //       {
-  //         ID: 3,
-  //         Name: "Connector",
-  //         Description: "Dim3",
-  //         UniqueIdentifier: "D3",
-  //         NominalValue: 8.2,
-  //         UpperTolerance: 0.06,
-  //         LowerTolerance: -0.06,
-  //         Sign: "-",
-  //         DistributionType: "Normal Cpk 1.66",
-  //         ToleranceType: "General Tol.",
-  //         Influence: 30,
-  //         Formula: "",
-  //       },
-  //       {
-  //         ID: 4,
-  //         Name: "Connector",
-  //         Description: "Dim4",
-  //         UniqueIdentifier: "D4",
-  //         NominalValue: 8.2,
-  //         UpperTolerance: 0.075,
-  //         LowerTolerance: -0.075,
-  //         Sign: "+",
-  //         DistributionType: "Normal Cpk 1.33",
-  //         ToleranceType: "General Tol.",
-  //         Influence: 30,
-  //         Formula: "",
-  //       },
-  //       {
-  //         ID: 5,
-  //         Name: "Connector",
-  //         Description: "Dim5",
-  //         UniqueIdentifier: "D5",
-  //         NominalValue: 0,
-  //         UpperTolerance: 0.15,
-  //         LowerTolerance: -0.15,
-  //         Sign: "+",
-  //         DistributionType: "Normal Cpk 1.66",
-  //         ToleranceType: "General Tol.",
-  //         Influence: 30,
-  //         Formula: "",
-  //       },
-  //       {
-  //         ID: 6,
-  //         Name: "Connector",
-  //         Description: "Dim6",
-  //         UniqueIdentifier: "D6",
-  //         NominalValue: 7,
-  //         UpperTolerance: 0.05,
-  //         LowerTolerance: -0.05,
-  //         Sign: "-",
-  //         DistributionType: "Normal Cpk 1.33",
-  //         ToleranceType: "General Tol.",
-  //         Influence: 30,
-  //         Formula: "",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     ProjectName: "Test Name2",
-  //     TemplateName: "Test Template2",
-  //     DataCase: [
-  //       {
-  //         ID: 1,
-  //         CaseName: "Case1",
-  //         Description: "Gap housing-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //       {
-  //         ID: 2,
-  //         CaseName: "Case2",
-  //         Description: "Gap housing-PCB",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //       {
-  //         ID: 3,
-  //         CaseName: "Case3",
-  //         Description: "Gap PCB-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     ProjectName: "Test Name3",
-  //     TemplateName: "Test Template3",
-  //     DataCase: [
-  //       {
-  //         ID: 1,
-  //         CaseName: "Case1",
-  //         Description: "Gap housing-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //       {
-  //         ID: 2,
-  //         CaseName: "Case2",
-  //         Description: "Gap housing-PCB",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //       {
-  //         ID: 3,
-  //         CaseName: "Case3",
-  //         Description: "Gap PCB-cover",
-  //         Author: "Alex",
-  //         Date: "Data",
-  //       },
-  //     ],
-  //   },
-  // ];
-
-  // const [databaseSummryUpdate, setDatabaseSummryUpdate] =
-  //   useState(DatabaseProject);
-
-  // useEffect(() => {
-  //   setDatabaseSummryUpdate(DatabaseProject);
-  // });
+  const [isBurgherClicked, setIsBurgherClicked] = useState(true);
 
   const handleResize2 = () => {
     if (window.innerWidth > 770) {
       setIsMinSize2(true);
 
       // console.log(window.innerWidth);
-    } else {
+    } else if (window.innerWidth < 769) {
       setIsMinSize2(false);
       // console.log(window.innerWidth);
     }
@@ -377,54 +42,53 @@ function App() {
       setViewAddTemplate(true);
     }
   };
-  // const handleSelectProjectname = (e) => {
-  //   setSelectproject(e);
-  // };
 
-  // const DatabaseFilter = (e) => {
-  //   if (e !== "Select project name" && e !== "New Project") {
-  //     setDatabaseSummryFiltered(
-  //       databaseSummryUpdate.filter((data) => data.ProjectName === e)
-  //     );
-  //     setProjectSelected(true);
-  //     setNewProject(false);
-  //   } else if (e === "New Project") {
-  //     setProjectSelected(false);
-  //     setNewProject(true);
-  //     setSelectproject("Select project name");
-  //   }
-  // };
-
-  // if (databaseTest.length > 0) {
-  //   console.log("databaseTest input:", databaseTest[5]);
-  // } else {
-  //   console.log("databaseTest is empty");
-  // }
+  const isBurgherClickedEvent = (e) => {
+    setIsBurgherClicked(e);
+  };
+  console.log("isBurgherClicked", isBurgherClicked);
 
   return (
-    <>
+    <Container fluid>
       <Row>
-        <Col className="col-0  col-md-3 col-lg-2 col-xl-2 p-2 sticky-top ">
+        {/* <Col className="p-2  col-1  col-md-3 col-lg-2 col-xl-2">
+          <Row className="sticky-top p-1 ">
+            <NavBarS />
+          </Row>
+        </Col> */}
+        {/* <Col className="col-0  col-md-2 col-lg-2 col-xl-2 p-2 sticky-top ">
           {isMinSize2 && <SideNav />}
-        </Col>
-        <Col className="col-12  col-md-9 col-lg-10 p-2 col-xl-10 ">
-          <Row className="sticky-top p-4">
-            <NaviBar isMinSize2={isMinSize2} />
+        </Col> */}
+        <Col className="p-2 ">
+          <Row className="sticky-top p-1 ">
+            <NaviBar
+              isMinSize2={isMinSize2}
+              isBurgherClickedEvent={isBurgherClickedEvent}
+            />
           </Row>
 
-          <Row className="p-4">
-            <Summary
-              NewTemplate={NewTemplate}
-              // databaseSummryFiltered={databaseSummryFiltered}
-            />
-            {viewAddTemplate && <Template />}
-            <Database />
-            {/* <AddComponent /> */}
-            <Case />
+          <Row className="p-4 ">
+            <Col className="p-0  col-1  col-md-1 col-lg-1 col-xl-1">
+              <Row className="stickyside p-1 ">
+                {isMinSize2 && (
+                  <NavBarSMenu isBurgherClicked={isBurgherClicked} />
+                )}
+              </Row>
+            </Col>
+            <Col className="p-2  col-11  col-md-11 col-lg-11 col-xl-11">
+              <Summary
+                NewTemplate={NewTemplate}
+                // databaseSummryFiltered={databaseSummryFiltered}
+              />
+              {viewAddTemplate && <Template />}
+              <Database />
+              {/* <AddComponent /> */}
+              <Case />
+            </Col>
           </Row>
         </Col>
       </Row>
-    </>
+    </Container>
   );
 }
 

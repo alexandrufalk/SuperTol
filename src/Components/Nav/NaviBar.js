@@ -2,16 +2,20 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import OpenSideNav from "./OpenSideNav";
+import NaviBarS from "./NavBarS";
 
-const NaviBar = (isMinSize2) => {
+const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
   console.log("isMinSize2 for NaviBar", isMinSize2);
   return (
     <>
       <Navbar
         bg="dark"
         variant="dark"
-        className="rounded shadow-lg  p-2 bg-body-tertiary rounded  "
+        className="rounded-5 shadow-lg  p-2 bg-body-tertiary  "
       >
+        {isMinSize2 && (
+          <NaviBarS isBurgherClickedEvent={isBurgherClickedEvent} />
+        )}
         <Container className="ms-1">
           <OpenSideNav />
           {isMinSize2 && <Navbar.Brand href="#home">SuperTol</Navbar.Brand>}

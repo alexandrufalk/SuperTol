@@ -4,6 +4,7 @@ import {
   httpGetAllProjects,
   httpAddNewProject,
   httpDeleteProject,
+  httpAddNewCase,
 } from "./requests";
 
 function useDatabaseProjects() {
@@ -24,9 +25,9 @@ function useDatabaseProjects() {
   console.log("databaseProjects from useState", databaseProjects);
 
   const addNewProject = useCallback(
-    async (e) => {
-      e.preventDefault();
-      const project = e.target;
+    async (project) => {
+      console.log("project from addNewProject", project);
+
       const response = await httpAddNewProject(project);
       if (response) {
         getDatabaseProjects();
@@ -49,11 +50,26 @@ function useDatabaseProjects() {
     [getDatabaseProjects]
   );
 
+  const addNewCase = useCallback(
+    async (id, newCase) => {
+      console.log("project from addNewProject", newCase);
+
+      const response = await httpAddNewCase(id, newCase);
+      if (response) {
+        getDatabaseProjects();
+      } else {
+        console.log("Project wasn't add to Database");
+      }
+    },
+    [getDatabaseProjects]
+  );
+
   return {
     databaseProjects,
     addNewProject,
     removeProject,
     getDatabaseProjects,
+    addNewCase,
   };
 }
 

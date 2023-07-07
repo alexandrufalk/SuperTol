@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
+import "./Summary.css";
+
 // import { useBetween } from "use-between";
 // import { useSharable } from "../../App";
 
@@ -19,7 +21,8 @@ import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 // import Logo from "./Logo.png";
 
 const Summary = ({ NewTemplate }) => {
-  const { databaseProjects } = useDatabaseProjects();
+  const { databaseProjects, addNewProject, removeProject, addNewCase } =
+    useDatabaseProjects();
   const [isDatabaseProjects, setIsdatabaseProjects] = useState(false);
   console.log("databaseProjects", databaseProjects);
   const [projectName, setProjectName] = useState("Enter project name");
@@ -204,19 +207,27 @@ const Summary = ({ NewTemplate }) => {
 
       console.log("lastID", lastID);
       console.log("index", index);
-      const nCase = {
+      // const nCase = {
+      //   ID: newID,
+      //   CaseName: `Case${newID}`,
+      //   Description: caseCaseName,
+      //   Author: "Alex",
+      //   Date: "Date",
+      // };
+      const id = index + 1;
+
+      addNewCase(id, {
         ID: newID,
         CaseName: `Case${newID}`,
         Description: caseCaseName,
         Author: "Alex",
-        Date: "Date",
-      };
+      });
 
-      databaseSummryUpdate[index].DataCase.push(nCase);
-      const DatabaseUpdate = databaseSummryUpdate;
+      // databaseSummryUpdate[index].DataCase.push(nCase);
+      // const DatabaseUpdate = databaseSummryUpdate;
 
-      setDatabaseSummryUpdate(DatabaseUpdate);
-      console.log("test output", DatabaseUpdate);
+      // setDatabaseSummryUpdate(DatabaseUpdate);
+      // console.log("test output", DatabaseUpdate);
       setViewAddCase(false);
       setCaseCaseName("");
 
@@ -247,6 +258,10 @@ const Summary = ({ NewTemplate }) => {
     setDatabaseSummryFiltered(update);
   };
 
+  const RemoveProject = (e) => {
+    removeProject(e);
+  };
+
   console.log("databaseSummryFiltered after Revmove", databaseSummryFiltered);
 
   const saveData = (e) => {
@@ -261,15 +276,35 @@ const Summary = ({ NewTemplate }) => {
         theme: "dark",
       });
     } else {
-      e.preventDefault();
-      databaseSummryUpdate.push({
-        ProjectName: projectName,
-        ProjectTemplate: projectTemplate,
-        DataCase: [],
+      const arrObjIds = databaseSummryUpdate.map((elements) => {
+        return elements.ID;
       });
-      const DatabaseUpdate2 = databaseSummryUpdate;
-      setDatabaseSummryUpdate(DatabaseUpdate2);
-      console.log("DatabaseUpdate2", DatabaseUpdate2);
+      console.log("arrObjIds", arrObjIds);
+      const lastID = Math.max(...arrObjIds);
+      let newID = 0;
+      if (lastID === -Infinity) {
+        newID = 1;
+      } else {
+        newID = lastID + 1;
+      }
+      console.log("newID", newID);
+      e.preventDefault();
+      addNewProject({
+        ID: newID,
+        ProjectName: projectName,
+        TemplateName: projectTemplate,
+        DataCase: [],
+        DatabaseDim: [],
+      });
+      // databaseSummryUpdate.push({
+      //   ID: newID,
+      //   ProjectName: projectName,
+      //   TemplateName: projectTemplate,
+      //   DataCase: [],
+      // });
+      // const DatabaseUpdate2 = databaseSummryUpdate;
+      // setDatabaseSummryUpdate(DatabaseUpdate2);
+      // console.log("DatabaseUpdate2", DatabaseUpdate2);
       setProjectName("Enter project name");
       setProjectTemplate("Select project template");
       setNewProject(false);
@@ -411,15 +446,43 @@ const Summary = ({ NewTemplate }) => {
               {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
-
-              {databaseSummryUpdate.map((n) => (
-                <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
-                  {n.ProjectName}
+              <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg ">
+                {databaseSummryUpdate.map((n) => (
+                  <Row>
+                    <Col>
+                      <Dropdown.Item
+                        eventKey={n.ProjectName}
+                        key={n.ProjectName}
+                        className="text-info dropdown-project"
+                      >
+                        {n.ProjectName}
+                      </Dropdown.Item>
+                    </Col>
+                    <Col>
+                      <td key={n.ID + "Remove"}>
+                        <Button
+                          size="sm"
+                          type="button"
+                          variant="outline-danger"
+                          onClick={() => {
+                            RemoveProject(n.ID);
+                            forceUpdate();
+                          }}
+                        >
+                          X
+                        </Button>
+                      </td>
+                    </Col>
+                  </Row>
+                ))}
+                <Dropdown.Item
+                  eventKey={"New Project"}
+                  key={"New Project"}
+                  className="text-info dropdown-newproject"
+                >
+                  New Project
                 </Dropdown.Item>
-              ))}
-              <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
-                New Project
-              </Dropdown.Item>
+              </div>
               {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
@@ -427,7 +490,7 @@ const Summary = ({ NewTemplate }) => {
                       <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
             </DropdownButton>
           )}
-          <Container className="p-3">
+          <Container className="p-3 ">
             <Table striped bordered hover variant="dark">
               <thead>
                 <tr>

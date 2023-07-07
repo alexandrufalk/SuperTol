@@ -71,3 +71,15 @@
   position: sticky;
   top: 0;
 }
+
+.stickyside {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 80px;
+  
+}
+
+.sidenavbar{
+  max-width: 200px;
+  
+}

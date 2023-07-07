@@ -1,7 +1,7 @@
-const API_URL = "http://localhost:5001/v1";
+const API_URL = "http://localhost:5001/v1/databaseproject";
 async function httpGetAllProjects() {
   // TODO: Once API is ready.
-  const response = await fetch(`${API_URL}/databaseproject`);
+  const response = await fetch(`${API_URL}/`);
 
   return await response.json();
   // Load Database and return as JSON.
@@ -34,7 +34,7 @@ async function httpDeleteProject(id) {
   // TODO: Once API is ready.
   // Delete project with given ID.
   try {
-    return await fetch(`${API_URL}/launches/${id}`, {
+    return await fetch(`${API_URL}/${id}`, {
       method: "delete",
     });
   } catch (err) {
@@ -44,5 +44,26 @@ async function httpDeleteProject(id) {
     };
   }
 }
+//add case
+async function httpAddNewCase(id, addCase) {
+  try {
+    return await fetch(`${API_URL}/case/${id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addCase),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
 
-export { httpGetAllProjects, httpAddNewProject, httpDeleteProject };
+export {
+  httpGetAllProjects,
+  httpAddNewProject,
+  httpDeleteProject,
+  httpAddNewCase,
+};
