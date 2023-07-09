@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
+import { Spinner } from "react-bootstrap";
 import {
   // VictoryBar,
   VictoryChart,
@@ -30,6 +31,7 @@ const Case = () => {
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
   const [nrSamples, setNrSamples] = useState("Select Nr. of samples ");
+  const [isSpinner, setIsSpinner] = useState(false);
 
   const [statisticalForm, setStatisticalForm] = useState({
     meanS: "",
@@ -347,6 +349,7 @@ const Case = () => {
     // console.log("stddev", stddev);
 
     //generate random number using Box Muller Transform
+
     const boxMullerTransform = () => {
       const u1 = Math.random();
       const u2 = Math.random();
@@ -498,6 +501,10 @@ const Case = () => {
     setNrSamples(e.target.value);
   };
   console.log("Gap Cpk:", gapCpk);
+  const setSpinner = () => {
+    setIsSpinner(true);
+    setTimeout(() => setIsSpinner(false), 25000);
+  };
 
   return (
     <>
@@ -537,8 +544,18 @@ const Case = () => {
         <ToastContainer transition={Bounce} autoClose={2000} />
       </Form.Group>
       <div className="container fluid p-2">
-        <button onClick={generateStatistic}>Generate Statistic</button>
+        <Button
+          variant="secondary"
+          className="px-2"
+          onClick={() => {
+            setSpinner();
+            generateStatistic();
+          }}
+        >
+          Generate Statistic
+        </Button>
       </div>
+      {isSpinner && <Spinner animation="border" variant="secondary" />}
       <div className="d-flex shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85">
         <Container fluid>
           <Row>
@@ -693,50 +710,60 @@ const Case = () => {
             <Col>
               <Row>
                 <Col>
-                  <div className="container-fluid">
+                  <div className="container-fluid tabelCase text-light ">
                     <h3>Worst Case</h3>
-                    <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75">
-                      <ListGroup.Item className="fs-5">
+                    <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75 rounded-4">
+                      <ListGroup.Item className="fs-5 tabelCase text-light">
                         {`Nominal:${WorstCaseNominal}`}
                       </ListGroup.Item>
-                      <ListGroup.Item>{`Upper Tolerance: ${WorstCaseTolerance}`}</ListGroup.Item>
-                      <ListGroup.Item>{`Lower Tolerance: ${-WorstCaseTolerance}`}</ListGroup.Item>
-                      <ListGroup.Item>{`Upper Limit: ${
+                      <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance: ${WorstCaseTolerance}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance: ${-WorstCaseTolerance}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Upper Limit: ${
                         WorstCaseNominal + WorstCaseTolerance
                       }`}</ListGroup.Item>
-                      <ListGroup.Item>{`Lower Limit: ${
+                      <ListGroup.Item className="tabelCase text-light">{`Lower Limit: ${
                         WorstCaseNominal - WorstCaseTolerance
                       }`}</ListGroup.Item>
-                      <ListGroup.Item>{`Range: ${
+                      <ListGroup.Item className="tabelCase text-light">{`Range: ${
                         2 * WorstCaseTolerance
                       }`}</ListGroup.Item>
-                      <ListGroup.Item>{`Symmetric:${WorstCaseNominal} ±${WorstCaseTolerance}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Symmetric:${WorstCaseNominal} ±${WorstCaseTolerance}`}</ListGroup.Item>
                     </ListGroup>
                   </div>
                 </Col>
                 <Col>
-                  <div className="container-fluid">
+                  <div className="container-fluid tabelCase text-light">
                     <h3>Statistic</h3>
-                    <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75">
-                      <ListGroup.Item className="fs-5">
+                    <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75 ">
+                      <ListGroup.Item className="fs-5 tabelCase text-light rounded-4">
                         {`Mean: ${meanStatistic}`}
                       </ListGroup.Item>
-                      <ListGroup.Item>{`Upper Tolerance:${statisticalForm.UTS} `}</ListGroup.Item>
-                      <ListGroup.Item>{`Lower Tolerance:${statisticalForm.LTS} `}</ListGroup.Item>
-                      <ListGroup.Item>Samples: 100000</ListGroup.Item>
-                      <ListGroup.Item>{`Range: ${
+                      <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance:${statisticalForm.UTS} `}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance:${statisticalForm.LTS} `}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
+                        Samples: 100000
+                      </ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Range: ${
                         statisticalForm.UTS - statisticalForm.LTS
                       }`}</ListGroup.Item>
-                      <ListGroup.Item>Pp:{statisticalForm.Pp}</ListGroup.Item>
-                      <ListGroup.Item>Ppk:{statisticalForm.PpK}</ListGroup.Item>
-                      <ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
+                        Pp:{statisticalForm.Pp}
+                      </ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
+                        Ppk:{statisticalForm.PpK}
+                      </ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
                         St.Dev[σ]:{statisticalForm.StDev}
                       </ListGroup.Item>
-                      <ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
                         Sigma intv.: {statisticalForm.SigmaInt}
                       </ListGroup.Item>
-                      <ListGroup.Item>Parts less LSL </ListGroup.Item>
-                      <ListGroup.Item>Parts more USL</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">
+                        Parts less LSL{" "}
+                      </ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light rounded-4">
+                        Parts more USL
+                      </ListGroup.Item>
                     </ListGroup>
                   </div>
                 </Col>

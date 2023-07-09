@@ -15,5 +15,15 @@
     z-index: 10;
   }
 
+  .tabelCase{
+    background-image: linear-gradient(rgba(24, 18, 18, 0.562), rgba(26, 30, 37, 0.952));
+    color: rgb(41, 104, 160);
+    border-radius: 15px;
+    margin: 2px;
+  }
+  .formcase{
+    background-color: black;
+  }
+
 
  
