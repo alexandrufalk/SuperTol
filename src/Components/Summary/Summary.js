@@ -490,42 +490,43 @@ const Summary = ({ NewTemplate }) => {
                       <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
             </DropdownButton>
           )}
-          <Container className="p-3 ">
-            <Table striped bordered hover variant="dark">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Case Name</th>
-                  <th>CaseName</th>
-                  <th>Author</th>
-                  <th>Date</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {projectSelected &&
-                  databaseSummryFiltered[0].DataCase.map((n) => (
-                    <tr key={n.ID}>
-                      <td key={n.ID}> {n.ID}</td>
-                      <td key={n.ID + n.CaseName}> {n.CaseName}</td>
-                      <td key={n.ID + n.Description}> {n.Description}</td>
-                      <td key={n.ID + n.Author}> {n.Author}</td>
-                      <td key={n.ID + n.Date}> {n.Date}</td>
-                      <td key={n.ID + "Remove"}>
-                        <Button
-                          type="button"
-                          variant="outline-danger"
-                          onClick={() => {
-                            RemoveCase(n.ID);
-                            forceUpdate();
-                          }}
-                        >
-                          X
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                {/* <tr>
+          <Container className="p-3  ">
+            <div className="scrollmenu">
+              <Table striped bordered hover variant="dark">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Case Name</th>
+                    <th>CaseName</th>
+                    <th>Author</th>
+                    <th>Date</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projectSelected &&
+                    databaseSummryFiltered[0].DataCase.map((n) => (
+                      <tr key={n.ID}>
+                        <td key={n.ID}> {n.ID}</td>
+                        <td key={n.ID + n.CaseName}> {n.CaseName}</td>
+                        <td key={n.ID + n.Description}> {n.Description}</td>
+                        <td key={n.ID + n.Author}> {n.Author}</td>
+                        <td key={n.ID + n.Date}> {n.Date}</td>
+                        <td key={n.ID + "Remove"}>
+                          <Button
+                            type="button"
+                            variant="outline-danger"
+                            onClick={() => {
+                              RemoveCase(n.ID);
+                              forceUpdate();
+                            }}
+                          >
+                            X
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  {/* <tr>
                   <td>1</td>
                   <td>Case1</td>
                   <td>Gap housing-cover</td>
@@ -539,8 +540,9 @@ const Summary = ({ NewTemplate }) => {
                   <td>Alex</td>
                   <td>data</td>
                 </tr> */}
-              </tbody>
-            </Table>
+                </tbody>
+              </Table>
+            </div>
           </Container>
         </Col>
       </Row>

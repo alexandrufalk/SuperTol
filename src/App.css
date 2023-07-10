@@ -83,3 +83,17 @@
   max-width: 200px;
   
 }
+
+div.scrollmenu {
+  background-color: #eee4e400;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+div.scrollmenu a {
+  display: inline-block;
+  color: rgb(24, 21, 21);
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}

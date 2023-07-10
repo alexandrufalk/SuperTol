@@ -32,6 +32,7 @@ const Case = () => {
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
   const [nrSamples, setNrSamples] = useState("Select Nr. of samples ");
   const [isSpinner, setIsSpinner] = useState(false);
+  // const [isGraph, setIsGraph] = useState(false);
 
   const [statisticalForm, setStatisticalForm] = useState({
     meanS: "",
@@ -309,6 +310,16 @@ const Case = () => {
   console.log("pdfData", pdfData);
 
   // console.log("min", Math.min(...genNum), "max", Math.max(...genNum));
+  const setSpinner = () => {
+    toast("The chart is loading", {
+      position: toast.POSITION.TOP_CENTER,
+      theme: "dark",
+    });
+    setIsSpinner(true);
+    console.log("setIsSpinner-True");
+    setTimeout(() => setIsSpinner(false), 5000);
+    // setIsGraph(true);
+  };
 
   const generateStatistic = () => {
     if (gapCpk === "Gap Cpk" || nrSamples === "Select Nr. of samples ") {
@@ -320,6 +331,7 @@ const Case = () => {
     }
     console.log("Click to genereate statistic");
 
+    console.log("setIsSpinner-True2");
     //Standard  deviation calculation
     const StandardDeviation = Math.sqrt(
       DatabaseCalculation.map((n) =>
@@ -334,6 +346,10 @@ const Case = () => {
         )
       ).reduce((accumulator, current) => accumulator + current, 0)
     );
+    toast("The chart is loading", {
+      position: toast.POSITION.TOP_CENTER,
+      theme: "dark",
+    });
 
     console.log("StandardDeviation", StandardDeviation);
 
@@ -501,10 +517,6 @@ const Case = () => {
     setNrSamples(e.target.value);
   };
   console.log("Gap Cpk:", gapCpk);
-  const setSpinner = () => {
-    setIsSpinner(true);
-    setTimeout(() => setIsSpinner(false), 25000);
-  };
 
   return (
     <>
@@ -679,6 +691,7 @@ const Case = () => {
                 </VictoryChart>
               </div> */}
             </div>
+
             {/* <Col xs={12} md={6}>
               <VictoryChart
                 // adding the material theme provided with Victory
@@ -869,8 +882,9 @@ const Case = () => {
         </Dropdown.Item> */}
         </DropdownButton>
       </div>
-
-      <Canvas canvasDatabse={DatabaseCalculation} />
+      <div className="scrollmenu">
+        <Canvas canvasDatabse={DatabaseCalculation} />
+      </div>
       {/* <Canvas2 /> */}
     </>
   );
