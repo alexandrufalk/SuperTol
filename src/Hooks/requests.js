@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:5001/v1/databaseproject";
+
 async function httpGetAllProjects() {
   // TODO: Once API is ready.
   const response = await fetch(`${API_URL}/`);
@@ -61,9 +62,55 @@ async function httpAddNewCase(id, addCase) {
   }
 }
 
+// Delete case
+async function httpDeleteCase(id, caseId) {
+  try {
+    return await fetch(`${API_URL}/case/${id}/${caseId}`, {
+      method: "delete",
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
+// Add new dimension
+async function httpAddNewDim(id, newDim) {
+  try {
+    return await fetch(`${API_URL}/dim/${id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newDim),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
+// Delete dimension
+async function httpDeleteDim(id, dimId) {
+  try {
+    return await fetch(`${API_URL}/dim/${id}/${dimId}`, {
+      method: "delete",
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
 export {
   httpGetAllProjects,
   httpAddNewProject,
   httpDeleteProject,
   httpAddNewCase,
+  httpDeleteCase,
+  httpAddNewDim,
+  httpDeleteDim,
 };

@@ -3,9 +3,10 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import OpenSideNav from "./OpenSideNav";
 import NaviBarS from "./NavBarS";
-import Logo from "./Logo.png";
+import "./Nav.css";
 import Button from "react-bootstrap/Button";
 import Figure from "react-bootstrap/Figure";
+import Logo3 from "./Icons/Logo3.png";
 
 const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
   console.log("isMinSize2 for NaviBar", isMinSize2);
@@ -19,24 +20,24 @@ const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
         {isMinSize2 && (
           <NaviBarS isBurgherClickedEvent={isBurgherClickedEvent} />
         )}
-        <Container className="ms-1">
+        <Container>
           <OpenSideNav />
           {isMinSize2 && (
             <div>
               <Navbar.Brand href="#home">SuperTol</Navbar.Brand>
               <Button
-                variant="info"
-                className="position-absolute start-50 top-50 translate-middle"
+                className="position-absolute start-50 top-50 translate-middle iconbutton bg-transparent border-0"
+                onClick={() => (window.location.href = "#home")}
               >
                 <Figure
-                  style={{ width: 47, height: "auto" }}
-                  className="position-absolute start-50 top-50 translate-middle"
+                  style={{ width: 120, height: 80 }}
+                  className="position-absolute start-50 top-50 translate-middle "
                 >
                   <Figure.Image
-                    width={85}
-                    height={45}
+                    width={120}
+                    height={80}
                     alt="85x90"
-                    src={Logo}
+                    src={Logo3}
                     className="rounded"
                   />
                 </Figure>
@@ -44,11 +45,13 @@ const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
             </div>
           )}
           <Nav>
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Navbar.Collapse className="justify-content-end">
-              <Nav.Link href="#signin">SignIn</Nav.Link>
-            </Navbar.Collapse>
+            <div className="d-flex align-items-end">
+              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#features">Features</Nav.Link>
+              <Navbar.Collapse className="justify-content-end">
+                <Nav.Link href="#signin">SignIn</Nav.Link>
+              </Navbar.Collapse>
+            </div>
           </Nav>
         </Container>
       </Navbar>

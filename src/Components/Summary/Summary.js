@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
+import useTemplate from "../../Hooks/useTemplate";
 import "./Summary.css";
 
 // import { useBetween } from "use-between";
@@ -23,6 +24,10 @@ import "./Summary.css";
 const Summary = ({ NewTemplate }) => {
   const { databaseProjects, addNewProject, removeProject, addNewCase } =
     useDatabaseProjects();
+  const { templates } = useTemplate();
+  console.log("loaded databaseProjects:", databaseProjects);
+
+  console.log("loaded templates:", templates);
   const [isDatabaseProjects, setIsdatabaseProjects] = useState(false);
   console.log("databaseProjects", databaseProjects);
   const [projectName, setProjectName] = useState("Enter project name");
@@ -400,7 +405,7 @@ const Summary = ({ NewTemplate }) => {
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-                      {DatabaseTemplateName.map((n) => (
+                      {templates.map((n) => (
                         <Dropdown.Item
                           eventKey={n.TemplateName}
                           key={n.TemplateName}
@@ -434,25 +439,21 @@ const Summary = ({ NewTemplate }) => {
             </Form>
           )}
           <ToastContainer transition={Bounce} autoClose={2000} />
-          {isDatabaseProjects && (
-            <DropdownButton
-              title={selectProject}
-              onSelect={(e) => {
-                DatabaseFilter(e);
-                handleSelectProjectname(e);
-              }}
-              variant="secondary"
-            >
-              {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                      {projectTemplate}
-                    </Dropdown.Toggle> */}
-              <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg ">
-                {databaseSummryUpdate.map((n) => (
-                  <Row>
+          <DropdownButton
+            title={selectProject}
+            onSelect={(e) => {
+              DatabaseFilter(e);
+              handleSelectProjectname(e);
+            }}
+            variant="secondary"
+          >
+            <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+              {isDatabaseProjects &&
+                databaseSummryUpdate.map((n) => (
+                  <Row key={n.ID}>
                     <Col>
                       <Dropdown.Item
                         eventKey={n.ProjectName}
-                        key={n.ProjectName}
                         className="text-info dropdown-project"
                       >
                         {n.ProjectName}
@@ -475,21 +476,15 @@ const Summary = ({ NewTemplate }) => {
                     </Col>
                   </Row>
                 ))}
-                <Dropdown.Item
-                  eventKey={"New Project"}
-                  key={"New Project"}
-                  className="text-info dropdown-newproject"
-                >
-                  New Project
-                </Dropdown.Item>
-              </div>
-              {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">Screw</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
-            </DropdownButton>
-          )}
+              <Dropdown.Item
+                eventKey={"New Project"}
+                className="text-info dropdown-newproject"
+              >
+                New Project
+              </Dropdown.Item>
+            </div>
+          </DropdownButton>
+
           <Container className="p-3  ">
             <div className="scrollmenu">
               <Table striped bordered hover variant="dark">

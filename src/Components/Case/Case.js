@@ -94,7 +94,7 @@ const Case = () => {
               UpperTolerance: 0.06,
               LowerTolerance: -0.06,
               Sign: "-",
-              DistributionType: "Normal Cpk 1.66",
+              DistributionType: "Normal Cpk 1.67",
               ToleranceType: "General Tol.",
               Influence: 30,
               Formula: "",
@@ -122,7 +122,7 @@ const Case = () => {
               UpperTolerance: 0.15,
               LowerTolerance: -0.15,
               Sign: "+",
-              DistributionType: "Normal Cpk 1.66",
+              DistributionType: "Normal Cpk 1.67",
               ToleranceType: "General Tol.",
               Influence: 30,
               Formula: "",
@@ -155,7 +155,7 @@ const Case = () => {
               UpperTolerance: 0.4,
               LowerTolerance: -0.4,
               Sign: "-",
-              DistributionType: "Normal Cpk 1.66",
+              DistributionType: "Normal Cpk 1.67",
               ToleranceType: "General Tol.",
               Influence: "40",
               Formula: "",
@@ -183,7 +183,7 @@ const Case = () => {
               UpperTolerance: 0.2,
               LowerTolerance: -0.2,
               Sign: "+",
-              DistributionType: "Normal Cpk 1.66",
+              DistributionType: "Normal Cpk 1.67",
               ToleranceType: "General Tol.",
               Influence: 30,
               Formula: "",
@@ -207,7 +207,7 @@ const Case = () => {
           NominalValue: 10,
           UpperTolerance: 0.4,
           LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.66",
+          DistributionType: "Normal Cpk 1.67",
           ToleranceType: "General Tol.",
           Samples: 1000,
         },
@@ -233,7 +233,7 @@ const Case = () => {
           NominalValue: 10,
           UpperTolerance: 0.2,
           LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.66",
+          DistributionType: "Normal Cpk 1.67",
           ToleranceType: "General Tol.",
           Samples: 1000,
         },
@@ -252,7 +252,7 @@ const Case = () => {
           NominalValue: 10,
           UpperTolerance: 0.4,
           LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.66",
+          DistributionType: "Normal Cpk 1.67",
           ToleranceType: "General Tol.",
           Samples: 1000,
         },
@@ -278,7 +278,7 @@ const Case = () => {
           NominalValue: 10,
           UpperTolerance: 0.2,
           LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.66",
+          DistributionType: "Normal Cpk 1.67",
           ToleranceType: "General Tol.",
           Samples: 1000,
         },
@@ -330,8 +330,8 @@ const Case = () => {
       return;
     }
     console.log("Click to genereate statistic");
+    setSpinner();
 
-    console.log("setIsSpinner-True2");
     //Standard  deviation calculation
     const StandardDeviation = Math.sqrt(
       DatabaseCalculation.map((n) =>
@@ -346,10 +346,6 @@ const Case = () => {
         )
       ).reduce((accumulator, current) => accumulator + current, 0)
     );
-    toast("The chart is loading", {
-      position: toast.POSITION.TOP_CENTER,
-      theme: "dark",
-    });
 
     console.log("StandardDeviation", StandardDeviation);
 
@@ -505,9 +501,13 @@ const Case = () => {
     for (let i = 0; i < genNum.length; i += 1) {
       PDFdataGraph.push({ x: genNum[i], y: PDFdata[i] });
     }
-    setHistData(genNumHist);
-    setHistBinData(histBinNum);
-    setPdfData(PDFdataGraph);
+
+    setTimeout(() => {
+      setHistData(genNumHist);
+      setHistBinData(histBinNum);
+      setPdfData(PDFdataGraph);
+      setIsSpinner(false);
+    }, 1000); // Simulate a 5-second delay
   };
 
   const handleCpkChange = (e) => {
@@ -535,7 +535,7 @@ const Case = () => {
           <option value="Gap Cpk">Gap Cpk</option>
           <option value="1">Normal Cpk 1</option>
           <option value="1.33">Normal Cpk 1.33</option>
-          <option value="1.66">Normal Cpk 1.66</option>
+          <option value="1.67">Normal Cpk 1.67</option>
           <option value="2">Normal Cpk 2</option>
         </Form.Select>
         <Form.Select
@@ -560,7 +560,6 @@ const Case = () => {
           variant="secondary"
           className="px-2"
           onClick={() => {
-            setSpinner();
             generateStatistic();
           }}
         >

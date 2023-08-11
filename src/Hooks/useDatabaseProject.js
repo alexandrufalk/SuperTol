@@ -1,20 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
-
 import {
   httpGetAllProjects,
   httpAddNewProject,
   httpDeleteProject,
   httpAddNewCase,
+  httpDeleteCase,
+  httpAddNewDim,
+  httpDeleteDim,
 } from "./requests";
 
 function useDatabaseProjects() {
   const getDatabaseProjects = useCallback(async () => {
-    const fetchedDatabaseProjects = await httpGetAllProjects();
-    console.log(
-      "httpGetAllProjects fetchedDatabaseProjects",
-      fetchedDatabaseProjects
-    );
-    saveDatabaseProjects(fetchedDatabaseProjects);
+    try {
+      const fetchedDatabaseProjects = await httpGetAllProjects();
+      console.log("fetchedDatabaseProjects", fetchedDatabaseProjects);
+      saveDatabaseProjects(fetchedDatabaseProjects);
+    } catch (error) {
+      console.error("Error fetching database projects:", error);
+    }
   }, []);
 
   useEffect(() => {
@@ -22,17 +25,18 @@ function useDatabaseProjects() {
   }, [getDatabaseProjects]);
 
   const [databaseProjects, saveDatabaseProjects] = useState([]);
-  console.log("databaseProjects from useState", databaseProjects);
 
   const addNewProject = useCallback(
     async (project) => {
-      console.log("project from addNewProject", project);
-
-      const response = await httpAddNewProject(project);
-      if (response) {
-        getDatabaseProjects();
-      } else {
-        console.log("Project wasn't add to Database");
+      try {
+        const response = await httpAddNewProject(project);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Project wasn't added to the database");
+        }
+      } catch (error) {
+        console.error("Error adding new project:", error);
       }
     },
     [getDatabaseProjects]
@@ -40,11 +44,15 @@ function useDatabaseProjects() {
 
   const removeProject = useCallback(
     async (id) => {
-      const response = await httpDeleteProject(id);
-      if (response) {
-        getDatabaseProjects();
-      } else {
-        console.log("Project wasn't delete");
+      try {
+        const response = await httpDeleteProject(id);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Project wasn't deleted");
+        }
+      } catch (error) {
+        console.error("Error deleting project:", error);
       }
     },
     [getDatabaseProjects]
@@ -52,13 +60,63 @@ function useDatabaseProjects() {
 
   const addNewCase = useCallback(
     async (id, newCase) => {
-      console.log("project from addNewProject", newCase);
+      try {
+        const response = await httpAddNewCase(id, newCase);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Case wasn't added to the database");
+        }
+      } catch (error) {
+        console.error("Error adding new case:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
 
-      const response = await httpAddNewCase(id, newCase);
-      if (response) {
-        getDatabaseProjects();
-      } else {
-        console.log("Project wasn't add to Database");
+  const removeCase = useCallback(
+    async (projectId, caseId) => {
+      try {
+        const response = await httpDeleteCase(projectId, caseId);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Case wasn't deleted");
+        }
+      } catch (error) {
+        console.error("Error deleting case:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
+  const addNewDim = useCallback(
+    async (id, newDim) => {
+      try {
+        const response = await httpAddNewDim(id, newDim);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Dimension wasn't added to the database");
+        }
+      } catch (error) {
+        console.error("Error adding new dimension:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
+  const removeDim = useCallback(
+    async (projectId, dimId) => {
+      try {
+        const response = await httpDeleteDim(projectId, dimId);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Dimension wasn't deleted");
+        }
+      } catch (error) {
+        console.error("Error deleting dimension:", error);
       }
     },
     [getDatabaseProjects]
@@ -68,8 +126,10 @@ function useDatabaseProjects() {
     databaseProjects,
     addNewProject,
     removeProject,
-    getDatabaseProjects,
     addNewCase,
+    removeCase,
+    addNewDim,
+    removeDim,
   };
 }
 
