@@ -52,104 +52,104 @@ const Summary = ({ NewTemplate }) => {
   const [viewAddCase, setViewAddCase] = useState(false);
   const [caseCaseName, setCaseCaseName] = useState("");
 
-  const DatabaseSummry = [
-    {
-      ProjectName: "Test Name1",
-      TemplateName: "Test Template1",
-      DataCase: [
-        {
-          ID: 1,
-          CaseName: "Case1",
-          Description: "Gap housing-cover",
-          Author: "Alex",
-          Date: "Data",
-        },
-        {
-          ID: 2,
-          CaseName: "Case2",
-          Description: "Gap housing-PCB",
-          Author: "Alex",
-          Date: "Data",
-        },
-        {
-          ID: 3,
-          CaseName: "Case3",
-          Description: "Gap PCB-cover",
-          Author: "Alex",
-          Date: "Data",
-        },
-      ],
-    },
-    {
-      ProjectName: "Test Name2",
-      TemplateName: "Test Template2",
-      DataCase: [
-        {
-          ID: 1,
-          CaseName: "Case1",
-          Description: "Gap housing-cover",
-          Author: "Alex",
-          Date: "Data",
-        },
-        {
-          ID: 2,
-          CaseName: "Case2",
-          Description: "Gap housing-PCB",
-          Author: "Alex",
-          Date: "Data",
-        },
-        {
-          ID: 3,
-          CaseName: "Case3",
-          Description: "Gap PCB-cover",
-          Author: "Alex",
-          Date: "Data",
-        },
-      ],
-    },
-  ];
-  const DatabaseTemplateName = [
-    {
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Housing",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Cover",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "PCB",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Cover",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Housing",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "Connector",
-          Color: "Green",
-        },
-      ],
-    },
-  ];
+  // const DatabaseSummry = [
+  //   {
+  //     ProjectName: "Test Name1",
+  //     TemplateName: "Test Template1",
+  //     DataCase: [
+  //       {
+  //         ID: 1,
+  //         CaseName: "Case1",
+  //         Description: "Gap housing-cover",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //       {
+  //         ID: 2,
+  //         CaseName: "Case2",
+  //         Description: "Gap housing-PCB",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //       {
+  //         ID: 3,
+  //         CaseName: "Case3",
+  //         Description: "Gap PCB-cover",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     ProjectName: "Test Name2",
+  //     TemplateName: "Test Template2",
+  //     DataCase: [
+  //       {
+  //         ID: 1,
+  //         CaseName: "Case1",
+  //         Description: "Gap housing-cover",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //       {
+  //         ID: 2,
+  //         CaseName: "Case2",
+  //         Description: "Gap housing-PCB",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //       {
+  //         ID: 3,
+  //         CaseName: "Case3",
+  //         Description: "Gap PCB-cover",
+  //         Author: "Alex",
+  //         Date: "Data",
+  //       },
+  //     ],
+  //   },
+  // ];
+  // const DatabaseTemplateName = [
+  //   {
+  //     TemplateName: "Test Template1",
+  //     Data: [
+  //       {
+  //         Index: 1,
+  //         ComponentName: "Housing",
+  //         Color: "Blue",
+  //       },
+  //       {
+  //         Index: 2,
+  //         ComponentName: "Cover",
+  //         Color: "Red",
+  //       },
+  //       {
+  //         Index: 3,
+  //         ComponentName: "PCB",
+  //         Color: "Green",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     TemplateName: "Test Template2",
+  //     Data: [
+  //       {
+  //         Index: 1,
+  //         ComponentName: "Cover",
+  //         Color: "Blue",
+  //       },
+  //       {
+  //         Index: 2,
+  //         ComponentName: "Housing",
+  //         Color: "Red",
+  //       },
+  //       {
+  //         Index: 3,
+  //         ComponentName: "Connector",
+  //         Color: "Green",
+  //       },
+  //     ],
+  //   },
+  // ];
 
   // const DatabaseProject = [
   //   {
@@ -369,7 +369,7 @@ const Summary = ({ NewTemplate }) => {
   // }, [databaseSummryFiltered]);
 
   return (
-    <>
+    <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1 ">
       <Row>
         <Col className="p-2">
           {newProject && (
@@ -567,7 +567,7 @@ const Summary = ({ NewTemplate }) => {
           </Button>
         </Form>
       )}
-    </>
+    </Row>
   );
 };
 

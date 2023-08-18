@@ -10,8 +10,9 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useTemplate from "../../Hooks/useTemplate";
 
-const Template = () => {
+const Template = ({ CloseTemplate }) => {
   const [viewAddComponent, setViewAddComponent] = useState(false);
   const [templateName, setTemplatename] = useState("");
   //to update template components when one is removed
@@ -24,6 +25,15 @@ const Template = () => {
   const [templateSelected, setTemplateSelected] = useState(false);
   const [componentDescription, setComponentDescription] = useState("");
   const [color, setColor] = useState("");
+  const {
+    templates,
+    addNewTemplate,
+    removeTemplate,
+    addDataToTemplate,
+    removeDataFromTemplate,
+  } = useTemplate();
+
+  console.log("Template-templates", templates);
 
   const DatabaseTemplateName = [
     {
@@ -72,7 +82,7 @@ const Template = () => {
     },
   ];
   const [databaseTemplateUpdate, setDatabaseTemplateUpdate] =
-    useState(DatabaseTemplateName);
+    useState(templates);
   console.log("databaseTemplateUpdate", databaseTemplateUpdate);
 
   useEffect(() => {
@@ -94,6 +104,16 @@ const Template = () => {
     e.preventDefault();
     setTemplatename(e.target.value);
   };
+  const databaseTemplateIsupdate = () => {
+    if (templates.length > 0) {
+      // setIsdatabaseProjects(true);
+      setDatabaseTemplateUpdate(templates);
+    }
+  };
+  useEffect(() => {
+    databaseTemplateIsupdate();
+  }, [templates]);
+
   // console.log("Template Name", templateName);
   const AddTemplate = (e) => {
     e.preventDefault();
@@ -103,12 +123,27 @@ const Template = () => {
         theme: "dark",
       });
     } else {
-      console.log("test");
+      const arrObjIds = databaseTemplateUpdate.map((elements) => {
+        return elements.ID;
+      });
+      const lastID = Math.max(...arrObjIds);
+      let newID = 0;
+      if (lastID === -Infinity) {
+        newID = 1;
+      } else {
+        newID = lastID + 1;
+      }
+      console.log("Template arrObjIds", arrObjIds);
       e.preventDefault();
-      databaseTemplateUpdate.push({
+      addNewTemplate({
+        ID: newID,
         TemplateName: templateName,
         Data: [],
       });
+      // databaseTemplateUpdate.push({
+      //   TemplateName: templateName,
+      //   Data: [],
+      // });
       console.log("DatabaseTemplateName", DatabaseTemplateName);
       setViewAddTemplateName(false);
       setViewAddComponent(false);
@@ -220,8 +255,21 @@ const Template = () => {
   console.log("colorPicker", color);
 
   return (
-    <>
-      <p className="fs-3 border border-success-subtle  rounded p-2">Template</p>
+    <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
+      <Row>
+        <Col className="d-flex align-items-center">
+          <p className="fs-3 p-2 m-0">Template</p>
+        </Col>
+        <Col md="auto" className="align-self-center">
+          <Button
+            variant="outline-danger"
+            type="button"
+            onClick={CloseTemplate}
+          >
+            X
+          </Button>
+        </Col>
+      </Row>
 
       {viewAddTemplateName && (
         <Form>
@@ -355,7 +403,7 @@ const Template = () => {
           </Form>
         )}
       </div>
-    </>
+    </Row>
   );
 };
 

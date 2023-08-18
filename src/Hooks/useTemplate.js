@@ -24,6 +24,8 @@ function useTemplate() {
 
   const [templates, saveTemplates] = useState([]);
 
+  console.log("useTemplate templates", templates);
+
   const addNewTemplate = useCallback(
     async (newTemplate) => {
       try {

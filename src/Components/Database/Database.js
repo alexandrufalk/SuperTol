@@ -211,7 +211,7 @@ const Database = () => {
   };
 
   return (
-    <>
+    <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
       <p className="fs-3 ">Database</p>
       <DropdownButton
         title={selectProjectData}
@@ -420,7 +420,7 @@ const Database = () => {
           </Button>
         </div>
       )}
-    </>
+    </Row>
   );
 };
 export default Database;

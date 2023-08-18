@@ -20,6 +20,7 @@ function App() {
   const [isMinSize2, setIsMinSize2] = useState(true);
   const [viewAddTemplate, setViewAddTemplate] = useState(false);
   const [isBurgherClicked, setIsBurgherClicked] = useState(true);
+  const [isTemplate, setIsTemlate] = useState(false);
 
   const handleResize2 = () => {
     if (window.innerWidth > 770) {
@@ -43,8 +44,16 @@ function App() {
     }
   };
 
+  const CloseTemplate = () => {
+    setViewAddTemplate(false);
+  };
+
   const isBurgherClickedEvent = (e) => {
     setIsBurgherClicked(e);
+  };
+
+  const ViewTemplate = () => {
+    setIsTemlate(true);
   };
   console.log("isBurgherClicked", isBurgherClicked);
 
@@ -68,7 +77,7 @@ function App() {
           </Row>
 
           <Row className="p-4 ">
-            <Col className="p-0  col-1  col-md-1 col-lg-1 col-xl-1">
+            <Col className="p-0  col-1  col-md-1 col-lg-1 col-xl-1 ">
               <Row className="stickyside p-1 ">
                 {isMinSize2 && (
                   <NavBarSMenu isBurgherClicked={isBurgherClicked} />
@@ -80,7 +89,7 @@ function App() {
                 NewTemplate={NewTemplate}
                 // databaseSummryFiltered={databaseSummryFiltered}
               />
-              {viewAddTemplate && <Template />}
+              {viewAddTemplate && <Template CloseTemplate={CloseTemplate} />}
               <Database />
               {/* <AddComponent /> */}
               <Case />
