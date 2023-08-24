@@ -450,7 +450,7 @@ const Summary = ({ NewTemplate }) => {
             <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
               {isDatabaseProjects &&
                 databaseSummryUpdate.map((n) => (
-                  <Row key={n.ID}>
+                  <Row key={n.ID + "Summary"}>
                     <Col>
                       <Dropdown.Item
                         eventKey={n.ProjectName}
@@ -501,13 +501,13 @@ const Summary = ({ NewTemplate }) => {
                 <tbody>
                   {projectSelected &&
                     databaseSummryFiltered[0].DataCase.map((n) => (
-                      <tr key={n.ID}>
-                        <td key={n.ID}> {n.ID}</td>
+                      <tr key={n.ID + "Summary table"}>
+                        <td key={n.ID + "Summary table td"}> {n.ID}</td>
                         <td key={n.ID + n.CaseName}> {n.CaseName}</td>
                         <td key={n.ID + n.Description}> {n.Description}</td>
                         <td key={n.ID + n.Author}> {n.Author}</td>
                         <td key={n.ID + n.Date}> {n.Date}</td>
-                        <td key={n.ID + "Remove"}>
+                        <td key={n.ID + "Remove case summary"}>
                           <Button
                             type="button"
                             variant="outline-danger"

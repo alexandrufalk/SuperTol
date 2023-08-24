@@ -247,55 +247,67 @@ const Database = () => {
                     <tr>
                       <th>Index</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.Index}</td>
+                        <td key={n.Index + "Database"}> {n.Index}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Name</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.Name}</td>
+                        <td key={n.Index + n.Name}> {n.Name}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Description</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.Description}</td>
+                        <td key={n.Index + n.Description}> {n.Description}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Unique Identifier</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.UniqueIdentifier}</td>
+                        <td key={n.Index + n.UniqueIdentifier}>
+                          {" "}
+                          {n.UniqueIdentifier}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Drw. nr.</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.DrwNr}</td>
+                        <td key={n.Index + n.DrwNr}> {n.DrwNr}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Nominal Value</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.NominalValue}</td>
+                        <td key={n.Index + n.NominalValue}>
+                          {" "}
+                          {n.NominalValue}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Upper Tolerance</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.UpperTolerance}</td>
+                        <td key={n.Index + n.UpperTolerance}>
+                          {" "}
+                          {n.UpperTolerance}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Lower Tolerance</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.LowerTolerance}</td>
+                        <td key={n.Index + n.LowerTolerance}>
+                          {" "}
+                          {n.LowerTolerance}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Upper Limit</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td key={n.Index + n.NominalValue + n.UpperTolerance}>
                           {n.NominalValue + n.UpperTolerance}
                         </td>
                       ))}
@@ -303,7 +315,7 @@ const Database = () => {
                     <tr>
                       <th>Lower Limit</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td key={n.Index + n.NominalValue + n.LowerTolerance}>
                           {n.NominalValue + n.LowerTolerance}
                         </td>
                       ))}
@@ -311,7 +323,14 @@ const Database = () => {
                     <tr>
                       <th>Tolerance Range</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td
+                          key={
+                            n.Index +
+                            n.UpperTolerance +
+                            "minu" +
+                            n.LowerTolerance
+                          }
+                        >
                           {n.UpperTolerance - n.LowerTolerance}
                         </td>
                       ))}
@@ -319,19 +338,25 @@ const Database = () => {
                     <tr>
                       <th>Distribution Type</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.DistributionType}</td>
+                        <td key={n.Index + n.DistributionType}>
+                          {" "}
+                          {n.DistributionType}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Tolerance Type</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}> {n.ToleranceType}</td>
+                        <td key={n.Index + n.ToleranceType}>
+                          {" "}
+                          {n.ToleranceType}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Standard Deviation</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td key={n.Index + "Std"}>
                           {Math.round(
                             ((n.UpperTolerance - n.LowerTolerance) /
                               (6 *
@@ -347,7 +372,7 @@ const Database = () => {
                     <tr>
                       <th>Mean</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td key={n.Index + "Mean"}>
                           {(n.NominalValue +
                             n.UpperTolerance +
                             n.NominalValue +
@@ -359,7 +384,7 @@ const Database = () => {
                     <tr>
                       <th>Drawing</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>
+                        <td key={n.Index + "Drawing"}>
                           <div className="addImage">
                             {/* <AddImage index={n.Index} /> */}
                             {/* <Image
@@ -376,7 +401,7 @@ const Database = () => {
                     <tr>
                       <th>Distribution Graph</th>
                       {databaseFiltered[0].Data.map((n) => (
-                        <td key={n.Index}>graph{n.Index}</td>
+                        <td key={n.Index + "graph"}>graph{n.Index}</td>
                       ))}
                     </tr>
                   </thead>

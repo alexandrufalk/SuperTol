@@ -7,8 +7,13 @@ import "./Nav.css";
 import Button from "react-bootstrap/Button";
 import Figure from "react-bootstrap/Figure";
 import Logo3 from "./Icons/Logo3.png";
+import { useProfile } from "../GoogleLoginButton/profileContext";
+import { Row } from "react-bootstrap";
 
 const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
+  const { profile } = useProfile();
+
+  console.log("Profile from NaviBar", profile);
   console.log("isMinSize2 for NaviBar", isMinSize2);
   return (
     <>
@@ -48,9 +53,20 @@ const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
             <div className="d-flex align-items-end">
               <Nav.Link href="#home">Home</Nav.Link>
               <Nav.Link href="#features">Features</Nav.Link>
-              <Navbar.Collapse className="justify-content-end">
-                <Nav.Link href="#signin">SignIn</Nav.Link>
-              </Navbar.Collapse>
+              {profile && (
+                <>
+                  <Navbar.Collapse className="justify-content-end">
+                    <Nav.Link href="#signin">SignIn as {profile.name}</Nav.Link>
+                  </Navbar.Collapse>
+                  <Figure.Image
+                    width={30}
+                    height={20}
+                    alt="60x40"
+                    src={profile.picture}
+                    className="rounded"
+                  />
+                </>
+              )}
             </div>
           </Nav>
         </Container>

@@ -197,19 +197,27 @@ const Template = ({ CloseTemplate }) => {
 
       console.log("lastID", lastID);
 
-      const nComponent = {
+      const id = index + 1;
+
+      addDataToTemplate(id, {
         Index: newID,
         ComponentName: componentDescription,
         Color: color,
-      };
+      });
 
-      databaseTemplateUpdate[index].Data.push(nComponent);
-      const DatabaseUpdateT = databaseTemplateUpdate;
+      // const nComponent = {
+      //   Index: newID,
+      //   ComponentName: componentDescription,
+      //   Color: color,
+      // };
+
+      // databaseTemplateUpdate[index].Data.push(nComponent);
+      // const DatabaseUpdateT = databaseTemplateUpdate;
       setComponentDescription("");
       setColor("");
 
-      setDatabaseTemplateUpdate(DatabaseUpdateT);
-      console.log("test new component");
+      // setDatabaseTemplateUpdate(DatabaseUpdateT);
+      // console.log("test new component");
       setViewAddComponent(false);
     } else {
       toast("Add description and color", {
@@ -334,11 +342,11 @@ const Template = ({ CloseTemplate }) => {
               </thead>
               <tbody>
                 {databaseTemplateFiltered[0].Data.map((n) => (
-                  <tr key={n.Index + "test"}>
-                    <td key={n.Index + "test"}> {n.Index}</td>
+                  <tr key={n.Index + "template table"}>
+                    <td key={n.Index + "template table td"}> {n.Index}</td>
                     <td key={n.ComponentName + n.Index}>{n.ComponentName}</td>
                     <td key={n.Color + n.Index}> {n.Color}</td>
-                    <td key={n.Index + "Remove"}>
+                    <td key={n.Index + "Remove template"}>
                       <Button
                         type="button"
                         variant="outline-danger"

@@ -808,24 +808,18 @@ const Case = () => {
                 </thead>
                 <tbody>
                   {DatabaseCases[0].Data[0].CaseData.map((n) => (
-                    <tr key={n.ID + "test"}>
-                      <td key={n.ID + "test"}> {n.ID}</td>
-                      <td key={n.Name + n.ID}> {n.Name}</td>
-                      <td key={n.Description + n.ID}>{n.Description}</td>
-                      <td key={n.UniqueIdentifier + n.ID}>
-                        {n.UniqueIdentifier}
-                      </td>
-                      <td key={n.NominalValue + n.ID}> {n.NominalValue}</td>
-                      <td key={n.UpperTolerance + n.ID}> {n.UpperTolerance}</td>
-                      <td key={n.LowerTolerance + n.ID}> {n.LowerTolerance}</td>
-                      <td key={n.Sign + n.ID}> {n.Sign}</td>
-                      <td key={n.DistributionType + n.ID}>
-                        {" "}
-                        {n.DistributionType}
-                      </td>
-                      <td key={n.ToleranceType + n.ID}> {n.ToleranceType}</td>
-                      <td key={n.Influence + n.ID}>
-                        {" "}
+                    <tr key={n.ID + "trtest"}>
+                      <td>{n.ID}</td>
+                      <td>{n.Name}</td>
+                      <td>{n.Description}</td>
+                      <td>{n.UniqueIdentifier}</td>
+                      <td>{n.NominalValue}</td>
+                      <td>{n.UpperTolerance}</td>
+                      <td>{n.LowerTolerance}</td>
+                      <td>{n.Sign}</td>
+                      <td>{n.DistributionType}</td>
+                      <td>{n.ToleranceType}</td>
+                      <td>
                         {Math.round(
                           ((((n.UpperTolerance - n.LowerTolerance) / 2) * 100) /
                             WorstCaseTolerance +
@@ -833,8 +827,8 @@ const Case = () => {
                             100
                         ) / 100}
                       </td>
-                      <td key={n.Formula + n.ID}> {n.Formula}</td>
-                      <td key={n.Index + "Remove"}>
+                      <td>{n.Formula}</td>
+                      <td>
                         <Button
                           type="button"
                           variant="outline-danger"
@@ -872,7 +866,7 @@ const Case = () => {
                     </Dropdown.Toggle> */}
 
           {Database[0].Data.map((n) => (
-            <Dropdown.Item eventKey={n.Name} key={n.Name}>
+            <Dropdown.Item eventKey={n.Name} key={n.Name + "Data"}>
               {n.Name}
             </Dropdown.Item>
           ))}
