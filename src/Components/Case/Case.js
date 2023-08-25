@@ -524,7 +524,7 @@ const Case = () => {
       <Form.Group controlId="formGridState" className="col col-sm-6">
         <Form.Label>Select gap Cpk</Form.Label>
         <Form.Select
-          defaultValue="Gap Cpk"
+          // defaultValue="Gap Cpk"
           className="form-control"
           name="Gap Cpk"
           value={gapCpk}
@@ -539,7 +539,7 @@ const Case = () => {
           <option value="2">Normal Cpk 2</option>
         </Form.Select>
         <Form.Select
-          defaultValue="Select Nr. of samples "
+          // defaultValue="Select Nr. of samples "
           className="form-control"
           name="Select Nr. of samples "
           value={nrSamples}
