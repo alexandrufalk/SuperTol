@@ -35,52 +35,52 @@ const Template = ({ CloseTemplate }) => {
 
   console.log("Template-templates", templates);
 
-  const DatabaseTemplateName = [
-    {
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Housing1",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Cover1",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "PCB1",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Cover2",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Housing2",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "Connector2",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template3",
-      Data: [],
-    },
-  ];
+  // const DatabaseTemplateName = [
+  //   {
+  //     TemplateName: "Test Template1",
+  //     Data: [
+  //       {
+  //         Index: 1,
+  //         ComponentName: "Housing1",
+  //         Color: "Blue",
+  //       },
+  //       {
+  //         Index: 2,
+  //         ComponentName: "Cover1",
+  //         Color: "Red",
+  //       },
+  //       {
+  //         Index: 3,
+  //         ComponentName: "PCB1",
+  //         Color: "Green",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     TemplateName: "Test Template2",
+  //     Data: [
+  //       {
+  //         Index: 1,
+  //         ComponentName: "Cover2",
+  //         Color: "Blue",
+  //       },
+  //       {
+  //         Index: 2,
+  //         ComponentName: "Housing2",
+  //         Color: "Red",
+  //       },
+  //       {
+  //         Index: 3,
+  //         ComponentName: "Connector2",
+  //         Color: "Green",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     TemplateName: "Test Template3",
+  //     Data: [],
+  //   },
+  // ];
   const [databaseTemplateUpdate, setDatabaseTemplateUpdate] =
     useState(templates);
   console.log("databaseTemplateUpdate", databaseTemplateUpdate);
@@ -144,7 +144,7 @@ const Template = ({ CloseTemplate }) => {
       //   TemplateName: templateName,
       //   Data: [],
       // });
-      console.log("DatabaseTemplateName", DatabaseTemplateName);
+
       setViewAddTemplateName(false);
       setViewAddComponent(false);
       setViewSelectTemplate(true);
@@ -188,6 +188,7 @@ const Template = ({ CloseTemplate }) => {
       const lastID = Math.max(
         ...databaseTemplateUpdate[index].Data.map((o) => o.Index)
       );
+      const TemplateName = databaseTemplateUpdate[index].TemplateName;
       let newID = 0;
       if (lastID === -Infinity) {
         newID = 1;
@@ -205,16 +206,17 @@ const Template = ({ CloseTemplate }) => {
         Color: color,
       });
 
-      // const nComponent = {
-      //   Index: newID,
-      //   ComponentName: componentDescription,
-      //   Color: color,
-      // };
+      const nComponent = {
+        Index: newID,
+        ComponentName: componentDescription,
+        Color: color,
+      };
 
-      // databaseTemplateUpdate[index].Data.push(nComponent);
+      databaseTemplateUpdate[index].Data.push(nComponent);
       // const DatabaseUpdateT = databaseTemplateUpdate;
       setComponentDescription("");
       setColor("");
+      TemplateFilter(TemplateName);
 
       // setDatabaseTemplateUpdate(DatabaseUpdateT);
       // console.log("test new component");
@@ -226,10 +228,14 @@ const Template = ({ CloseTemplate }) => {
       });
     }
   };
-  const RemoveCase = (e) => {
+  const RemoveComponent = (e) => {
     let obj = databaseTemplateFiltered[0].Data.find((o) => o.Index === e);
     let index = databaseTemplateFiltered[0].Data.indexOf(obj);
     let update = databaseTemplateFiltered;
+    const templateID = databaseTemplateFiltered[0].ID;
+    const dataIndex = e;
+
+    console.log("templateID,dataIndex:", templateID, dataIndex);
 
     if (index > -1) {
       update[0].Data.splice(index, 1);
@@ -241,6 +247,7 @@ const Template = ({ CloseTemplate }) => {
     // alert(`Case ${e} removed`);
     console.log("remove obj", obj);
     setDatabaseTemplateFiltered(update);
+    removeDataFromTemplate(templateID, dataIndex);
   };
 
   const SetNewComponent = (e) => {
@@ -351,8 +358,13 @@ const Template = ({ CloseTemplate }) => {
                         type="button"
                         variant="outline-danger"
                         onClick={() => {
-                          RemoveCase(n.Index);
-                          forceUpdate();
+                          const confirmRemove = window.confirm(
+                            "Do you want to remove this component?"
+                          );
+                          if (confirmRemove) {
+                            RemoveComponent(n.Index);
+                            forceUpdate();
+                          }
                         }}
                       >
                         X
@@ -363,18 +375,18 @@ const Template = ({ CloseTemplate }) => {
               </tbody>
             </Table>
           </Container>
+          <Form.Group>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={(e) => SetNewComponent(e)}
+            >
+              Add Component
+            </Button>
+          </Form.Group>
         </Row>
       )}
       <div className="container fluid p-2">
-        <Form.Group>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={(e) => SetNewComponent(e)}
-          >
-            Add Component
-          </Button>
-        </Form.Group>
         {viewAddComponent && (
           <Form>
             <Row>
