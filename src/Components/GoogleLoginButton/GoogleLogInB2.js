@@ -5,6 +5,7 @@ import axios from "axios";
 import Figure from "react-bootstrap/Figure";
 import Logo3 from "../Nav/Icons/Logo3.png";
 import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useProfile } from "./profileContext";
@@ -52,10 +53,6 @@ function GoogleLoginB2({ ShowPage }) {
 
   return (
     <Container className="text-center">
-      <Row style={{ alignItems: "center", marginTop: "100px" }}>
-        <h2 className="text-light">SuperTol Login</h2>
-      </Row>
-
       <br />
       <br />
       {profile ? (
@@ -69,25 +66,33 @@ function GoogleLoginB2({ ShowPage }) {
           <button onClick={logOut}>Log out</button>
         </div>
       ) : (
-        <Row style={{ alignItems: "center", marginTop: "40px" }}>
-          <Col sm={3}></Col>
-          <Col sm={3}>
-            <Figure.Image
-              width={360}
-              height={240}
-              alt="85x90"
-              src={Logo3}
-              className="rounded"
-              style={{ display: "block", margin: "0 auto" }}
-            />
-          </Col>
-          <Col sm={2} style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ margin: "0 auto" }}>
-              <GoogleLoginButton onClick={() => login()} />
-              {/* <button onClick={() => login()}>Sign in with Google 🚀 </button> */}
-            </div>
-          </Col>
-        </Row>
+        <>
+          <Row style={{ alignItems: "center", marginTop: "100px" }}>
+            <h2 className="text-light">SuperTol Login</h2>
+          </Row>
+
+          <Row style={{ alignItems: "center", marginTop: "40px" }}>
+            <Col sm={3}></Col>
+            <Col sm={3}>
+              <Figure.Image
+                width={360}
+                height={240}
+                alt="85x90"
+                src={Logo3}
+                className="rounded"
+                style={{ display: "block", margin: "0 auto" }}
+              />
+            </Col>
+            <Col sm={2} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ margin: "0 auto" }}>
+                {/* <Button>Google</Button> */}
+                <GoogleLoginButton onClick={() => login()} />
+
+                {/* <button onClick={() => login()}>Sign in with Google 🚀 </button> */}
+              </div>
+            </Col>
+          </Row>
+        </>
       )}
     </Container>
   );

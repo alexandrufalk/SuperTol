@@ -22,8 +22,13 @@ import "./Summary.css";
 // import Logo from "./Logo.png";
 
 const Summary = ({ NewTemplate }) => {
-  const { databaseProjects, addNewProject, removeProject, addNewCase } =
-    useDatabaseProjects();
+  const {
+    databaseProjects,
+    addNewProject,
+    removeProject,
+    addNewCase,
+    removeCase,
+  } = useDatabaseProjects();
   const { templates } = useTemplate();
   console.log("loaded databaseProjects:", databaseProjects);
 
@@ -203,6 +208,8 @@ const Summary = ({ NewTemplate }) => {
       const lastID = Math.max(
         ...databaseSummryUpdate[index].DataCase.map((o) => o.ID)
       );
+      const ProjectName = databaseSummryUpdate[index].ProjectName;
+      console.log("ProjectName when adding case:", ProjectName);
       let newID = 0;
       if (lastID === -Infinity) {
         newID = 1;
@@ -233,8 +240,13 @@ const Summary = ({ NewTemplate }) => {
 
       // setDatabaseSummryUpdate(DatabaseUpdate);
       // console.log("test output", DatabaseUpdate);
+
       setViewAddCase(false);
       setCaseCaseName("");
+      setDatabaseSummryUpdate(databaseProjects);
+      console.log("AddCase databaseProjects", databaseProjects);
+      DatabaseFilter(ProjectName);
+      // Force a component rerender
 
       // console.log("caseCaseName", caseCaseName);
       console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
@@ -250,6 +262,10 @@ const Summary = ({ NewTemplate }) => {
     let obj = databaseSummryFiltered[0].DataCase.find((o) => o.ID === e);
     let index = databaseSummryFiltered[0].DataCase.indexOf(obj);
     let update = databaseSummryFiltered;
+    const projectId = databaseSummryFiltered[0].ID;
+    const caseId = e;
+
+    console.log("Summary Case remove ids:", projectId, caseId);
 
     if (index > -1) {
       update[0].DataCase.splice(index, 1);
@@ -261,6 +277,7 @@ const Summary = ({ NewTemplate }) => {
     // alert(`Case ${e} removed`);
     console.log("remove obj", obj);
     setDatabaseSummryFiltered(update);
+    removeCase(projectId, caseId);
   };
 
   const RemoveProject = (e) => {
