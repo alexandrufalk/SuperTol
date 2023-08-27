@@ -269,6 +269,10 @@ const Template = ({ CloseTemplate }) => {
   console.log("databaseTemplateFiltered", databaseTemplateFiltered);
   console.log("colorPicker", color);
 
+  const RemoveTemplate = (e) => {
+    removeTemplate(e);
+  };
+
   return (
     <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
       <Row>
@@ -321,9 +325,26 @@ const Template = ({ CloseTemplate }) => {
                     </Dropdown.Toggle> */}
 
           {databaseTemplateUpdate.map((n) => (
-            <Dropdown.Item eventKey={n.TemplateName} key={n.TemplateName}>
-              {n.TemplateName}
-            </Dropdown.Item>
+            <Row key={n.ID + n.TemplateName}>
+              <Col>
+                <Dropdown.Item eventKey={n.TemplateName}>
+                  {n.TemplateName}
+                </Dropdown.Item>
+              </Col>
+              <Col>
+                <Button
+                  size="sm"
+                  type="button"
+                  variant="outline-danger"
+                  onClick={() => {
+                    RemoveTemplate(n.ID);
+                    // forceUpdate();
+                  }}
+                >
+                  X
+                </Button>
+              </Col>
+            </Row>
           ))}
           <Dropdown.Item eventKey={"New Template"} key={"New Template"}>
             New Template

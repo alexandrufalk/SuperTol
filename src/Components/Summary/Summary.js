@@ -486,7 +486,7 @@ const Summary = ({ NewTemplate }) => {
                         variant="outline-danger"
                         onClick={() => {
                           RemoveProject(n.ID);
-                          forceUpdate();
+                          // forceUpdate();
                         }}
                       >
                         X

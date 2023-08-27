@@ -11,8 +11,10 @@ import "./database.css";
 
 import ImportImage from "../ImportImage/ImportImage.tsx";
 import AddComponent from "../AddComponent/AddComponent";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
 const Database = () => {
+  const { databaseProjects, addNewDim, removeDim } = useDatabaseProjects();
   const [viewAddComponentData, setViewAddComponentData] = useState(false);
 
   const [databaseFiltered, setDatabaseFiltered] = useState([]);
@@ -156,9 +158,9 @@ const Database = () => {
       ],
     },
   ];
-  console.log("Database", Database);
+  // console.log("Database", Database);
 
-  const [DatabaseUpdate, setDatabaseUpdate] = useState(Database);
+  const [DatabaseUpdate, setDatabaseUpdate] = useState(databaseProjects);
 
   useEffect(() => {
     const dataU = JSON.parse(window.localStorage.getItem("DatabasesU"));
@@ -169,6 +171,16 @@ const Database = () => {
     }
   }, []);
   console.log("useEffect DatabaseUpdate", DatabaseUpdate);
+
+  const databaseProjectIsupdate = () => {
+    if (databaseProjects.length > 0) {
+      // setIsdatabaseProjects(true);
+      setDatabaseUpdate(databaseProjects);
+    }
+  };
+  useEffect(() => {
+    databaseProjectIsupdate();
+  }, [databaseProjects]);
 
   useEffect(() => {
     const DatabasesU = [DatabaseUpdate];
@@ -193,7 +205,7 @@ const Database = () => {
     setViewAddComponentData(false);
     setViewAddComponent(true);
   };
-  console.log("DatabaseUpdate", DatabaseUpdate[0].Data);
+  console.log("DatabaseUpdate", DatabaseUpdate);
 
   const DatabasesFilter = (e) => {
     if (e !== "Select project name" && e !== "New Project") {
@@ -246,25 +258,25 @@ const Database = () => {
                   <thead>
                     <tr>
                       <th>Index</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + "Database"}> {n.Index}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Name</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.Name}> {n.Name}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Description</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.Description}> {n.Description}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Unique Identifier</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.UniqueIdentifier}>
                           {" "}
                           {n.UniqueIdentifier}
@@ -273,13 +285,13 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Drw. nr.</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.DrwNr}> {n.DrwNr}</td>
                       ))}
                     </tr>
                     <tr>
                       <th>Nominal Value</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.NominalValue}>
                           {" "}
                           {n.NominalValue}
@@ -288,7 +300,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Upper Tolerance</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.UpperTolerance}>
                           {" "}
                           {n.UpperTolerance}
@@ -297,7 +309,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Lower Tolerance</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.LowerTolerance}>
                           {" "}
                           {n.LowerTolerance}
@@ -306,7 +318,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Upper Limit</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.NominalValue + n.UpperTolerance}>
                           {n.NominalValue + n.UpperTolerance}
                         </td>
@@ -314,7 +326,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Lower Limit</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.NominalValue + n.LowerTolerance}>
                           {n.NominalValue + n.LowerTolerance}
                         </td>
@@ -322,7 +334,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Tolerance Range</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td
                           key={
                             n.Index +
@@ -337,7 +349,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Distribution Type</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.DistributionType}>
                           {" "}
                           {n.DistributionType}
@@ -346,7 +358,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Tolerance Type</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + n.ToleranceType}>
                           {" "}
                           {n.ToleranceType}
@@ -355,7 +367,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Standard Deviation</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + "Std"}>
                           {Math.round(
                             ((n.UpperTolerance - n.LowerTolerance) /
@@ -371,7 +383,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Mean</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + "Mean"}>
                           {(n.NominalValue +
                             n.UpperTolerance +
@@ -383,7 +395,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Drawing</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + "Drawing"}>
                           <div className="addImage">
                             {/* <AddImage index={n.Index} /> */}
@@ -400,7 +412,7 @@ const Database = () => {
                     </tr>
                     <tr>
                       <th>Distribution Graph</th>
-                      {databaseFiltered[0].Data.map((n) => (
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.Index + "graph"}>graph{n.Index}</td>
                       ))}
                     </tr>
