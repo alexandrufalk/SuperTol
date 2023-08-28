@@ -259,25 +259,54 @@ const Database = () => {
                     <tr>
                       <th>Index</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + "Database"}> {n.Index}</td>
+                        <td
+                          key={n.ID + "Database"}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {" "}
+                          {n.ID}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Name</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.Name}> {n.Name}</td>
+                        <td
+                          key={n.ID + n.Name}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {" "}
+                          {n.Name}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Description</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.Description}> {n.Description}</td>
+                        <td
+                          key={n.ID + n.Description}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {" "}
+                          {n.Description}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Unique Identifier</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.UniqueIdentifier}>
+                        <td
+                          key={n.ID + n.UniqueIdentifier}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.UniqueIdentifier}
                         </td>
@@ -286,13 +315,26 @@ const Database = () => {
                     <tr>
                       <th>Drw. nr.</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.DrwNr}> {n.DrwNr}</td>
+                        <td
+                          key={n.ID + n.DrwNr}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {" "}
+                          {n.DrwNr}
+                        </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Nominal Value</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.NominalValue}>
+                        <td
+                          key={n.ID + n.NominalValue}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.NominalValue}
                         </td>
@@ -301,7 +343,12 @@ const Database = () => {
                     <tr>
                       <th>Upper Tolerance</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.UpperTolerance}>
+                        <td
+                          key={n.ID + n.UpperTolerance}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.UpperTolerance}
                         </td>
@@ -310,7 +357,12 @@ const Database = () => {
                     <tr>
                       <th>Lower Tolerance</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.LowerTolerance}>
+                        <td
+                          key={n.ID + n.LowerTolerance}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.LowerTolerance}
                         </td>
@@ -319,16 +371,26 @@ const Database = () => {
                     <tr>
                       <th>Upper Limit</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.NominalValue + n.UpperTolerance}>
-                          {n.NominalValue + n.UpperTolerance}
+                        <td
+                          key={n.ID + n.NominalValue + n.UpperTolerance}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {(n.NominalValue + n.UpperTolerance).toFixed(3)}
                         </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Lower Limit</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.NominalValue + n.LowerTolerance}>
-                          {n.NominalValue + n.LowerTolerance}
+                        <td
+                          key={n.ID + n.NominalValue + n.LowerTolerance}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {(n.NominalValue + n.LowerTolerance).toFixed(3)}
                         </td>
                       ))}
                     </tr>
@@ -337,20 +399,38 @@ const Database = () => {
                       {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td
                           key={
-                            n.Index +
-                            n.UpperTolerance +
-                            "minu" +
-                            n.LowerTolerance
+                            n.ID + n.UpperTolerance + "minu" + n.LowerTolerance
                           }
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
                         >
                           {n.UpperTolerance - n.LowerTolerance}
                         </td>
                       ))}
                     </tr>
                     <tr>
+                      <th>Sign</th>
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
+                        <td
+                          key={n.ID + "Sign"}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {n.Sign}
+                        </td>
+                      ))}
+                    </tr>
+                    <tr>
                       <th>Distribution Type</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.DistributionType}>
+                        <td
+                          key={n.ID + n.DistributionType}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.DistributionType}
                         </td>
@@ -359,7 +439,12 @@ const Database = () => {
                     <tr>
                       <th>Tolerance Type</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + n.ToleranceType}>
+                        <td
+                          key={n.ID + n.ToleranceType}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {" "}
                           {n.ToleranceType}
                         </td>
@@ -368,7 +453,12 @@ const Database = () => {
                     <tr>
                       <th>Standard Deviation</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + "Std"}>
+                        <td
+                          key={n.ID + "Std"}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
                           {Math.round(
                             ((n.UpperTolerance - n.LowerTolerance) /
                               (6 *
@@ -384,21 +474,28 @@ const Database = () => {
                     <tr>
                       <th>Mean</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + "Mean"}>
-                          {(n.NominalValue +
-                            n.UpperTolerance +
-                            n.NominalValue +
-                            n.LowerTolerance) /
-                            2}
+                        <td
+                          key={n.ID + "Mean"}
+                          style={{
+                            color: n.Color ? n.Color.toLowerCase() : "inherit",
+                          }}
+                        >
+                          {(
+                            (n.NominalValue +
+                              n.UpperTolerance +
+                              n.NominalValue +
+                              n.LowerTolerance) /
+                            2
+                          ).toFixed(3)}
                         </td>
                       ))}
                     </tr>
                     <tr>
                       <th>Drawing</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + "Drawing"}>
+                        <td key={n.ID + "Drawing"}>
                           <div className="addImage">
-                            {/* <AddImage index={n.Index} /> */}
+                            {/* <AddImage index={n.ID} /> */}
                             {/* <Image
                             width={150}
                             src={
@@ -413,7 +510,7 @@ const Database = () => {
                     <tr>
                       <th>Distribution Graph</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
-                        <td key={n.Index + "graph"}>graph{n.Index}</td>
+                        <td key={n.ID + "graph"}>graph{n.ID}</td>
                       ))}
                     </tr>
                   </thead>

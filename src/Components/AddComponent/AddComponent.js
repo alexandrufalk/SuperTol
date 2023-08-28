@@ -8,17 +8,22 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useTemplate from "../../Hooks/useTemplate";
 
 const AddComponent = ({ databaseFiltered, Database }) => {
   console.log("Database from ADDComponent", databaseFiltered);
 
-  const [viewComponents, setViewComponents] = useState("Name of component");
+  const [viewComponents, setViewComponents] = useState("Select Component Name");
   const [selectedColor, SetSelectedColor] = useState("");
-  const [databaseAdd, setdatabaseAdd] = useState(databaseFiltered);
-  const [componentData, setComponentData] = useState([]);
+  const [componentData, setComponentData] = useState();
   const [viewDropDownComponents, setViewDropDownComponents] = useState(false);
+  const [isTemplate, setIsTemplate] = useState(false);
+
+  const [templateUpdate, setTemplateUpdate] = useState([]);
+  const [componentColor, setComponentColor] = useState("");
 
   const [viewCustomCpk, setViewCustomCpk] = useState(false);
+  const { templates } = useTemplate();
   const DatabaseTemplateName = [
     {
       TemplateName: "Test Template1",
@@ -66,6 +71,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     },
   ];
 
+  console.log("Is templates?:", templateUpdate);
+
   const [form, setForm] = useState({
     Name: "",
     Description: "",
@@ -76,50 +83,80 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     DistributionType: "",
     ToleranceType: "",
     Samples: "",
+    Color: "",
   });
 
   useEffect(() => {
     TemplateComponentFiltered();
   }, [databaseFiltered]);
 
-  const TemplateComponentFiltered = () => {
-    const TemplateN = databaseFiltered[0].TemplateName;
-    console.log("TemplateN", TemplateN);
-    setComponentData(
-      DatabaseTemplateName.filter((data) => data.TemplateName === TemplateN)
-    );
-    setViewDropDownComponents(true);
-  };
-  console.log("componentData", componentData);
+  useEffect(() => {
+    templateIsUpdate();
+  }, [templates]);
 
-  const TemplateDatabaseFilter = (e) => {
-    if (
-      e.target.value !== "New Component" &&
-      e.target.value !== "Name of component"
-    ) {
-      console.log("e", e.target.value);
-      console.log(componentData[0].Data);
-      const index = componentData[0].Data.findIndex(
-        (x) => x.ComponentName === e.target.value
-      );
-      // console.log("index", index);
-
-      SetSelectedColor(componentData[0].Data[index].Color);
-
-      // setTemplateSelected(true);
-      // setViewAddTemplateName(false);
-    } else {
-      console.log("New component selected");
-      // setTemplateSelected(false);
-      // setViewAddTemplateName(true);
-      // setViewSelectTemplate(false);
-      // setSelectTemplate("Select template name");
+  const templateIsUpdate = () => {
+    if (templates.length > 0) {
+      setTemplateUpdate(templates);
     }
   };
 
-  const handleSelectTemplate = (e) => {
-    setViewComponents(e);
+  const TemplateComponentFiltered = () => {
+    const TemplateN = databaseFiltered[0].TemplateName;
+    const filteredTemplate = templateUpdate.filter(
+      (data) => data.TemplateName === TemplateN
+    );
+    console.log("TemplateN", TemplateN);
+    console.log("TemplateComponentFiltered", filteredTemplate);
+    if (filteredTemplate.length > 0) {
+      setComponentData(filteredTemplate);
+      setIsTemplate(true);
+    }
   };
+  console.log("componentData", componentData);
+
+  // const TemplateDatabaseFilter = (e) => {
+  //   if (
+  //     e.target.value !== "New Component" &&
+  //     e.target.value !== "Name of component"
+  //   ) {
+  //     console.log("e", e.target.value);
+
+  //     const index = componentData[0].Data.findIndex(
+  //       (x) => x.ComponentName === e.target.value
+  //     );
+  //     // console.log("index", index);
+
+  //     SetSelectedColor(componentData[0].Data[index].Color);
+
+  //     // setTemplateSelected(true);
+  //     // setViewAddTemplateName(false);
+  //   } else {
+  //     console.log("New component selected");
+  //     // setTemplateSelected(false);
+  //     // setViewAddTemplateName(true);
+  //     // setViewSelectTemplate(false);
+  //     // setSelectTemplate("Select template name");
+  //   }
+  // };
+
+  const handleSelectTemplate = (e) => {
+    console.log("e from handleSelecttemplate:", e);
+    setViewComponents(e);
+    filterColor(e);
+
+    setForm({ ...form, Name: e });
+    setForm({ ...form, Color: componentColor });
+  };
+
+  const filterColor = (e) => {
+    const obj = componentData[0].Data.find((o) => o.ComponentName === e);
+    const index = componentData[0].Data.indexOf(obj);
+    const color = componentData[0].Data[index].Color;
+    setComponentColor(color);
+  };
+  console.log("AddComponent form", form);
+
+  console.log("AddComponent Template name:", viewComponents);
   const handleCustomCpK = (e) => {
     if (e.target.value === "Normal Cpk Custom") {
       setViewCustomCpk(true);
@@ -153,7 +190,9 @@ const AddComponent = ({ databaseFiltered, Database }) => {
         (x) => x.ProjectName === databaseFiltered[0].ProjectName
       );
       console.log("index", index);
-      const lastID = Math.max(...Database[index].Data.map((o) => o.Index));
+      const lastID = Math.max(
+        ...Database[index].DatabaseDim.map((o) => o.Index)
+      );
       let newID = 0;
       if (lastID === -Infinity) {
         newID = 1;
@@ -175,7 +214,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
         Samples: Number(form.Samples),
       };
 
-      Database[index].Data.push(nComponent);
+      Database[index].DatabaseDim.push(nComponent);
 
       console.log("Database Updated", Database);
 
@@ -243,71 +282,57 @@ const AddComponent = ({ databaseFiltered, Database }) => {
         Add Component
       </p>
       <p className="fs-4 border border-success-subtle p-2 rounded">
-        Project Name:{databaseAdd[0].ProjectName}
+        Project Name:{databaseFiltered[0].ProjectName}
       </p>
       <Form className="p-2" onSubmit={handleSubmit}>
         <Row>
           <Col>
             <Row>
               <Col>
-                {viewDropDownComponents && (
+                {isTemplate && (
                   <Form.Group
                     controlId="formGridState"
                     className="col col-sm-6"
                   >
                     <Form.Label>Select Component</Form.Label>
-                    <Form.Select
-                      defaultValue="Select Component"
-                      className="form-control"
-                      name="Name"
-                      value={form.Name}
-                      onChange={(e) => {
-                        handleChange(e);
-                        TemplateDatabaseFilter(e);
+                    <DropdownButton
+                      title={viewComponents}
+                      // defaultValue="Select Component"
+                      // className="form-control"
+                      // name="Name"
+                      // value={form.Name}
+                      onSelect={(e) => {
+                        // handleChange(e);
+                        // TemplateDatabaseFilter(e);
                         handleSelectTemplate(e);
                       }}
                     >
-                      <option value="Select Component">Select Component</option>
+                      {/* <option value="Select Component">Select Component</option> */}
                       {componentData[0].Data.map((n) => (
-                        <option value={n.ComponentName}>
+                        <Dropdown.Item
+                          eventKey={n.ComponentName}
+                          key={n.ComponentName}
+                        >
                           {n.ComponentName}
-                        </option>
+                        </Dropdown.Item>
+                        // <option value={n.TemplateName}>{n.TemplateName}</option>
                       ))}
-                      <option value="New Component">New Component</option>
-                    </Form.Select>
+                      {/* <option value="New Component">New Component</option> */}
+                    </DropdownButton>
                   </Form.Group>
-
-                  // <DropdownButton
-                  //   title={viewComponents}
-                  //   onSelect={(e) => {
-                  //     TemplateDatabaseFilter(e);
-                  //     handleSelectTemplate(e);
-                  //   }}
-                  //   variant="secondary"
-                  // >
-                  //   {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                  //     {projectTemplate}
-                  //   </Dropdown.Toggle> */}
-
-                  //   {componentData[0].Data.map((n) => (
-                  //     <Dropdown.Item
-                  //       eventKey={n.ComponentName}
-                  //       key={n.ComponentName}
-                  //     >
-                  //       {n.ComponentName}
-                  //     </Dropdown.Item>
-                  //   ))}
-                  //   <Dropdown.Item
-                  //     eventKey={"New Template"}
-                  //     key={"New Template"}
-                  //   >
-                  //     New Component
-                  //   </Dropdown.Item>
-                  // </DropdownButton>
                 )}
               </Col>
               <Col>
-                <p>Color {selectedColor}</p>
+                <p>Color </p>
+                <div
+                  style={{
+                    display: "inline-block",
+                    width: "20px", // Adjust the width of the rectangle as needed
+                    height: "20px", // Adjust the height of the rectangle as needed
+                    backgroundColor: componentColor,
+                    marginLeft: "10px", // Add some spacing between the paragraph and the rectangle
+                  }}
+                ></div>
               </Col>
             </Row>
             <ToastContainer transition={Bounce} autoClose={2000} />
