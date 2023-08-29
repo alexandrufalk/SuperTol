@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useTemplate from "../../Hooks/useTemplate";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
 const AddComponent = ({ databaseFiltered, Database }) => {
   console.log("Database from ADDComponent", databaseFiltered);
@@ -24,6 +25,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
 
   const [viewCustomCpk, setViewCustomCpk] = useState(false);
   const { templates } = useTemplate();
+  const { addNewDim, removeDim } = useDatabaseProjects();
+
   const DatabaseTemplateName = [
     {
       TemplateName: "Test Template1",
@@ -84,6 +87,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     ToleranceType: "",
     Samples: "",
     Color: "",
+    Sign: "",
   });
 
   useEffect(() => {
@@ -143,16 +147,19 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     console.log("e from handleSelecttemplate:", e);
     setViewComponents(e);
     filterColor(e);
+    const test = e;
 
-    setForm({ ...form, Name: e });
-    setForm({ ...form, Color: componentColor });
+    setForm({ ...form, Name: test });
   };
 
   const filterColor = (e) => {
     const obj = componentData[0].Data.find((o) => o.ComponentName === e);
     const index = componentData[0].Data.indexOf(obj);
     const color = componentData[0].Data[index].Color;
-    setComponentColor(color);
+
+    const testcolor = color.toLowerCase();
+    console.log("Color from filterColor", testcolor);
+    setForm({ ...form, Color: testcolor });
   };
   console.log("AddComponent form", form);
 
@@ -183,7 +190,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       form.DistributionType !== "Distribution type" &&
       form.ToleranceType !== "" &&
       form.ToleranceType !== "" &&
-      form.Samples !== ""
+      form.Samples !== "" &&
+      form.Sign !== ""
     ) {
       console.log("Database", databaseFiltered[0].ProjectName);
       const index = Database.findIndex(
@@ -199,6 +207,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       } else {
         newID = lastID + 1;
       }
+
+      const id = index + 1;
       console.log("lastID", lastID);
       const nComponent = {
         Index: newID,
@@ -212,7 +222,10 @@ const AddComponent = ({ databaseFiltered, Database }) => {
         DistributionType: form.DistributionType,
         ToleranceType: form.ToleranceType,
         Samples: Number(form.Samples),
+        Sign: form.Sign,
       };
+
+      addNewDim(id, nComponent);
 
       Database[index].DatabaseDim.push(nComponent);
 
@@ -329,7 +342,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                     display: "inline-block",
                     width: "20px", // Adjust the width of the rectangle as needed
                     height: "20px", // Adjust the height of the rectangle as needed
-                    backgroundColor: componentColor,
+                    backgroundColor: form.Color,
                     marginLeft: "10px", // Add some spacing between the paragraph and the rectangle
                   }}
                 ></div>
@@ -419,20 +432,22 @@ const AddComponent = ({ databaseFiltered, Database }) => {
               </Col>
             </Row>
             <Row>
-              <Form.Group controlId="formGridState" className="col col-sm-6">
-                <Form.Label>Select tolerance type</Form.Label>
-                <Form.Select
-                  defaultValue="Select tolerance"
-                  className="form-control"
-                  name="ToleranceType"
-                  value={form.ToleranceType}
-                  onChange={(e) => handleChange(e)}
-                >
-                  <option value="Select tolerance">Select tolerance</option>
-                  <option value="General Tolerance">General Tolerance</option>
-                  <option value="Imposed Tolerance">Imposed Tolerance</option>
-                </Form.Select>
-              </Form.Group>
+              <Col>
+                <Form.Group controlId="formGridState" className="col col-sm-6">
+                  <Form.Label>Select tolerance type</Form.Label>
+                  <Form.Select
+                    defaultValue="Select tolerance"
+                    className="form-control"
+                    name="ToleranceType"
+                    value={form.ToleranceType}
+                    onChange={(e) => handleChange(e)}
+                  >
+                    <option value="Select tolerance">Select tolerance</option>
+                    <option value="General Tolerance">General Tolerance</option>
+                    <option value="Imposed Tolerance">Imposed Tolerance</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
               <Col>
                 <Form.Group controlId="formGridState" className="col col-sm-6">
                   <Form.Label>Select distribution type</Form.Label>
@@ -468,6 +483,34 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                     </Form.Group>
                   </Row>
                 )}
+              </Col>
+              <Col>
+                <Form.Group controlId="formGridState" className="col col-sm-6">
+                  <Form.Label>Select Sign</Form.Label>
+                  <Form.Select
+                    defaultValue="Select Sign"
+                    className="form-control"
+                    name="Sign"
+                    value={form.Sign}
+                    onChange={(e) => handleChange(e)}
+                  >
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Samples</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter number of samples"
+                    name="Samples"
+                    value={form.Samples}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </Form.Group>
               </Col>
             </Row>
 
@@ -531,18 +574,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown> */}
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Samples</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter number of samples"
-                name="Samples"
-                value={form.Samples}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </Form.Group>
           </Col>
         </Row>
         <div className="d-flex justify-content-between">
