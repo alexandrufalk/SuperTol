@@ -24,140 +24,7 @@ const Database = () => {
   );
   const [viewCancel, setViewCancel] = useState(false);
   const [viewAddComponent, setViewAddComponent] = useState(true);
-  const Database = [
-    {
-      ProjectName: "Test Name1",
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          Name: "Housing",
-          Description: "Dim1",
-          UniqueIdentifier: "D1",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.4,
-          LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.66",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 2,
-          Name: "Cover",
-          Description: "Dim2",
-          UniqueIdentifier: "D2",
-          DrwNr: "123",
-          NominalValue: 2,
-          UpperTolerance: 1,
-          LowerTolerance: -1,
-          DistributionType: "Normal Cpk 1.33",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 3,
-          Name: "Connector",
-          Description: "Dim3",
-          UniqueIdentifier: "D3",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.2,
-          LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.66",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-      ],
-    },
-    {
-      ProjectName: "Test Name2",
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          Name: "Housing2",
-          Description: "Dim21",
-          UniqueIdentifier: "D1",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.4,
-          LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.66",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 2,
-          Name: "Cover2",
-          Description: "Dim22",
-          UniqueIdentifier: "D2",
-          DrwNr: "123",
-          NominalValue: 2,
-          UpperTolerance: 1,
-          LowerTolerance: -1,
-          DistributionType: "Normal Cpk 1.33",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 3,
-          Name: "Connector2",
-          Description: "Dim23",
-          UniqueIdentifier: "D3",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.2,
-          LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.66",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-      ],
-    },
-  ];
-  const DatabaseTemplateName = [
-    {
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Housing",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Cover",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "PCB",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Cover",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Housing",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "Connector",
-          Color: "Green",
-        },
-      ],
-    },
-  ];
+
   // console.log("Database", Database);
 
   const [DatabaseUpdate, setDatabaseUpdate] = useState(databaseProjects);
@@ -221,6 +88,7 @@ const Database = () => {
   const handleSelectProjectnameData = (e) => {
     setSelectprojectData(e);
   };
+  console.log("databaseFiltered", databaseFiltered);
 
   return (
     <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
@@ -265,7 +133,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.ID}
                         </td>
                       ))}
@@ -293,7 +160,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.Description}
                         </td>
                       ))}
@@ -307,7 +173,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.UniqueIdentifier}
                         </td>
                       ))}
@@ -321,7 +186,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.DrwNr}
                         </td>
                       ))}
@@ -330,12 +194,11 @@ const Database = () => {
                       <th>Nominal Value</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td
-                          key={n.ID + n.NominalValue}
+                          key={n.ID + "NominalValue"}
                           style={{
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.NominalValue}
                         </td>
                       ))}
@@ -349,7 +212,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.UpperTolerance}
                         </td>
                       ))}
@@ -363,7 +225,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.LowerTolerance}
                         </td>
                       ))}
@@ -445,7 +306,6 @@ const Database = () => {
                             color: n.Color ? n.Color.toLowerCase() : "inherit",
                           }}
                         >
-                          {" "}
                           {n.ToleranceType}
                         </td>
                       ))}
@@ -507,10 +367,27 @@ const Database = () => {
                         </td>
                       ))}
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <th>Distribution Graph</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.ID + "graph"}>graph{n.ID}</td>
+                      ))}
+                    </tr> */}
+                    <tr>
+                      <th>Delete</th>
+                      {databaseFiltered[0].DatabaseDim.map((n) => (
+                        <td key={n.ID + "Remove case summary"}>
+                          <Button
+                            type="button"
+                            variant="outline-danger"
+                            // onClick={() => {
+                            //   RemoveCase(n.ID);
+                            //   forceUpdate();
+                            // }}
+                          >
+                            X
+                          </Button>
+                        </td>
                       ))}
                     </tr>
                   </thead>
@@ -526,7 +403,8 @@ const Database = () => {
           <AddComponent
             databaseFiltered={databaseFiltered}
             Database={DatabaseUpdate}
-            viewAddComponentData={viewAddComponentData}
+            // viewAddComponentData={viewAddComponentData}
+            setDatabaseUpdate={setDatabaseUpdate}
           />
           {viewCancel && (
             <div className="d-flex justify-content-between">

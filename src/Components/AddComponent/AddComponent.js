@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import useTemplate from "../../Hooks/useTemplate";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
-const AddComponent = ({ databaseFiltered, Database }) => {
+const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
   console.log("Database from ADDComponent", databaseFiltered);
 
   const [viewComponents, setViewComponents] = useState("Select Component Name");
@@ -85,7 +85,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     LowerTolerance: "",
     DistributionType: "",
     ToleranceType: "",
-    Samples: "",
     Color: "",
     Sign: "",
   });
@@ -118,49 +117,30 @@ const AddComponent = ({ databaseFiltered, Database }) => {
   };
   console.log("componentData", componentData);
 
-  // const TemplateDatabaseFilter = (e) => {
-  //   if (
-  //     e.target.value !== "New Component" &&
-  //     e.target.value !== "Name of component"
-  //   ) {
-  //     console.log("e", e.target.value);
-
-  //     const index = componentData[0].Data.findIndex(
-  //       (x) => x.ComponentName === e.target.value
-  //     );
-  //     // console.log("index", index);
-
-  //     SetSelectedColor(componentData[0].Data[index].Color);
-
-  //     // setTemplateSelected(true);
-  //     // setViewAddTemplateName(false);
-  //   } else {
-  //     console.log("New component selected");
-  //     // setTemplateSelected(false);
-  //     // setViewAddTemplateName(true);
-  //     // setViewSelectTemplate(false);
-  //     // setSelectTemplate("Select template name");
-  //   }
-  // };
-
   const handleSelectTemplate = (e) => {
-    console.log("e from handleSelecttemplate:", e);
+    console.log("e from handleSelectTemplate:", e);
     setViewComponents(e);
     filterColor(e);
-    const test = e;
 
-    setForm({ ...form, Name: test });
+    setForm((prevForm) => ({
+      ...prevForm,
+      Name: e,
+    }));
   };
 
   const filterColor = (e) => {
     const obj = componentData[0].Data.find((o) => o.ComponentName === e);
     const index = componentData[0].Data.indexOf(obj);
     const color = componentData[0].Data[index].Color;
-
     const testcolor = color.toLowerCase();
     console.log("Color from filterColor", testcolor);
-    setForm({ ...form, Color: testcolor });
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      Color: testcolor,
+    }));
   };
+
   console.log("AddComponent form", form);
 
   console.log("AddComponent Template name:", viewComponents);
@@ -190,17 +170,16 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       form.DistributionType !== "Distribution type" &&
       form.ToleranceType !== "" &&
       form.ToleranceType !== "" &&
-      form.Samples !== "" &&
-      form.Sign !== ""
+      form.Sign !== "" &&
+      form.Color !== "" &&
+      form.DrwNr !== ""
     ) {
       console.log("Database", databaseFiltered[0].ProjectName);
       const index = Database.findIndex(
         (x) => x.ProjectName === databaseFiltered[0].ProjectName
       );
       console.log("index", index);
-      const lastID = Math.max(
-        ...Database[index].DatabaseDim.map((o) => o.Index)
-      );
+      const lastID = Math.max(...Database[index].DatabaseDim.map((o) => o.ID));
       let newID = 0;
       if (lastID === -Infinity) {
         newID = 1;
@@ -211,46 +190,28 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       const id = index + 1;
       console.log("lastID", lastID);
       const nComponent = {
-        Index: newID,
+        ID: newID,
         Name: form.Name,
         Description: form.Description,
         UniqueIdentifier: `D${newID}`,
-        DrwNr: form.DrwNr,
         NominalValue: Number(form.NominalValue),
         UpperTolerance: Number(form.UpperTolerance),
         LowerTolerance: Number(form.LowerTolerance),
+        Sign: form.Sign,
         DistributionType: form.DistributionType,
         ToleranceType: form.ToleranceType,
-        Samples: Number(form.Samples),
-        Sign: form.Sign,
+        Color: form.Color,
+        DrwNr: form.DrwNr,
       };
 
       addNewDim(id, nComponent);
 
       Database[index].DatabaseDim.push(nComponent);
+      setDatabaseUpdate([...Database]); // Trigger a shallow copy to notify changes
 
       console.log("Database Updated", Database);
 
       resetButton();
-
-      // Database.push({
-      //   ProjectName: databaseAdd[0].ProjectName,
-      //   TemplateName: databaseAdd[0].TemplateName,
-      //   Data: [
-      //     {
-      //       Index: 1,
-      //       Name: form.Name,
-      //       Description: form.Description,
-      //       UniqueIdentifier: "test",
-      //       DrwNr: form.DrwNr,
-      //       NominalValue: form.NominalValue,
-      //       UpperTolerance: form.UpperTolerance,
-      //       LowerTolerance: form.LowerTolerance,
-      //       DistributionType: form.DistributionType,
-      //       ToleranceType: form.ToleranceType,
-      //     },
-      //   ],
-      // });
     } else {
       toast("Add all informations!", {
         position: toast.POSITION.TOP_CENTER,
@@ -286,6 +247,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       DistributionType: "",
       ToleranceType: "",
       Samples: "",
+      Color: "",
+      Sign: "",
     });
   };
 
@@ -373,24 +336,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                 />
               </Form.Group>
             </Row>
-            {/* <Row className="mb-3">
-              <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter description"
-                  onChange={(e) => handleComponentDescripion(e)}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Drw. nr.</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter drawing number"
-                  onChange={handleDrwNr}
-                />
-              </Form.Group>
-            </Row> */}
 
             <Row className="mb-3">
               <Col>
@@ -499,81 +444,7 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                   </Form.Select>
                 </Form.Group>
               </Col>
-              <Col>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Samples</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter number of samples"
-                    name="Samples"
-                    value={form.Samples}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </Form.Group>
-              </Col>
             </Row>
-
-            {/* <DropdownButton
-              title={selectToleranceType}
-              onSelect={(e) => {
-                handleSelectToleranceType(e);
-              }}
-              variant="secondary"
-            >
-              <Dropdown.Item
-                eventKey={"General Tolerance"}
-                key={"General Tolerance"}
-              >
-                General Tolerance
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey={"Imposed Tolerance"}
-                key={"Imposed Tolerance"}
-              >
-                Imposed Tolerance
-              </Dropdown.Item>
-            </DropdownButton>
-            <Dropdown
-              onSelect={(e) => {
-                handleDistributionType(e);
-                handleCustomCpK(e);
-              }}
-            >
-              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                {distributionType}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item eventKey={"Normal Cpk 1"} key={"Normal Cpk 1"}>
-                  Normal Cpk 1
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk 1.33"}
-                  key={"Normal Cpk 1.33t"}
-                >
-                  Normal Cpk 1.33
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk 1.66"}
-                  key={"Normal Cpk 1.66t"}
-                >
-                  Normal Cpk 1.66
-                </Dropdown.Item>
-                <Dropdown.Item eventKey={"Normal Cpk 2"} key={"Normal Cpk 2"}>
-                  Normal Cpk 2
-                </Dropdown.Item>
-
-                <Dropdown.Item eventKey={"Uniform"} key={"Uniform"}>
-                  Uniform
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk Custom"}
-                  key={"Normal Cpk Custom"}
-                >
-                  Normal Cpk Custom
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
           </Col>
         </Row>
         <div className="d-flex justify-content-between">
@@ -586,24 +457,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
             Add
           </Button>
         </div>
-        {/* <Row className="mb-3">
-          <Form.Group controlId="formGridCheckbox" className="col col-sm-6">
-            <button
-              type="submit"
-              onClick={submitButton}
-              className="me-4 btn btn-success btn-lg btn-block"
-            >
-              Submit
-            </button>
-            <button
-              type="reset"
-              onClick={resetButton}
-              className="me-4 btn btn-danger btn-lg btn-block"
-            >
-              Cancel
-            </button>
-          </Form.Group>
-        </Row> */}
       </Form>
     </>
   );
