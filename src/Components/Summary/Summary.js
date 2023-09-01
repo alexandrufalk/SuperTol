@@ -531,7 +531,7 @@ const Summary = ({ NewTemplate }) => {
                             variant="outline-danger"
                             onClick={() => {
                               RemoveCase(n.ID);
-                              forceUpdate();
+                              // forceUpdate();
                             }}
                           >
                             X
@@ -539,20 +539,6 @@ const Summary = ({ NewTemplate }) => {
                         </td>
                       </tr>
                     ))}
-                  {/* <tr>
-                  <td>1</td>
-                  <td>Case1</td>
-                  <td>Gap housing-cover</td>
-                  <td>Alex</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Case2</td>
-                  <td>Gap housing-connector</td>
-                  <td>Alex</td>
-                  <td>data</td>
-                </tr> */}
                 </tbody>
               </Table>
             </div>

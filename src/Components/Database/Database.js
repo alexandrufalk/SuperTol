@@ -12,9 +12,10 @@ import "./database.css";
 import ImportImage from "../ImportImage/ImportImage.tsx";
 import AddComponent from "../AddComponent/AddComponent";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
+import useTemplate from "../../Hooks/useTemplate";
 
 const Database = () => {
-  const { databaseProjects, addNewDim, removeDim } = useDatabaseProjects();
+  const { databaseProjects, removeDim } = useDatabaseProjects();
   const [viewAddComponentData, setViewAddComponentData] = useState(false);
 
   const [databaseFiltered, setDatabaseFiltered] = useState([]);
@@ -24,10 +25,14 @@ const Database = () => {
   );
   const [viewCancel, setViewCancel] = useState(false);
   const [viewAddComponent, setViewAddComponent] = useState(true);
+  const [templateUpdate, setTemplateUpdate] = useState([]);
+  const [isTemplate, setIsTemplate] = useState(false);
+  const [componentData, setComponentData] = useState();
 
   // console.log("Database", Database);
 
   const [DatabaseUpdate, setDatabaseUpdate] = useState(databaseProjects);
+  const { templates } = useTemplate();
 
   useEffect(() => {
     const dataU = JSON.parse(window.localStorage.getItem("DatabasesU"));
@@ -38,6 +43,15 @@ const Database = () => {
     }
   }, []);
   console.log("useEffect DatabaseUpdate", DatabaseUpdate);
+  useEffect(() => {
+    templateIsUpdate();
+  }, [templates]);
+
+  const templateIsUpdate = () => {
+    if (templates.length > 0) {
+      setTemplateUpdate(templates);
+    }
+  };
 
   const databaseProjectIsupdate = () => {
     if (databaseProjects.length > 0) {
@@ -53,6 +67,9 @@ const Database = () => {
     const DatabasesU = [DatabaseUpdate];
     window.localStorage.setItem("DatabasesU", JSON.stringify(DatabasesU));
     console.log("Database was updated");
+    if (selectProjectData !== "Select project name") {
+      DatabasesFilter(selectProjectData);
+    }
   }, [DatabaseUpdate]);
 
   const SetViewAdd = () => {
@@ -90,6 +107,40 @@ const Database = () => {
   };
   console.log("databaseFiltered", databaseFiltered);
 
+  const TemplateComponentFiltered = () => {
+    const TemplateN = databaseFiltered[0].TemplateName;
+    const filteredTemplate = templateUpdate.filter(
+      (data) => data.TemplateName === TemplateN
+    );
+    console.log("TemplateN", TemplateN);
+    console.log("TemplateComponentFiltered", filteredTemplate);
+    if (filteredTemplate.length > 0) {
+      setComponentData(filteredTemplate);
+      setIsTemplate(true);
+    }
+  };
+
+  const RemoveDim = (e) => {
+    let obj = databaseFiltered[0].DatabaseDim.find((o) => o.ID === e);
+    let index = databaseFiltered[0].DatabaseDim.indexOf(obj);
+    let update = databaseFiltered;
+    const projectId = databaseFiltered[0].ID;
+    const dimId = e;
+
+    console.log("Dim remove ids:", projectId, dimId);
+
+    if (index > -1) {
+      update[0].DatabaseDim.splice(index, 1);
+    }
+
+    console.log("update", update);
+
+    console.log("index", index);
+    // alert(`Case ${e} removed`);
+    console.log("remove obj", obj);
+    setDatabaseFiltered(update);
+    removeDim(projectId, dimId);
+  };
   return (
     <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
       <p className="fs-3 ">Database</p>
@@ -380,10 +431,10 @@ const Database = () => {
                           <Button
                             type="button"
                             variant="outline-danger"
-                            // onClick={() => {
-                            //   RemoveCase(n.ID);
-                            //   forceUpdate();
-                            // }}
+                            onClick={() => {
+                              RemoveDim(n.ID);
+                              // forceUpdate();
+                            }}
                           >
                             X
                           </Button>
@@ -403,8 +454,10 @@ const Database = () => {
           <AddComponent
             databaseFiltered={databaseFiltered}
             Database={DatabaseUpdate}
+            isTemplate={isTemplate}
             // viewAddComponentData={viewAddComponentData}
             setDatabaseUpdate={setDatabaseUpdate}
+            componentData={componentData}
           />
           {viewCancel && (
             <div className="d-flex justify-content-between">
@@ -426,7 +479,10 @@ const Database = () => {
             variant="secondary"
             type="submit"
             className="m-2"
-            onClick={SetViewAdd}
+            onClick={() => {
+              SetViewAdd();
+              TemplateComponentFiltered();
+            }}
           >
             Add component
           </Button>

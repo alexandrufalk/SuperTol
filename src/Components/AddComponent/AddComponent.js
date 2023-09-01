@@ -11,70 +11,22 @@ import "react-toastify/dist/ReactToastify.css";
 import useTemplate from "../../Hooks/useTemplate";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
-const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
+const AddComponent = ({
+  databaseFiltered,
+  Database,
+  setDatabaseUpdate,
+  isTemplate,
+  componentData,
+}) => {
   console.log("Database from ADDComponent", databaseFiltered);
 
   const [viewComponents, setViewComponents] = useState("Select Component Name");
-  const [selectedColor, SetSelectedColor] = useState("");
-  const [componentData, setComponentData] = useState();
-  const [viewDropDownComponents, setViewDropDownComponents] = useState(false);
-  const [isTemplate, setIsTemplate] = useState(false);
-
-  const [templateUpdate, setTemplateUpdate] = useState([]);
-  const [componentColor, setComponentColor] = useState("");
 
   const [viewCustomCpk, setViewCustomCpk] = useState(false);
-  const { templates } = useTemplate();
-  const { addNewDim, removeDim } = useDatabaseProjects();
 
-  const DatabaseTemplateName = [
-    {
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Housing1",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Cover1",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "PCB1",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Cover2",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Housing2",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "Connector2",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template3",
-      Data: [],
-    },
-  ];
+  const { addNewDim } = useDatabaseProjects();
 
-  console.log("Is templates?:", templateUpdate);
+  console.log("Is templates?:", isTemplate);
 
   const [form, setForm] = useState({
     Name: "",
@@ -89,32 +41,6 @@ const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
     Sign: "",
   });
 
-  useEffect(() => {
-    TemplateComponentFiltered();
-  }, [databaseFiltered]);
-
-  useEffect(() => {
-    templateIsUpdate();
-  }, [templates]);
-
-  const templateIsUpdate = () => {
-    if (templates.length > 0) {
-      setTemplateUpdate(templates);
-    }
-  };
-
-  const TemplateComponentFiltered = () => {
-    const TemplateN = databaseFiltered[0].TemplateName;
-    const filteredTemplate = templateUpdate.filter(
-      (data) => data.TemplateName === TemplateN
-    );
-    console.log("TemplateN", TemplateN);
-    console.log("TemplateComponentFiltered", filteredTemplate);
-    if (filteredTemplate.length > 0) {
-      setComponentData(filteredTemplate);
-      setIsTemplate(true);
-    }
-  };
   console.log("componentData", componentData);
 
   const handleSelectTemplate = (e) => {
@@ -169,8 +95,9 @@ const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
       form.DistributionType !== "" &&
       form.DistributionType !== "Distribution type" &&
       form.ToleranceType !== "" &&
-      form.ToleranceType !== "" &&
+      form.ToleranceType !== "Select tolerance" &&
       form.Sign !== "" &&
+      form.Sign !== "Select Sign" &&
       form.Color !== "" &&
       form.DrwNr !== ""
     ) {
@@ -273,13 +200,7 @@ const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
                     <Form.Label>Select Component</Form.Label>
                     <DropdownButton
                       title={viewComponents}
-                      // defaultValue="Select Component"
-                      // className="form-control"
-                      // name="Name"
-                      // value={form.Name}
                       onSelect={(e) => {
-                        // handleChange(e);
-                        // TemplateDatabaseFilter(e);
                         handleSelectTemplate(e);
                       }}
                     >
@@ -303,7 +224,7 @@ const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
                 <div
                   style={{
                     display: "inline-block",
-                    width: "20px", // Adjust the width of the rectangle as needed
+                    width: "40px", // Adjust the width of the rectangle as needed
                     height: "20px", // Adjust the height of the rectangle as needed
                     backgroundColor: form.Color,
                     marginLeft: "10px", // Add some spacing between the paragraph and the rectangle
@@ -439,6 +360,7 @@ const AddComponent = ({ databaseFiltered, Database, setDatabaseUpdate }) => {
                     value={form.Sign}
                     onChange={(e) => handleChange(e)}
                   >
+                    <option value="Select Sign">Select Sign</option>
                     <option value="+">+</option>
                     <option value="-">-</option>
                   </Form.Select>
