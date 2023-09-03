@@ -9,7 +9,7 @@ import TemplateImg from "./Icons/TemplateImg.png";
 import AddImg from "./Icons/AddImg.png";
 import PDFImg from "./Icons/PDFImg.png";
 
-const NavBarSMenu = (isBurgherClicked) => {
+const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
   // to change burger classes
   //   const [burger_class, setBurgerClass] = useState("burger-bar unclicked");
   //   const [menu_class, setMenuClass] = useState("menu hidden");
@@ -19,15 +19,15 @@ const NavBarSMenu = (isBurgherClicked) => {
   //   const updateMenu = () => {
   //     if (!isMenuClicked) {
   //       setBurgerClass("burger-bar clicked");
-  //       setMenuClass("menu visible");
+  //       setMenuClass("menu isBurgherClicked");
   //     } else {
   //       setBurgerClass("burger-bar unclicked");
   //       setMenuClass("menu hidden");
   //     }
   //     // setIsMenuClicked(!isMenuClicked);
   //   };
-  const visible = isBurgherClicked.isBurgherClicked;
-  console.log("NavBarSMenu isBurgherClicked:", visible);
+
+  console.log("NavBarSMenu isBurgherClicked:", isBurgherClicked);
 
   return (
     <div>
@@ -39,7 +39,7 @@ const NavBarSMenu = (isBurgherClicked) => {
     //     </div>
     //   </Row> */}
       <Row className="stickyside">
-        {visible && (
+        {isBurgherClicked && (
           <div className="sidecompresed ">
             <Button
               variant="info"
@@ -58,6 +58,7 @@ const NavBarSMenu = (isBurgherClicked) => {
             <Button
               variant="success"
               className="sidebutonscompresed button1 shadow-lg"
+              onClick={ViewAddTemplate}
             >
               <Figure style={{ width: 30, height: 15 }}>
                 <Figure.Image
@@ -72,6 +73,7 @@ const NavBarSMenu = (isBurgherClicked) => {
             <Button
               variant="primary"
               className="sidebutonscompresed button1 shadow-lg"
+              onClick={ViewDatabase}
             >
               <Figure style={{ width: 30, height: 15 }}>
                 <Figure.Image
@@ -113,7 +115,7 @@ const NavBarSMenu = (isBurgherClicked) => {
             </Button>
           </div>
         )}
-        {!visible && (
+        {!isBurgherClicked && (
           <div>
             <div>
               <Button variant="info" className="sidebutonscompresed button1">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/esm/Table";
 import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
@@ -14,7 +15,7 @@ import AddComponent from "../AddComponent/AddComponent";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 import useTemplate from "../../Hooks/useTemplate";
 
-const Database = () => {
+const Database = ({ CloseDatabase }) => {
   const { databaseProjects, removeDim } = useDatabaseProjects();
   const [viewAddComponentData, setViewAddComponentData] = useState(false);
 
@@ -143,7 +144,21 @@ const Database = () => {
   };
   return (
     <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
-      <p className="fs-3 ">Database</p>
+      <Row>
+        <Col className="d-flex align-items-center">
+          <p className="fs-3 ">Database</p>
+        </Col>
+        <Col md="auto" className="align-self-center">
+          <Button
+            variant="outline-danger"
+            type="button"
+            onClick={CloseDatabase}
+          >
+            X
+          </Button>
+        </Col>
+      </Row>
+
       <DropdownButton
         title={selectProjectData}
         onSelect={(e) => {
