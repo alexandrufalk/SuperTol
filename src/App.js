@@ -25,6 +25,7 @@ import { useProfile } from "./Components/GoogleLoginButton/profileContext";
 function App() {
   const [isMinSize2, setIsMinSize2] = useState(true);
   const [viewAddTemplate, setViewAddTemplate] = useState(false);
+  const [viewDatabase, setViewDatabase] = useState(true);
   const [isBurgherClicked, setIsBurgherClicked] = useState(true);
   const [isTemplate, setIsTemlate] = useState(false);
   const [showPage, setShowPage] = useState(false);
@@ -56,6 +57,15 @@ function App() {
 
   const CloseTemplate = () => {
     setViewAddTemplate(false);
+  };
+  const ViewAddTemplate = () => {
+    setViewAddTemplate(true);
+  };
+  const CloseDatabase = () => {
+    setViewDatabase(false);
+  };
+  const ViewDatabase = () => {
+    setViewDatabase(true);
   };
 
   const isBurgherClickedEvent = (e) => {
@@ -100,7 +110,11 @@ function App() {
               <Col className="p-0  col-1  col-md-1 col-lg-1 col-xl-1 ">
                 <Row className="stickyside p-1 ">
                   {isMinSize2 && (
-                    <NavBarSMenu isBurgherClicked={isBurgherClicked} />
+                    <NavBarSMenu
+                      isBurgherClicked={isBurgherClicked}
+                      ViewAddTemplate={ViewAddTemplate}
+                      ViewDatabase={ViewDatabase}
+                    />
                   )}
                 </Row>
               </Col>
@@ -110,7 +124,7 @@ function App() {
                   // databaseSummryFiltered={databaseSummryFiltered}
                 />
                 {viewAddTemplate && <Template CloseTemplate={CloseTemplate} />}
-                <Database />
+                {viewDatabase && <Database CloseDatabase={CloseDatabase} />}
                 {/* <AddComponent /> */}
                 <Case />
               </Col>

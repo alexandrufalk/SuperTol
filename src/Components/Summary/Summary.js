@@ -219,13 +219,16 @@ const Summary = ({ NewTemplate }) => {
 
       console.log("lastID", lastID);
       console.log("index", index);
-      // const nCase = {
-      //   ID: newID,
-      //   CaseName: `Case${newID}`,
-      //   Description: caseCaseName,
-      //   Author: "Alex",
-      //   Date: "Date",
-      // };
+      const currentDate = new Date(); // Get the current date and time
+      const isoFormattedDate = currentDate.toISOString();
+      console.log("currentDate:", isoFormattedDate);
+      const nCase = {
+        ID: newID,
+        CaseName: `Case${newID}`,
+        Description: caseCaseName,
+        Author: "Alex",
+        Date: isoFormattedDate,
+      };
       const id = index + 1;
 
       addNewCase(id, {
@@ -235,7 +238,7 @@ const Summary = ({ NewTemplate }) => {
         Author: "Alex",
       });
 
-      // databaseSummryUpdate[index].DataCase.push(nCase);
+      databaseSummryUpdate[index].DataCase.push(nCase);
       // const DatabaseUpdate = databaseSummryUpdate;
 
       // setDatabaseSummryUpdate(DatabaseUpdate);
@@ -243,10 +246,9 @@ const Summary = ({ NewTemplate }) => {
 
       setViewAddCase(false);
       setCaseCaseName("");
-      setDatabaseSummryUpdate(databaseProjects);
+      // setDatabaseSummryUpdate(databaseProjects);
       console.log("AddCase databaseProjects", databaseProjects);
       DatabaseFilter(ProjectName);
-      // Force a component rerender
 
       // console.log("caseCaseName", caseCaseName);
       console.log("databaseSummryUpdate Add Case", databaseSummryUpdate);
@@ -311,6 +313,7 @@ const Summary = ({ NewTemplate }) => {
       }
       console.log("newID", newID);
       e.preventDefault();
+
       addNewProject({
         ID: newID,
         ProjectName: projectName,
@@ -477,19 +480,17 @@ const Summary = ({ NewTemplate }) => {
                       </Dropdown.Item>
                     </Col>
                     <Col>
-                      <td key={n.ID + "Remove"}>
-                        <Button
-                          size="sm"
-                          type="button"
-                          variant="outline-danger"
-                          onClick={() => {
-                            RemoveProject(n.ID);
-                            forceUpdate();
-                          }}
-                        >
-                          X
-                        </Button>
-                      </td>
+                      <Button
+                        size="sm"
+                        type="button"
+                        variant="outline-danger"
+                        onClick={() => {
+                          RemoveProject(n.ID);
+                          // forceUpdate();
+                        }}
+                      >
+                        X
+                      </Button>
                     </Col>
                   </Row>
                 ))}
@@ -530,7 +531,7 @@ const Summary = ({ NewTemplate }) => {
                             variant="outline-danger"
                             onClick={() => {
                               RemoveCase(n.ID);
-                              forceUpdate();
+                              // forceUpdate();
                             }}
                           >
                             X
@@ -538,20 +539,6 @@ const Summary = ({ NewTemplate }) => {
                         </td>
                       </tr>
                     ))}
-                  {/* <tr>
-                  <td>1</td>
-                  <td>Case1</td>
-                  <td>Gap housing-cover</td>
-                  <td>Alex</td>
-                  <td>data</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Case2</td>
-                  <td>Gap housing-connector</td>
-                  <td>Alex</td>
-                  <td>data</td>
-                </tr> */}
                 </tbody>
               </Table>
             </div>

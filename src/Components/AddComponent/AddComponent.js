@@ -8,63 +8,25 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useTemplate from "../../Hooks/useTemplate";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
-const AddComponent = ({ databaseFiltered, Database }) => {
+const AddComponent = ({
+  databaseFiltered,
+  Database,
+  setDatabaseUpdate,
+  isTemplate,
+  componentData,
+}) => {
   console.log("Database from ADDComponent", databaseFiltered);
 
-  const [viewComponents, setViewComponents] = useState("Name of component");
-  const [selectedColor, SetSelectedColor] = useState("");
-  const [databaseAdd, setdatabaseAdd] = useState(databaseFiltered);
-  const [componentData, setComponentData] = useState([]);
-  const [viewDropDownComponents, setViewDropDownComponents] = useState(false);
+  const [viewComponents, setViewComponents] = useState("Select Component Name");
 
   const [viewCustomCpk, setViewCustomCpk] = useState(false);
-  const DatabaseTemplateName = [
-    {
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Housing1",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Cover1",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "PCB1",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          ComponentName: "Cover2",
-          Color: "Blue",
-        },
-        {
-          Index: 2,
-          ComponentName: "Housing2",
-          Color: "Red",
-        },
-        {
-          Index: 3,
-          ComponentName: "Connector2",
-          Color: "Green",
-        },
-      ],
-    },
-    {
-      TemplateName: "Test Template3",
-      Data: [],
-    },
-  ];
+
+  const { addNewDim } = useDatabaseProjects();
+
+  console.log("Is templates?:", isTemplate);
 
   const [form, setForm] = useState({
     Name: "",
@@ -75,51 +37,39 @@ const AddComponent = ({ databaseFiltered, Database }) => {
     LowerTolerance: "",
     DistributionType: "",
     ToleranceType: "",
-    Samples: "",
+    Color: "",
+    Sign: "",
   });
 
-  useEffect(() => {
-    TemplateComponentFiltered();
-  }, [databaseFiltered]);
-
-  const TemplateComponentFiltered = () => {
-    const TemplateN = databaseFiltered[0].TemplateName;
-    console.log("TemplateN", TemplateN);
-    setComponentData(
-      DatabaseTemplateName.filter((data) => data.TemplateName === TemplateN)
-    );
-    setViewDropDownComponents(true);
-  };
   console.log("componentData", componentData);
 
-  const TemplateDatabaseFilter = (e) => {
-    if (
-      e.target.value !== "New Component" &&
-      e.target.value !== "Name of component"
-    ) {
-      console.log("e", e.target.value);
-      console.log(componentData[0].Data);
-      const index = componentData[0].Data.findIndex(
-        (x) => x.ComponentName === e.target.value
-      );
-      // console.log("index", index);
-
-      SetSelectedColor(componentData[0].Data[index].Color);
-
-      // setTemplateSelected(true);
-      // setViewAddTemplateName(false);
-    } else {
-      console.log("New component selected");
-      // setTemplateSelected(false);
-      // setViewAddTemplateName(true);
-      // setViewSelectTemplate(false);
-      // setSelectTemplate("Select template name");
-    }
-  };
-
   const handleSelectTemplate = (e) => {
+    console.log("e from handleSelectTemplate:", e);
     setViewComponents(e);
+    filterColor(e);
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      Name: e,
+    }));
   };
+
+  const filterColor = (e) => {
+    const obj = componentData[0].Data.find((o) => o.ComponentName === e);
+    const index = componentData[0].Data.indexOf(obj);
+    const color = componentData[0].Data[index].Color;
+    const testcolor = color.toLowerCase();
+    console.log("Color from filterColor", testcolor);
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      Color: testcolor,
+    }));
+  };
+
+  console.log("AddComponent form", form);
+
+  console.log("AddComponent Template name:", viewComponents);
   const handleCustomCpK = (e) => {
     if (e.target.value === "Normal Cpk Custom") {
       setViewCustomCpk(true);
@@ -145,60 +95,50 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       form.DistributionType !== "" &&
       form.DistributionType !== "Distribution type" &&
       form.ToleranceType !== "" &&
-      form.ToleranceType !== "" &&
-      form.Samples !== ""
+      form.ToleranceType !== "Select tolerance" &&
+      form.Sign !== "" &&
+      form.Sign !== "Select Sign" &&
+      form.Color !== "" &&
+      form.DrwNr !== ""
     ) {
       console.log("Database", databaseFiltered[0].ProjectName);
       const index = Database.findIndex(
         (x) => x.ProjectName === databaseFiltered[0].ProjectName
       );
       console.log("index", index);
-      const lastID = Math.max(...Database[index].Data.map((o) => o.Index));
+      const lastID = Math.max(...Database[index].DatabaseDim.map((o) => o.ID));
       let newID = 0;
       if (lastID === -Infinity) {
         newID = 1;
       } else {
         newID = lastID + 1;
       }
+
+      const id = index + 1;
       console.log("lastID", lastID);
       const nComponent = {
-        Index: newID,
+        ID: newID,
         Name: form.Name,
         Description: form.Description,
         UniqueIdentifier: `D${newID}`,
-        DrwNr: form.DrwNr,
         NominalValue: Number(form.NominalValue),
         UpperTolerance: Number(form.UpperTolerance),
         LowerTolerance: Number(form.LowerTolerance),
+        Sign: form.Sign,
         DistributionType: form.DistributionType,
         ToleranceType: form.ToleranceType,
-        Samples: Number(form.Samples),
+        Color: form.Color,
+        DrwNr: form.DrwNr,
       };
 
-      Database[index].Data.push(nComponent);
+      addNewDim(id, nComponent);
+
+      Database[index].DatabaseDim.push(nComponent);
+      setDatabaseUpdate([...Database]); // Trigger a shallow copy to notify changes
 
       console.log("Database Updated", Database);
 
       resetButton();
-
-      // Database.push({
-      //   ProjectName: databaseAdd[0].ProjectName,
-      //   TemplateName: databaseAdd[0].TemplateName,
-      //   Data: [
-      //     {
-      //       Index: 1,
-      //       Name: form.Name,
-      //       Description: form.Description,
-      //       UniqueIdentifier: "test",
-      //       DrwNr: form.DrwNr,
-      //       NominalValue: form.NominalValue,
-      //       UpperTolerance: form.UpperTolerance,
-      //       LowerTolerance: form.LowerTolerance,
-      //       DistributionType: form.DistributionType,
-      //       ToleranceType: form.ToleranceType,
-      //     },
-      //   ],
-      // });
     } else {
       toast("Add all informations!", {
         position: toast.POSITION.TOP_CENTER,
@@ -234,6 +174,8 @@ const AddComponent = ({ databaseFiltered, Database }) => {
       DistributionType: "",
       ToleranceType: "",
       Samples: "",
+      Color: "",
+      Sign: "",
     });
   };
 
@@ -243,71 +185,51 @@ const AddComponent = ({ databaseFiltered, Database }) => {
         Add Component
       </p>
       <p className="fs-4 border border-success-subtle p-2 rounded">
-        Project Name:{databaseAdd[0].ProjectName}
+        Project Name:{databaseFiltered[0].ProjectName}
       </p>
       <Form className="p-2" onSubmit={handleSubmit}>
         <Row>
           <Col>
             <Row>
               <Col>
-                {viewDropDownComponents && (
+                {isTemplate && (
                   <Form.Group
                     controlId="formGridState"
                     className="col col-sm-6"
                   >
                     <Form.Label>Select Component</Form.Label>
-                    <Form.Select
-                      defaultValue="Select Component"
-                      className="form-control"
-                      name="Name"
-                      value={form.Name}
-                      onChange={(e) => {
-                        handleChange(e);
-                        TemplateDatabaseFilter(e);
+                    <DropdownButton
+                      title={viewComponents}
+                      onSelect={(e) => {
                         handleSelectTemplate(e);
                       }}
                     >
-                      <option value="Select Component">Select Component</option>
+                      {/* <option value="Select Component">Select Component</option> */}
                       {componentData[0].Data.map((n) => (
-                        <option value={n.ComponentName}>
+                        <Dropdown.Item
+                          eventKey={n.ComponentName}
+                          key={n.ComponentName}
+                        >
                           {n.ComponentName}
-                        </option>
+                        </Dropdown.Item>
+                        // <option value={n.TemplateName}>{n.TemplateName}</option>
                       ))}
-                      <option value="New Component">New Component</option>
-                    </Form.Select>
+                      {/* <option value="New Component">New Component</option> */}
+                    </DropdownButton>
                   </Form.Group>
-
-                  // <DropdownButton
-                  //   title={viewComponents}
-                  //   onSelect={(e) => {
-                  //     TemplateDatabaseFilter(e);
-                  //     handleSelectTemplate(e);
-                  //   }}
-                  //   variant="secondary"
-                  // >
-                  //   {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                  //     {projectTemplate}
-                  //   </Dropdown.Toggle> */}
-
-                  //   {componentData[0].Data.map((n) => (
-                  //     <Dropdown.Item
-                  //       eventKey={n.ComponentName}
-                  //       key={n.ComponentName}
-                  //     >
-                  //       {n.ComponentName}
-                  //     </Dropdown.Item>
-                  //   ))}
-                  //   <Dropdown.Item
-                  //     eventKey={"New Template"}
-                  //     key={"New Template"}
-                  //   >
-                  //     New Component
-                  //   </Dropdown.Item>
-                  // </DropdownButton>
                 )}
               </Col>
               <Col>
-                <p>Color {selectedColor}</p>
+                <p>Color </p>
+                <div
+                  style={{
+                    display: "inline-block",
+                    width: "40px", // Adjust the width of the rectangle as needed
+                    height: "20px", // Adjust the height of the rectangle as needed
+                    backgroundColor: form.Color,
+                    marginLeft: "10px", // Add some spacing between the paragraph and the rectangle
+                  }}
+                ></div>
               </Col>
             </Row>
             <ToastContainer transition={Bounce} autoClose={2000} />
@@ -335,24 +257,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                 />
               </Form.Group>
             </Row>
-            {/* <Row className="mb-3">
-              <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter description"
-                  onChange={(e) => handleComponentDescripion(e)}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Drw. nr.</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter drawing number"
-                  onChange={handleDrwNr}
-                />
-              </Form.Group>
-            </Row> */}
 
             <Row className="mb-3">
               <Col>
@@ -394,20 +298,22 @@ const AddComponent = ({ databaseFiltered, Database }) => {
               </Col>
             </Row>
             <Row>
-              <Form.Group controlId="formGridState" className="col col-sm-6">
-                <Form.Label>Select tolerance type</Form.Label>
-                <Form.Select
-                  defaultValue="Select tolerance"
-                  className="form-control"
-                  name="ToleranceType"
-                  value={form.ToleranceType}
-                  onChange={(e) => handleChange(e)}
-                >
-                  <option value="Select tolerance">Select tolerance</option>
-                  <option value="General Tolerance">General Tolerance</option>
-                  <option value="Imposed Tolerance">Imposed Tolerance</option>
-                </Form.Select>
-              </Form.Group>
+              <Col>
+                <Form.Group controlId="formGridState" className="col col-sm-6">
+                  <Form.Label>Select tolerance type</Form.Label>
+                  <Form.Select
+                    defaultValue="Select tolerance"
+                    className="form-control"
+                    name="ToleranceType"
+                    value={form.ToleranceType}
+                    onChange={(e) => handleChange(e)}
+                  >
+                    <option value="Select tolerance">Select tolerance</option>
+                    <option value="General Tolerance">General Tolerance</option>
+                    <option value="Imposed Tolerance">Imposed Tolerance</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
               <Col>
                 <Form.Group controlId="formGridState" className="col col-sm-6">
                   <Form.Label>Select distribution type</Form.Label>
@@ -444,80 +350,23 @@ const AddComponent = ({ databaseFiltered, Database }) => {
                   </Row>
                 )}
               </Col>
+              <Col>
+                <Form.Group controlId="formGridState" className="col col-sm-6">
+                  <Form.Label>Select Sign</Form.Label>
+                  <Form.Select
+                    defaultValue="Select Sign"
+                    className="form-control"
+                    name="Sign"
+                    value={form.Sign}
+                    onChange={(e) => handleChange(e)}
+                  >
+                    <option value="Select Sign">Select Sign</option>
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
             </Row>
-
-            {/* <DropdownButton
-              title={selectToleranceType}
-              onSelect={(e) => {
-                handleSelectToleranceType(e);
-              }}
-              variant="secondary"
-            >
-              <Dropdown.Item
-                eventKey={"General Tolerance"}
-                key={"General Tolerance"}
-              >
-                General Tolerance
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey={"Imposed Tolerance"}
-                key={"Imposed Tolerance"}
-              >
-                Imposed Tolerance
-              </Dropdown.Item>
-            </DropdownButton>
-            <Dropdown
-              onSelect={(e) => {
-                handleDistributionType(e);
-                handleCustomCpK(e);
-              }}
-            >
-              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                {distributionType}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item eventKey={"Normal Cpk 1"} key={"Normal Cpk 1"}>
-                  Normal Cpk 1
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk 1.33"}
-                  key={"Normal Cpk 1.33t"}
-                >
-                  Normal Cpk 1.33
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk 1.66"}
-                  key={"Normal Cpk 1.66t"}
-                >
-                  Normal Cpk 1.66
-                </Dropdown.Item>
-                <Dropdown.Item eventKey={"Normal Cpk 2"} key={"Normal Cpk 2"}>
-                  Normal Cpk 2
-                </Dropdown.Item>
-
-                <Dropdown.Item eventKey={"Uniform"} key={"Uniform"}>
-                  Uniform
-                </Dropdown.Item>
-                <Dropdown.Item
-                  eventKey={"Normal Cpk Custom"}
-                  key={"Normal Cpk Custom"}
-                >
-                  Normal Cpk Custom
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown> */}
-
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Samples</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter number of samples"
-                name="Samples"
-                value={form.Samples}
-                onChange={handleChange}
-                className="form-control"
-              />
-            </Form.Group>
           </Col>
         </Row>
         <div className="d-flex justify-content-between">
@@ -530,24 +379,6 @@ const AddComponent = ({ databaseFiltered, Database }) => {
             Add
           </Button>
         </div>
-        {/* <Row className="mb-3">
-          <Form.Group controlId="formGridCheckbox" className="col col-sm-6">
-            <button
-              type="submit"
-              onClick={submitButton}
-              className="me-4 btn btn-success btn-lg btn-block"
-            >
-              Submit
-            </button>
-            <button
-              type="reset"
-              onClick={resetButton}
-              className="me-4 btn btn-danger btn-lg btn-block"
-            >
-              Cancel
-            </button>
-          </Form.Group>
-        </Row> */}
       </Form>
     </>
   );
