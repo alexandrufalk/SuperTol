@@ -301,14 +301,29 @@ const Template = ({ CloseTemplate }) => {
             />
           </Form.Group>
           <ToastContainer transition={Bounce} autoClose={2000} />
-
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={(e) => AddTemplate(e)}
-          >
-            Add Template
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={(e) => AddTemplate(e)}
+              >
+                Add Template
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setViewAddTemplateName(false);
+                  setViewSelectTemplate(true);
+                }}
+              >
+                View Templates
+              </Button>
+            </Col>
+          </Row>
         </Form>
       )}
       {viewSelectTemplate && (

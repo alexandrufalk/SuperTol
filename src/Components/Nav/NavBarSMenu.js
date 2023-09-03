@@ -26,6 +26,12 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
   //     }
   //     // setIsMenuClicked(!isMenuClicked);
   //   };
+  const scrollToSummary = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Optional: Smooth scrolling animation
+    });
+  };
 
   console.log("NavBarSMenu isBurgherClicked:", isBurgherClicked);
 
@@ -44,6 +50,7 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
             <Button
               variant="info"
               className="sidebutonscompresed button1 shadow-lg"
+              onClick={scrollToSummary}
             >
               <Figure style={{ width: 30, height: 15 }}>
                 <Figure.Image
@@ -118,13 +125,25 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
         {!isBurgherClicked && (
           <div>
             <div>
-              <Button variant="info" className="sidebutonscompresed button1">
+              <Button
+                variant="info"
+                className="sidebutonscompresed button1"
+                onClick={scrollToSummary}
+              >
                 Summary
               </Button>
-              <Button variant="success" className="sidebutonscompresed button1">
+              <Button
+                variant="success"
+                className="sidebutonscompresed button1"
+                onClick={ViewAddTemplate}
+              >
                 Template
               </Button>
-              <Button variant="primary" className="sidebutonscompresed button1">
+              <Button
+                variant="primary"
+                className="sidebutonscompresed button1"
+                onClick={ViewDatabase}
+              >
                 Database
               </Button>
               <Button variant="success" className="sidebutonscompresed button1">
