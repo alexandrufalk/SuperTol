@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 import { Spinner } from "react-bootstrap";
@@ -22,8 +22,9 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
-const Case = () => {
+const Case = ({ projectId, caseId }) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
@@ -32,6 +33,12 @@ const Case = () => {
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
   const [nrSamples, setNrSamples] = useState("Select Nr. of samples ");
   const [isSpinner, setIsSpinner] = useState(false);
+  const [isStatistic, setIsStatistic] = useState(false);
+  const [isDatabaseProjects, setIsdatabaseProjects] = useState(false);
+  const { databaseProjects } = useDatabaseProjects();
+  const [databaseSummryUpdate, setDatabaseSummryUpdate] =
+    useState(databaseProjects);
+
   // const [isGraph, setIsGraph] = useState(false);
 
   const [statisticalForm, setStatisticalForm] = useState({
@@ -49,6 +56,7 @@ const Case = () => {
     Max: "",
   });
   console.log("statisticalForm", statisticalForm);
+  console.log("projectId,caseid:", projectId, caseId);
 
   const DatabaseCases = [
     {
@@ -286,6 +294,20 @@ const Case = () => {
     },
   ];
 
+  const databaseProjectIsupdate = () => {
+    if (databaseProjects.length > 0 && projectId !== null && caseId !== null) {
+      setIsdatabaseProjects(true);
+      setDatabaseSummryUpdate(databaseProjects);
+      console.log(
+        "Dimensions from selected project:",
+        databaseProjects[projectId - 1].DatabaseDim
+      );
+    }
+  };
+  useEffect(() => {
+    databaseProjectIsupdate();
+  }, [databaseProjects]);
+
   const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
 
   //Worst case nominal
@@ -508,6 +530,7 @@ const Case = () => {
       setPdfData(PDFdataGraph);
       setIsSpinner(false);
     }, 1000); // Simulate a 5-second delay
+    setIsStatistic(true);
   };
 
   const handleCpkChange = (e) => {
@@ -726,59 +749,71 @@ const Case = () => {
                     <h3>Worst Case</h3>
                     <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75 rounded-4">
                       <ListGroup.Item className="fs-5 tabelCase text-light">
-                        {`Nominal:${WorstCaseNominal}`}
+                        {`Nominal:${WorstCaseNominal.toFixed(3)}`}
                       </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance: ${WorstCaseTolerance}`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance: ${-WorstCaseTolerance}`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Upper Limit: ${
+                      <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance: ${WorstCaseTolerance.toFixed(
+                        3
+                      )}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance: ${-WorstCaseTolerance.toFixed(
+                        3
+                      )}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Upper Limit: ${(
                         WorstCaseNominal + WorstCaseTolerance
-                      }`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Lower Limit: ${
+                      ).toFixed(3)}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Lower Limit: ${(
                         WorstCaseNominal - WorstCaseTolerance
-                      }`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Range: ${
+                      ).toFixed(3)}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Range: ${(
                         2 * WorstCaseTolerance
-                      }`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Symmetric:${WorstCaseNominal} ±${WorstCaseTolerance}`}</ListGroup.Item>
+                      ).toFixed(3)}`}</ListGroup.Item>
+                      <ListGroup.Item className="tabelCase text-light">{`Symmetric:${WorstCaseNominal.toFixed(
+                        3
+                      )} ±${WorstCaseTolerance.toFixed(3)}`}</ListGroup.Item>
                     </ListGroup>
                   </div>
                 </Col>
-                <Col>
-                  <div className="container-fluid tabelCase text-light">
-                    <h3>Statistic</h3>
-                    <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75 ">
-                      <ListGroup.Item className="fs-5 tabelCase text-light rounded-4">
-                        {`Mean: ${meanStatistic}`}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance:${statisticalForm.UTS} `}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance:${statisticalForm.LTS} `}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        Samples: 100000
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">{`Range: ${
-                        statisticalForm.UTS - statisticalForm.LTS
-                      }`}</ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        Pp:{statisticalForm.Pp}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        Ppk:{statisticalForm.PpK}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        St.Dev[σ]:{statisticalForm.StDev}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        Sigma intv.: {statisticalForm.SigmaInt}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light">
-                        Parts less LSL{" "}
-                      </ListGroup.Item>
-                      <ListGroup.Item className="tabelCase text-light rounded-4">
-                        Parts more USL
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </div>
-                </Col>
+                {isStatistic && (
+                  <Col>
+                    <div className="container-fluid tabelCase text-light">
+                      <h3>Statistic</h3>
+                      <ListGroup className="shadow p-3 mb-5 bg-body-tertiary rounded opacity-75 ">
+                        <ListGroup.Item className="fs-5 tabelCase text-light rounded-4">
+                          {`Mean: ${meanStatistic.toFixed(4)}`}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">{`Upper Tolerance:${statisticalForm.UTS.toFixed(
+                          4
+                        )} `}</ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">{`Lower Tolerance:${statisticalForm.LTS.toFixed(
+                          4
+                        )} `}</ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          Samples: 100000
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">{`Range: ${(
+                          statisticalForm.UTS - statisticalForm.LTS
+                        ).toFixed(4)}`}</ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          Pp:{statisticalForm.Pp.toFixed(4)}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          Ppk:{statisticalForm.PpK.toFixed(4)}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          St.Dev[σ]:{statisticalForm.StDev.toFixed(4)}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          Sigma intv.: {statisticalForm.SigmaInt.toFixed(4)}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light">
+                          Parts less LSL{" "}
+                        </ListGroup.Item>
+                        <ListGroup.Item className="tabelCase text-light rounded-4">
+                          Parts more USL
+                        </ListGroup.Item>
+                      </ListGroup>
+                    </div>
+                  </Col>
+                )}
               </Row>
             </Col>
           </Row>
@@ -852,28 +887,39 @@ const Case = () => {
         {/* <Button variant="secondary" type="submit" className="p-2">
           Add component
         </Button> */}
-        <DropdownButton
-          title={addComponent}
-          // onSelect={(e) => {
-          //   DatabasesFilter(e);
+        <Row>
+          <h2>
+            Add dimension to Case {caseId} (Project {projectId})
+          </h2>
+          {isDatabaseProjects && (
+            <Col>
+              <DropdownButton
+                title={addComponent}
+                // onSelect={(e) => {
+                //   DatabasesFilter(e);
 
-          //   handleSelectProjectnameData(e);
-          // }}
-          variant="secondary"
-        >
-          {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                //   handleSelectProjectnameData(e);
+                // }}
+                variant="secondary"
+              >
+                {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-          {Database[0].Data.map((n) => (
-            <Dropdown.Item eventKey={n.Name} key={n.Name + "Data"}>
-              {n.Name}
-            </Dropdown.Item>
-          ))}
-          {/* <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
+                {databaseSummryUpdate[projectId - 1].DatabaseDim.map((n) => (
+                  <Dropdown.Item eventKey={n.Name} key={n.Name + "Data"}>
+                    {n.Description} - {n.Name} :{n.NominalValue}±
+                    {(n.UpperTolerance - n.LowerTolerance) / 2}
+                  </Dropdown.Item>
+                ))}
+                {/* <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
           New Project
         </Dropdown.Item> */}
-        </DropdownButton>
+              </DropdownButton>
+            </Col>
+          )}
+          <Col></Col>
+        </Row>
       </div>
       <div className="scrollmenu">
         <Canvas canvasDatabse={DatabaseCalculation} />
