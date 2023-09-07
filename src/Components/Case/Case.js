@@ -28,7 +28,7 @@ const Case = ({ projectId, caseId }) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
-  const [addComponent, setAddComponent] = useState("Select Component");
+  const [addComponent, setAddComponent] = useState("Select Dimension");
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
   const [nrSamples, setNrSamples] = useState("Select Nr. of samples ");
@@ -38,6 +38,7 @@ const Case = ({ projectId, caseId }) => {
   const { databaseProjects } = useDatabaseProjects();
   const [databaseSummryUpdate, setDatabaseSummryUpdate] =
     useState(databaseProjects);
+  const [dataCaseFiltered, setDataCaseFiltered] = useState([]);
 
   // const [isGraph, setIsGraph] = useState(false);
 
@@ -55,6 +56,24 @@ const Case = ({ projectId, caseId }) => {
     PartsMore: "",
     Max: "",
   });
+
+  const [formAddDim, setFormAddDim] = useState({
+    ID: "",
+    Name: "",
+    Description: "",
+    UniqueIdentifier: "",
+    NominalValue: "",
+    UpperTolerance: "",
+    LowerTolerance: "",
+    DistributionType: "",
+    ToleranceType: "",
+    Color: "",
+    Sign: "",
+  });
+
+  console.log("formAddDim:", formAddDim);
+  console.log("Case databaseSummryUpdate:", databaseSummryUpdate);
+
   console.log("statisticalForm", statisticalForm);
   console.log("projectId,caseid:", projectId, caseId);
 
@@ -296,17 +315,49 @@ const Case = ({ projectId, caseId }) => {
 
   const databaseProjectIsupdate = () => {
     if (databaseProjects.length > 0 && projectId !== null && caseId !== null) {
-      setIsdatabaseProjects(true);
       setDatabaseSummryUpdate(databaseProjects);
-      console.log(
-        "Dimensions from selected project:",
-        databaseProjects[projectId - 1].DatabaseDim
-      );
+      console.log("Dimensions from selected project:");
+      setDataCaseFiltered(databaseProjects[projectId - 1].DatabaseDim);
+
+      // DatabaseCaseFilter();
     }
   };
+  console.log("dataCaseFiltered:", dataCaseFiltered);
+
   useEffect(() => {
     databaseProjectIsupdate();
-  }, [databaseProjects]);
+  }, [databaseProjects, projectId, caseId]);
+
+  useEffect(() => {
+    if (dataCaseFiltered.length > 0) {
+      setIsdatabaseProjects(true);
+    } else {
+      console.log("dataCaseFiltered:", false);
+    }
+  }, [dataCaseFiltered]);
+
+  // const DatabaseCaseFilter = () => {
+  //   if (
+  //     projectId !== null &&
+  //     caseId !== null &&
+  //     databaseSummryUpdate.length > 0
+  //   ) {
+  //     setDataCaseFiltered(
+  //       databaseSummryUpdate.filter((data) => data.ID === projectId)
+  //     );
+  //     setIsdatabaseProjects(true);
+  //     console.log("was setIsdatabaseProject", true);
+  //   } else {
+  //     console.log("was setIsdatabaseProject", false);
+  //   }
+  //   // setProjectSelected(true);
+  //   // setNewProject(false);
+  //   // } else if (e === "New Project") {
+  //   //   setProjectSelected(false);
+  //   //   setNewProject(true);
+  //   //   setSelectproject("Select project name");
+  //   // }
+  // };
 
   const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
 
@@ -341,6 +392,11 @@ const Case = ({ projectId, caseId }) => {
     console.log("setIsSpinner-True");
     setTimeout(() => setIsSpinner(false), 5000);
     // setIsGraph(true);
+  };
+
+  const handleChange = (e) => {
+    // console.log("event", e.target.value);
+    setFormAddDim({ ...formAddDim, [e.target.name]: e.target.value });
   };
 
   const generateStatistic = () => {
@@ -535,6 +591,12 @@ const Case = ({ projectId, caseId }) => {
 
   const handleCpkChange = (e) => {
     setGapCpk(e.target.value);
+  };
+
+  const handleSelectDimData = (e) => {
+    console.log("handleSelectDimData:", dataCaseFiltered[e - 1]);
+    const selectedDim = dataCaseFiltered[e - 1];
+    setFormAddDim({});
   };
   const handleNrSamples = (e) => {
     setNrSamples(e.target.value);
@@ -895,19 +957,19 @@ const Case = ({ projectId, caseId }) => {
             <Col>
               <DropdownButton
                 title={addComponent}
-                // onSelect={(e) => {
-                //   DatabasesFilter(e);
+                onSelect={(e) => {
+                  // DatabasesFilter(e);
 
-                //   handleSelectProjectnameData(e);
-                // }}
+                  handleSelectDimData(e);
+                }}
                 variant="secondary"
               >
                 {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
 
-                {databaseSummryUpdate[projectId - 1].DatabaseDim.map((n) => (
-                  <Dropdown.Item eventKey={n.Name} key={n.Name + "Data"}>
+                {dataCaseFiltered.map((n) => (
+                  <Dropdown.Item eventKey={n.ID} key={n.ID + "Data"}>
                     {n.Description} - {n.Name} :{n.NominalValue}±
                     {(n.UpperTolerance - n.LowerTolerance) / 2}
                   </Dropdown.Item>
@@ -918,7 +980,22 @@ const Case = ({ projectId, caseId }) => {
               </DropdownButton>
             </Col>
           )}
-          <Col></Col>
+          <Col>
+            <Form.Group controlId="formGridState" className="col col-sm-6">
+              <Form.Label>Select Sign</Form.Label>
+              <Form.Select
+                // defaultValue="Select Sign"
+                className="form-control"
+                name="Sign"
+                value={formAddDim.Sign}
+                onChange={(e) => handleChange(e)}
+              >
+                <option value="Select Sign">Select Sign</option>
+                <option value="+">+</option>
+                <option value="-">-</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
         </Row>
       </div>
       <div className="scrollmenu">

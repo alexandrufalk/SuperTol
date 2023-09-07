@@ -7,6 +7,8 @@ import {
   httpDeleteCase,
   httpAddNewDim,
   httpDeleteDim,
+  httpAddNewCaseDim,
+  httpDeleteCaseDim,
 } from "./requests";
 
 function useDatabaseProjects() {
@@ -122,6 +124,38 @@ function useDatabaseProjects() {
     [getDatabaseProjects]
   );
 
+  const addNewCaeDim = useCallback(
+    async (id, idCase, newCaseDim) => {
+      try {
+        const response = await httpAddNewCaseDim(id, idCase, newCaseDim);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Dimension wasn't added to the database");
+        }
+      } catch (error) {
+        console.error("Error adding new dimension:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
+  const removeCaseDim = useCallback(
+    async (id, idCase, caseDimID) => {
+      try {
+        const response = await httpDeleteCaseDim(id, idCase, caseDimID);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Dimension wasn't deleted");
+        }
+      } catch (error) {
+        console.error("Error deleting dimension:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
   return {
     databaseProjects,
     addNewProject,
@@ -130,6 +164,8 @@ function useDatabaseProjects() {
     removeCase,
     addNewDim,
     removeDim,
+    addNewCaeDim,
+    removeCaseDim,
   };
 }
 

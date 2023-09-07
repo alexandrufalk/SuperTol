@@ -281,7 +281,7 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
     setDatabaseSummryFiltered(update);
     removeCase(projectId, caseId);
   };
-  const SelectCase = (e, setProjectId, setCaseId) => {
+  const SelectCase = (e) => {
     const projectId = databaseSummryFiltered[0].ID;
     const caseId = e;
 
