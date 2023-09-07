@@ -21,7 +21,7 @@ import "./Summary.css";
 // import Figure from "react-bootstrap/Figure";
 // import Logo from "./Logo.png";
 
-const Summary = ({ NewTemplate }) => {
+const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
   const {
     databaseProjects,
     addNewProject,
@@ -281,6 +281,14 @@ const Summary = ({ NewTemplate }) => {
     setDatabaseSummryFiltered(update);
     removeCase(projectId, caseId);
   };
+  const SelectCase = (e) => {
+    const projectId = databaseSummryFiltered[0].ID;
+    const caseId = e;
+
+    console.log("Summary Case selext ids:", projectId, caseId);
+    setProjectId(projectId);
+    setCaseId(caseId);
+  };
 
   const RemoveProject = (e) => {
     removeProject(e);
@@ -510,7 +518,7 @@ const Summary = ({ NewTemplate }) => {
                   <tr>
                     <th>ID</th>
                     <th>Case Name</th>
-                    <th>CaseName</th>
+                    <th>Case Description</th>
                     <th>Author</th>
                     <th>Date</th>
                     <th>Delete</th>
@@ -521,8 +529,19 @@ const Summary = ({ NewTemplate }) => {
                     databaseSummryFiltered[0].DataCase.map((n) => (
                       <tr key={n.ID + "Summary table"}>
                         <td key={n.ID + "Summary table td"}> {n.ID}</td>
-                        <td key={n.ID + n.CaseName}> {n.CaseName}</td>
-                        <td key={n.ID + n.Description}> {n.Description}</td>
+                        <td key={n.ID + "CaseName"}>
+                          <Button
+                            type="button"
+                            variant="outline-secondary"
+                            onClick={() => {
+                              SelectCase(n.ID);
+                              // forceUpdate();
+                            }}
+                          >
+                            {n.CaseName}
+                          </Button>{" "}
+                        </td>
+                        <td key={n.ID + "nDescription"}> {n.Description}</td>
                         <td key={n.ID + n.Author}> {n.Author}</td>
                         <td key={n.ID + n.Date}> {n.Date}</td>
                         <td key={n.ID + "Remove case summary"}>

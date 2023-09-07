@@ -30,6 +30,8 @@ function App() {
   const [isTemplate, setIsTemlate] = useState(false);
   const [showPage, setShowPage] = useState(false);
   const { profile } = useProfile();
+  const [projectId, setProjectId] = useState(null);
+  const [caseId, setCaseId] = useState(null);
 
   console.log("Profile from App", profile);
 
@@ -80,6 +82,7 @@ function App() {
   const ShowPage = () => {
     setShowPage(!showPage);
   };
+
   console.log("showPage", showPage);
 
   return (
@@ -121,12 +124,14 @@ function App() {
               <Col className="p-2  col-11  col-md-11 col-lg-11 col-xl-11">
                 <Summary
                   NewTemplate={NewTemplate}
+                  setProjectId={setProjectId}
+                  setCaseId={setCaseId}
                   // databaseSummryFiltered={databaseSummryFiltered}
                 />
                 {viewAddTemplate && <Template CloseTemplate={CloseTemplate} />}
                 {viewDatabase && <Database CloseDatabase={CloseDatabase} />}
                 {/* <AddComponent /> */}
-                <Case />
+                <Case projectId={projectId} caseId={caseId} />
               </Col>
             </Row>
           </Col>

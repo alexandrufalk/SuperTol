@@ -105,6 +105,36 @@ async function httpDeleteDim(id, dimId) {
   }
 }
 
+// Add new Case dimension
+async function httpAddNewCaseDim(id, idCase, newCaseDim) {
+  try {
+    return await fetch(`${API_URL}/dimCase/${id}/${idCase}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newCaseDim),
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
+// Delete Case dimension
+async function httpDeleteCaseDim(id, idCase, caseDimID) {
+  try {
+    return await fetch(`${API_URL}/dimCase/${id}/${idCase}/${caseDimID}`, {
+      method: "delete",
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
 export {
   httpGetAllProjects,
   httpAddNewProject,
@@ -113,4 +143,6 @@ export {
   httpDeleteCase,
   httpAddNewDim,
   httpDeleteDim,
+  httpAddNewCaseDim,
+  httpDeleteCaseDim,
 };
