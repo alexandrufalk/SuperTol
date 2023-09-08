@@ -95,6 +95,7 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
             <Button
               variant="success"
               className="sidebutonscompresed button1 shadow-lg"
+              onClick={scrollToSummary}
             >
               <Figure style={{ width: 30, height: 15 }}>
                 <Figure.Image
@@ -146,7 +147,11 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
               >
                 Database
               </Button>
-              <Button variant="success" className="sidebutonscompresed button1">
+              <Button
+                variant="success"
+                className="sidebutonscompresed button1"
+                onClick={scrollToSummary}
+              >
                 Add Case
               </Button>
               <Button variant="danger" className="sidebutonscompresed button1">

@@ -298,6 +298,7 @@ const Template = ({ CloseTemplate }) => {
               type="text"
               placeholder="Enter Template Name"
               onChange={handleTemplateName}
+              className="p-2 bg-dark bg-gradient text-info rounded shadow-lg"
             />
           </Form.Group>
           <ToastContainer transition={Bounce} autoClose={2000} />
@@ -338,37 +339,45 @@ const Template = ({ CloseTemplate }) => {
           {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
-
-          {databaseTemplateUpdate.map((n) => (
-            <Row key={n.ID + n.TemplateName}>
-              <Col>
-                <Dropdown.Item eventKey={n.TemplateName}>
-                  {n.TemplateName}
-                </Dropdown.Item>
-              </Col>
-              <Col>
-                <Button
-                  size="sm"
-                  type="button"
-                  variant="outline-danger"
-                  onClick={() => {
-                    RemoveTemplate(n.ID);
-                    // forceUpdate();
-                  }}
-                >
-                  X
-                </Button>
-              </Col>
-            </Row>
-          ))}
-          <Dropdown.Item eventKey={"New Template"} key={"New Template"}>
-            New Template
-          </Dropdown.Item>
-          {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
+          <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+            {databaseTemplateUpdate.map((n) => (
+              <Row key={n.ID + n.TemplateName}>
+                <Col>
+                  <Dropdown.Item
+                    eventKey={n.TemplateName}
+                    className="text-info dropdown-project"
+                  >
+                    {n.TemplateName}
+                  </Dropdown.Item>
+                </Col>
+                <Col>
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="outline-danger"
+                    onClick={() => {
+                      RemoveTemplate(n.ID);
+                      // forceUpdate();
+                    }}
+                  >
+                    X
+                  </Button>
+                </Col>
+              </Row>
+            ))}
+            <Dropdown.Item
+              eventKey={"New Template"}
+              key={"New Template"}
+              className="text-info dropdown-newproject"
+            >
+              New Template
+            </Dropdown.Item>
+            {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Screw</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Shaft</Dropdown.Item> */}
+          </div>
         </DropdownButton>
       )}
       {templateSelected && (

@@ -404,18 +404,19 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
             <Form className="p-2">
               <Row>
                 <Col>
-                  <Form.Group className="mb-3 " controlId="formBasicEmail">
+                  <Form.Group className="mb-3 ">
                     <Form.Label>Project Name</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter project name"
                       onChange={handeleProjectName}
                       value={projectName}
+                      className="p-2 bg-dark bg-gradient text-info rounded shadow-lg"
                     />
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Group className="mb-3">
                     <Form.Label>Project Template</Form.Label>
                     {/* <Form.Control
                     type="text"
@@ -432,21 +433,24 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
                       {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
-
-                      {templates.map((n) => (
+                      <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+                        {templates.map((n) => (
+                          <Dropdown.Item
+                            eventKey={n.TemplateName}
+                            key={n.TemplateName}
+                            className="text-info dropdown-project"
+                          >
+                            {n.TemplateName}
+                          </Dropdown.Item>
+                        ))}
                         <Dropdown.Item
-                          eventKey={n.TemplateName}
-                          key={n.TemplateName}
+                          eventKey={"New Template"}
+                          key={"New Template"}
+                          className="text-info dropdown-newproject"
                         >
-                          {n.TemplateName}
+                          New Template
                         </Dropdown.Item>
-                      ))}
-                      <Dropdown.Item
-                        eventKey={"New Template"}
-                        key={"New Template"}
-                      >
-                        New Template
-                      </Dropdown.Item>
+                      </div>
                       {/* <Dropdown.Item href="#/action-1">Housing</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">Cover</Dropdown.Item>
                       <Dropdown.Item href="#/action-2">PCB</Dropdown.Item>

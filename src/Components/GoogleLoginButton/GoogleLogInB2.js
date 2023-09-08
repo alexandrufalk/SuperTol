@@ -5,7 +5,7 @@ import axios from "axios";
 import Figure from "react-bootstrap/Figure";
 import Logo3 from "../Nav/Icons/Logo3.png";
 import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/esm/Button";
+
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useProfile } from "./profileContext";

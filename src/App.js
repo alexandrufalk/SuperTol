@@ -131,7 +131,11 @@ function App() {
                 {viewAddTemplate && <Template CloseTemplate={CloseTemplate} />}
                 {viewDatabase && <Database CloseDatabase={CloseDatabase} />}
                 {/* <AddComponent /> */}
-                <Case projectId={projectId} caseId={caseId} />
+                <Case
+                  projectId={projectId}
+                  caseId={caseId}
+                  ViewDatabase={ViewDatabase}
+                />
               </Col>
             </Row>
           </Col>

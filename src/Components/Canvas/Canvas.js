@@ -1,16 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ContinuousColorLegend } from "react-vis";
 
-const Canvas = (canvasDatabse) => {
+const Canvas = ({ canvasDatabse }) => {
   const [canvaswidth, setCanvaswidth] = useState(window.innerWidth);
   const canvas = useRef(null);
-  let ctx = null;
+  const [ctx, setCtx] = useState(null); // State to hold the context
+  const [canvasInitialized, setCanvasInitialized] = useState(false); // Flag to track initialization
 
-  console.log(
-    "CanvasDatabase",
-    canvasDatabse.canvasDatabse,
-    typeof canvasDatabse
-  );
+  console.log("CanvasDatabase", canvasDatabse, typeof canvasDatabse);
   const handleResizeCanvas = () => {
     setCanvaswidth(window.innerWidth);
   };
@@ -21,11 +17,11 @@ const Canvas = (canvasDatabse) => {
   });
   // console.log("canvaswidth", canvaswidth);
 
-  const plusValues = canvasDatabse.canvasDatabse
+  const plusValues = canvasDatabse
     .map((n) => (n.Sign === "+" ? Number(n.NominalValue) : 0))
     .reduce((accumulator, current) => accumulator + current, 0);
 
-  const minusValues = canvasDatabse.canvasDatabse
+  const minusValues = canvasDatabse
     .map((n) => (n.Sign === "-" ? Number(n.NominalValue) : 0))
     .reduce((accumulator, current) => accumulator + current, 0);
 
@@ -35,6 +31,12 @@ const Canvas = (canvasDatabse) => {
 
   console.log("plusValues", plusValues);
   console.log("minusValues", minusValues);
+
+  const clearCanvas = () => {
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.current.width, canvas.current.height);
+    }
+  };
 
   // initialize the canvas context
   useEffect(() => {
@@ -49,9 +51,14 @@ const Canvas = (canvasDatabse) => {
     // get context of the canvas
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    ctx = canvasEle.getContext("2d");
+    // ctx = canvasEle.getContext("2d");
     // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  }, []);
+
+    // Get context of the canvas
+    const context = canvasEle.getContext("2d");
+    setCtx(context); // Set the context in state
+    setCanvasInitialized(true); // Set the initialization flag
+  }, [canvaswidth]);
 
   // useEffect(() => {
   //   drawLine({
@@ -76,67 +83,80 @@ const Canvas = (canvasDatabse) => {
   //Maping lines
 
   useEffect(() => {
-    let acumCanvas = canvaswidth / 4;
-    let ymax = 0;
-    let id = 1;
-    canvasDatabse.canvasDatabse.map(
-      (n) => (
-        drawLine({
-          x: acumCanvas,
-          y: 40 * id,
-          x1: eval(
+    // Only draw on the canvas if it has been initialized
+    if (canvasInitialized) {
+      // Clear the canvas before drawing new content
+      clearCanvas();
+
+      let acumCanvas = canvaswidth / 4;
+      let ymax = 0;
+      let id = 1;
+      canvasDatabse.map(
+        (n) => (
+          drawLine(
+            {
+              x: acumCanvas,
+              y: 40 * id,
+              x1: eval(
+                acumCanvas +
+                  n.Sign +
+                  (n.NominalValue * canvaswidth) / (4 * referanceValue)
+              ),
+              y1: 40 * id,
+              t:
+                n.UniqueIdentifier +
+                "-> " +
+                n.NominalValue +
+                "±" +
+                n.UpperTolerance,
+            },
+            { color: n.Color }
+          ),
+          drawLine2({
+            x: eval(
+              acumCanvas +
+                n.Sign +
+                (n.NominalValue * canvaswidth) / (4 * referanceValue)
+            ),
+            y: 40 * id,
+            x1: eval(
+              acumCanvas +
+                n.Sign +
+                (n.NominalValue * canvaswidth) / (4 * referanceValue)
+            ),
+            y1: 40 * id + 40,
+          }),
+          (acumCanvas = eval(
             acumCanvas +
               n.Sign +
               (n.NominalValue * canvaswidth) / (4 * referanceValue)
-          ),
-          y1: 40 * id,
-          t:
-            n.UniqueIdentifier +
-            "-> " +
-            n.NominalValue +
-            "±" +
-            n.UpperTolerance,
-        }),
-        drawLine2({
-          x: eval(
-            acumCanvas +
-              n.Sign +
-              (n.NominalValue * canvaswidth) / (4 * referanceValue)
-          ),
-          y: 40 * id,
-          x1: eval(
-            acumCanvas +
-              n.Sign +
-              (n.NominalValue * canvaswidth) / (4 * referanceValue)
-          ),
-          y1: 40 * id + 40,
-        }),
-        (acumCanvas = eval(
-          acumCanvas +
-            n.Sign +
-            (n.NominalValue * canvaswidth) / (4 * referanceValue)
-        )),
-        (ymax = 40 * id + 40),
-        (id = id + 1),
-        console.log("acumCanvas", acumCanvas),
-        console.log("ymax", ymax)
-      )
-    );
-    drawLine(
-      { x: acumCanvas, y: ymax, x1: canvaswidth / 4, y1: ymax, t: "CL" },
-      { color: "red" }
-    );
-    drawLine2(
-      { x: canvaswidth / 4, y: ymax, x1: canvaswidth / 4, y1: 40 },
-      { color: "red" }
-    );
-  }, []);
+          )),
+          (ymax = 40 * id + 40),
+          (id = id + 1),
+          console.log("acumCanvas", acumCanvas),
+          console.log("ymax", ymax)
+        )
+      );
+      drawLine(
+        { x: acumCanvas, y: ymax, x1: canvaswidth / 4, y1: ymax, t: "CL" },
+        { color: "red" }
+      );
+      drawLine2(
+        { x: canvaswidth / 4, y: ymax, x1: canvaswidth / 4, y1: 40 },
+        { color: "red" }
+      );
+    }
+  }, [canvasDatabse, canvasInitialized, canvaswidth]);
   // canvasDatabse.map((n) =>
   //   drawLine({ x: 0, y: 200 * n.ID, x1: 100, y1: 20, t: "D1" })
   // );
 
   // draw a line
   const drawLine = (info, style = {}) => {
+    // Check if ctx is null before using it
+    if (!ctx) {
+      return;
+    }
     const { x, y, x1, y1, t = "" } = info;
     const { color = "black", width = 1 } = style;
     const tx = x + Math.round((x1 - x) / 2);
@@ -181,6 +201,10 @@ const Canvas = (canvasDatabse) => {
     ctx.restore();
   };
   const drawLine2 = (info, style = {}) => {
+    // Check if ctx is null before using it
+    if (!ctx) {
+      return;
+    }
     const { x, y, x1, y1, t = "" } = info;
     const { color = "black", width = 1 } = style;
     const tx = x + Math.round((x1 - x) / 2);
