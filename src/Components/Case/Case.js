@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./case.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
-const Case = ({ projectId, caseId }) => {
+const Case = ({ projectId, caseId, ViewDatabase }) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
@@ -35,10 +35,17 @@ const Case = ({ projectId, caseId }) => {
   const [isSpinner, setIsSpinner] = useState(false);
   const [isStatistic, setIsStatistic] = useState(false);
   const [isDatabaseProjects, setIsdatabaseProjects] = useState(false);
-  const { databaseProjects } = useDatabaseProjects();
+  const { databaseProjects, addNewCaeDim, removeCaseDim } =
+    useDatabaseProjects();
   const [databaseSummryUpdate, setDatabaseSummryUpdate] =
     useState(databaseProjects);
   const [dataCaseFiltered, setDataCaseFiltered] = useState([]);
+  const [dataCaseDimFiltred, setDataCaseDimFilttred] = useState([]);
+  const [isDataCaseDimFiltred, setIsDataCaseDimFilttred] = useState(false);
+  const [viewsign, setViewSign] = useState(false);
+
+  console.log("dataCaseDimFiltred", dataCaseDimFiltred);
+  console.log("isDataCaseDimFiltred", isDataCaseDimFiltred);
 
   // const [isGraph, setIsGraph] = useState(false);
 
@@ -220,105 +227,27 @@ const Case = ({ projectId, caseId }) => {
       ],
     },
   ];
-  const Database = [
-    {
-      ProjectName: "Test Name1",
-      TemplateName: "Test Template1",
-      Data: [
-        {
-          Index: 1,
-          Name: "Housing",
-          Description: "Dim1",
-          UniqueIdentifier: "D1",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.4,
-          LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.67",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 2,
-          Name: "Cover",
-          Description: "Dim2",
-          UniqueIdentifier: "D2",
-          DrwNr: "123",
-          NominalValue: 2,
-          UpperTolerance: 1,
-          LowerTolerance: -1,
-          DistributionType: "Normal Cpk 1.33",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 3,
-          Name: "Connector",
-          Description: "Dim3",
-          UniqueIdentifier: "D3",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.2,
-          LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.67",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-      ],
-    },
-    {
-      ProjectName: "Test Name2",
-      TemplateName: "Test Template2",
-      Data: [
-        {
-          Index: 1,
-          Name: "Housing2",
-          Description: "Dim21",
-          UniqueIdentifier: "D1",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.4,
-          LowerTolerance: -0.4,
-          DistributionType: "Normal Cpk 1.67",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 2,
-          Name: "Cover2",
-          Description: "Dim22",
-          UniqueIdentifier: "D2",
-          DrwNr: "123",
-          NominalValue: 2,
-          UpperTolerance: 1,
-          LowerTolerance: -1,
-          DistributionType: "Normal Cpk 1.33",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-        {
-          Index: 3,
-          Name: "Connector2",
-          Description: "Dim23",
-          UniqueIdentifier: "D3",
-          DrwNr: "123",
-          NominalValue: 10,
-          UpperTolerance: 0.2,
-          LowerTolerance: -0.2,
-          DistributionType: "Normal Cpk 1.67",
-          ToleranceType: "General Tol.",
-          Samples: 1000,
-        },
-      ],
-    },
-  ];
 
   const databaseProjectIsupdate = () => {
     if (databaseProjects.length > 0 && projectId !== null && caseId !== null) {
       setDatabaseSummryUpdate(databaseProjects);
       console.log("Dimensions from selected project:");
-      setDataCaseFiltered(databaseProjects[projectId - 1].DatabaseDim);
+      if (databaseProjects[projectId - 1].DatabaseDim.length > 0) {
+        setDataCaseFiltered(databaseProjects[projectId - 1].DatabaseDim);
+      } else {
+        setDataCaseFiltered([]);
+      }
 
+      if (
+        databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData.length > 0
+      ) {
+        setDataCaseDimFilttred(
+          databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData
+        );
+        setIsDataCaseDimFilttred(true);
+      } else {
+        setDataCaseDimFilttred([]);
+      }
       // DatabaseCaseFilter();
     }
   };
@@ -336,30 +265,8 @@ const Case = ({ projectId, caseId }) => {
     }
   }, [dataCaseFiltered]);
 
-  // const DatabaseCaseFilter = () => {
-  //   if (
-  //     projectId !== null &&
-  //     caseId !== null &&
-  //     databaseSummryUpdate.length > 0
-  //   ) {
-  //     setDataCaseFiltered(
-  //       databaseSummryUpdate.filter((data) => data.ID === projectId)
-  //     );
-  //     setIsdatabaseProjects(true);
-  //     console.log("was setIsdatabaseProject", true);
-  //   } else {
-  //     console.log("was setIsdatabaseProject", false);
-  //   }
-  //   // setProjectSelected(true);
-  //   // setNewProject(false);
-  //   // } else if (e === "New Project") {
-  //   //   setProjectSelected(false);
-  //   //   setNewProject(true);
-  //   //   setSelectproject("Select project name");
-  //   // }
-  // };
-
-  const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
+  // const DatabaseCalculation = DatabaseCases[0].Data[0].CaseData;
+  const DatabaseCalculation = dataCaseDimFiltred;
 
   //Worst case nominal
   const WorstCaseNominal = DatabaseCalculation.map((n) =>
@@ -596,12 +503,85 @@ const Case = ({ projectId, caseId }) => {
   const handleSelectDimData = (e) => {
     console.log("handleSelectDimData:", dataCaseFiltered[e - 1]);
     const selectedDim = dataCaseFiltered[e - 1];
-    setFormAddDim({});
+    const selectedCaseDim =
+      databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData;
+    console.log("handleSelectedDimData selectedCaseDim:", selectedCaseDim);
+    const lastID = Math.max(...selectedCaseDim.map((o) => o.ID));
+    console.log("handleSelectedDimData lasdId:", lastID);
+    let newID = 0;
+    if (lastID === -Infinity) {
+      newID = 1;
+    } else {
+      newID = lastID + 1;
+    }
+
+    setFormAddDim({
+      ID: newID,
+      Name: selectedDim.Name,
+      Description: selectedDim.Description,
+      UniqueIdentifier: selectedDim.UniqueIdentifier,
+      NominalValue: selectedDim.NominalValue,
+      UpperTolerance: selectedDim.UpperTolerance,
+      LowerTolerance: selectedDim.LowerTolerance,
+      DistributionType: selectedDim.DistributionType,
+      ToleranceType: selectedDim.ToleranceType,
+      Color: selectedDim.Color,
+      Sign: "",
+    });
+    setViewSign(true);
+    setAddComponent(selectedDim.Description);
   };
+
+  const AddDim = (e) => {
+    e.preventDefault();
+    console.log("form", formAddDim);
+
+    if (
+      formAddDim.Name !== "" &&
+      formAddDim.Description !== "" &&
+      formAddDim.NominalValue !== "" &&
+      formAddDim.UpperTolerance !== "" &&
+      formAddDim.LowerTolerance !== "" &&
+      formAddDim.DistributionType !== "" &&
+      formAddDim.ToleranceType !== "" &&
+      formAddDim.Sign !== "" &&
+      formAddDim.Sign !== "Select Sign" &&
+      formAddDim.Color !== ""
+    ) {
+      console.log("AddDim formAddDim", formAddDim);
+
+      addNewCaeDim(projectId, caseId, formAddDim);
+
+      // addNewDim(id, nComponent);
+
+      dataCaseDimFiltred.push(formAddDim);
+      setAddComponent("Select Dimension");
+
+      // Database[index].DatabaseDim.push(nComponent);
+      // setDatabaseUpdate([...Database]); // Trigger a shallow copy to notify changes
+
+      // console.log("Database Updated", Database);
+
+      // resetButton();
+    } else {
+      toast("Add all informations!", {
+        position: toast.POSITION.TOP_CENTER,
+        theme: "dark",
+      });
+    }
+  };
+
   const handleNrSamples = (e) => {
     setNrSamples(e.target.value);
   };
   console.log("Gap Cpk:", gapCpk);
+
+  const scrollToDatabase = () => {
+    window.scrollTo({
+      top: 400,
+      behavior: "smooth", // Optional: Smooth scrolling animation
+    });
+  };
 
   return (
     <>
@@ -610,7 +590,8 @@ const Case = ({ projectId, caseId }) => {
         <Form.Label>Select gap Cpk</Form.Label>
         <Form.Select
           // defaultValue="Gap Cpk"
-          className="form-control"
+          className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg"
+          style={{ "--bs-bg-opacity": "0.9" }}
           name="Gap Cpk"
           value={gapCpk}
           onChange={(e) => {
@@ -625,7 +606,7 @@ const Case = ({ projectId, caseId }) => {
         </Form.Select>
         <Form.Select
           // defaultValue="Select Nr. of samples "
-          className="form-control"
+          className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg"
           name="Select Nr. of samples "
           value={nrSamples}
           onChange={(e) => {
@@ -887,7 +868,7 @@ const Case = ({ projectId, caseId }) => {
             <Container className="p-3">
               <Table striped bordered hover variant="dark">
                 <thead>
-                  <tr>
+                  <tr className="text-info">
                     <th>ID</th>
                     <th>Name</th>
                     <th>Description</th>
@@ -904,19 +885,83 @@ const Case = ({ projectId, caseId }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {DatabaseCases[0].Data[0].CaseData.map((n) => (
+                  {dataCaseDimFiltred.map((n) => (
                     <tr key={n.ID + "trtest"}>
-                      <td>{n.ID}</td>
-                      <td>{n.Name}</td>
-                      <td>{n.Description}</td>
-                      <td>{n.UniqueIdentifier}</td>
-                      <td>{n.NominalValue}</td>
-                      <td>{n.UpperTolerance}</td>
-                      <td>{n.LowerTolerance}</td>
-                      <td>{n.Sign}</td>
-                      <td>{n.DistributionType}</td>
-                      <td>{n.ToleranceType}</td>
-                      <td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.ID}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.Name}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.Description}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.UniqueIdentifier}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.NominalValue}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.UpperTolerance}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.LowerTolerance}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.Sign}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.DistributionType}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
+                        {n.ToleranceType}
+                      </td>
+                      <td
+                        style={{
+                          color: n.Color ? n.Color.toLowerCase() : "inherit",
+                        }}
+                      >
                         {Math.round(
                           ((((n.UpperTolerance - n.LowerTolerance) / 2) * 100) /
                             WorstCaseTolerance +
@@ -953,8 +998,9 @@ const Case = ({ projectId, caseId }) => {
           <h2>
             Add dimension to Case {caseId} (Project {projectId})
           </h2>
-          {isDatabaseProjects && (
+          {isDatabaseProjects ? (
             <Col>
+              <p>Select Dimension</p>
               <DropdownButton
                 title={addComponent}
                 onSelect={(e) => {
@@ -967,40 +1013,79 @@ const Case = ({ projectId, caseId }) => {
                 {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
-
-                {dataCaseFiltered.map((n) => (
-                  <Dropdown.Item eventKey={n.ID} key={n.ID + "Data"}>
-                    {n.Description} - {n.Name} :{n.NominalValue}±
-                    {(n.UpperTolerance - n.LowerTolerance) / 2}
-                  </Dropdown.Item>
-                ))}
+                <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+                  {dataCaseFiltered.map((n) => (
+                    <Dropdown.Item
+                      eventKey={n.ID}
+                      key={n.ID + "Data"}
+                      className="text-info dropdown-project"
+                    >
+                      {n.Description} - {n.Name} :{n.NominalValue}±
+                      {(n.UpperTolerance - n.LowerTolerance) / 2}
+                    </Dropdown.Item>
+                  ))}
+                </div>
                 {/* <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
           New Project
         </Dropdown.Item> */}
               </DropdownButton>
             </Col>
-          )}
-          <Col>
-            <Form.Group controlId="formGridState" className="col col-sm-6">
-              <Form.Label>Select Sign</Form.Label>
-              <Form.Select
-                // defaultValue="Select Sign"
-                className="form-control"
-                name="Sign"
-                value={formAddDim.Sign}
-                onChange={(e) => handleChange(e)}
+          ) : (
+            <Col>
+              <p>No dimensions on the database</p>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  scrollToDatabase();
+                  ViewDatabase();
+                }}
               >
-                <option value="Select Sign">Select Sign</option>
-                <option value="+">+</option>
-                <option value="-">-</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
+                Go to Database
+              </Button>
+            </Col>
+          )}
+          {viewsign && (
+            <Col>
+              <Form.Group controlId="formGridState" className="col col-sm-6">
+                <Form.Label style={{ marginBottom: "18px" }}>
+                  Select Sign
+                </Form.Label>
+                <Form.Select
+                  // defaultValue="Select Sign"
+                  className="form-control text-info dropdown-project bg-dark bg-gradient"
+                  name="Sign"
+                  value={formAddDim.Sign}
+                  onChange={(e) => handleChange(e)}
+                >
+                  <option value="Select Sign">Select Sign</option>
+                  <option value="+">+</option>
+                  <option value="-">-</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          )}
+          <Row>
+            <div className="container fluid   ">
+              <Button
+                variant="secondary"
+                type="submit"
+                className="m-2"
+                onClick={(e) => {
+                  AddDim(e);
+                }}
+              >
+                Add Dimension
+              </Button>
+            </div>
+          </Row>
         </Row>
       </div>
-      <div className="scrollmenu">
-        <Canvas canvasDatabse={DatabaseCalculation} />
-      </div>
+      {isDataCaseDimFiltred && (
+        <div className="scrollmenu">
+          <Canvas canvasDatabse={DatabaseCalculation} />
+        </div>
+      )}
+
       {/* <Canvas2 /> */}
     </>
   );

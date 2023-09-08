@@ -171,12 +171,17 @@ const Database = ({ CloseDatabase }) => {
         {/* <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {projectTemplate}
                     </Dropdown.Toggle> */}
-
-        {DatabaseUpdate.map((n) => (
-          <Dropdown.Item eventKey={n.ProjectName} key={n.ProjectName}>
-            {n.ProjectName}
-          </Dropdown.Item>
-        ))}
+        <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+          {DatabaseUpdate.map((n) => (
+            <Dropdown.Item
+              eventKey={n.ProjectName}
+              key={n.ProjectName}
+              className="text-info dropdown-project"
+            >
+              {n.ProjectName}
+            </Dropdown.Item>
+          ))}
+        </div>
         {/* <Dropdown.Item eventKey={"New Project"} key={"New Project"}>
           New Project
         </Dropdown.Item> */}

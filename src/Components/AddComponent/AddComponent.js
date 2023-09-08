@@ -203,17 +203,21 @@ const AddComponent = ({
                       onSelect={(e) => {
                         handleSelectTemplate(e);
                       }}
+                      variant="secondary"
                     >
-                      {/* <option value="Select Component">Select Component</option> */}
-                      {componentData[0].Data.map((n) => (
-                        <Dropdown.Item
-                          eventKey={n.ComponentName}
-                          key={n.ComponentName}
-                        >
-                          {n.ComponentName}
-                        </Dropdown.Item>
-                        // <option value={n.TemplateName}>{n.TemplateName}</option>
-                      ))}
+                      <div className="p-2 bg-dark bg-gradient text-white rounded shadow-lg">
+                        {/* <option value="Select Component">Select Component</option> */}
+                        {componentData[0].Data.map((n) => (
+                          <Dropdown.Item
+                            eventKey={n.ComponentName}
+                            key={n.ComponentName}
+                            className="text-info dropdown-project"
+                          >
+                            {n.ComponentName}
+                          </Dropdown.Item>
+                          // <option value={n.TemplateName}>{n.TemplateName}</option>
+                        ))}
+                      </div>
                       {/* <option value="New Component">New Component</option> */}
                     </DropdownButton>
                   </Form.Group>
@@ -242,7 +246,7 @@ const AddComponent = ({
                   placeholder="Enter description"
                   value={form.Description}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg "
                 />
               </Form.Group>
               <Form.Group controlId="formBasicEmail" className="col col-sm-6">
@@ -253,7 +257,7 @@ const AddComponent = ({
                   placeholder="Enter drawing number"
                   value={form.DrwNr}
                   onChange={handleChange}
-                  className="form-control"
+                  className="form-control p-2 bg-dark bg-gradient text-info  rounded shadow-lg"
                 />
               </Form.Group>
             </Row>
@@ -268,7 +272,7 @@ const AddComponent = ({
                     name="NominalValue"
                     value={form.NominalValue}
                     onChange={handleChange}
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info  rounded shadow-lg"
                   />
                 </Form.Group>
               </Col>
@@ -281,7 +285,7 @@ const AddComponent = ({
                     name="UpperTolerance"
                     value={form.UpperTolerance}
                     onChange={handleChange}
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info  rounded shadow-lg"
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -292,7 +296,7 @@ const AddComponent = ({
                     name="LowerTolerance"
                     value={form.LowerTolerance}
                     onChange={handleChange}
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info  rounded shadow-lg"
                   />
                 </Form.Group>
               </Col>
@@ -301,9 +305,10 @@ const AddComponent = ({
               <Col>
                 <Form.Group controlId="formGridState" className="col col-sm-6">
                   <Form.Label>Select tolerance type</Form.Label>
+
                   <Form.Select
                     defaultValue="Select tolerance"
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg "
                     name="ToleranceType"
                     value={form.ToleranceType}
                     onChange={(e) => handleChange(e)}
@@ -319,7 +324,7 @@ const AddComponent = ({
                   <Form.Label>Select distribution type</Form.Label>
                   <Form.Select
                     defaultValue="Distribution type"
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg"
                     name="DistributionType"
                     value={form.DistributionType}
                     onChange={(e) => {
@@ -337,14 +342,15 @@ const AddComponent = ({
                   </Form.Select>
                 </Form.Group>
                 {viewCustomCpk && (
-                  <Row className="col col-sm-6">
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Row className="col col-sm-6 ">
+                    <Form.Group className="mb-3 " controlId="formBasicPassword">
                       <Form.Control
                         type="text"
                         placeholder="Enter Cpk"
                         name="DistributionType"
                         // value={form.DistributionType}
                         onChange={handleChange}
+                        className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg "
                       />
                     </Form.Group>
                   </Row>
@@ -355,7 +361,7 @@ const AddComponent = ({
                   <Form.Label>Select Sign</Form.Label>
                   <Form.Select
                     defaultValue="Select Sign"
-                    className="form-control"
+                    className="form-control p-2 bg-dark bg-gradient text-info rounded shadow-lg"
                     name="Sign"
                     value={form.Sign}
                     onChange={(e) => handleChange(e)}
