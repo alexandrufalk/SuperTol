@@ -228,6 +228,7 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
         Description: caseCaseName,
         Author: "Alex",
         Date: isoFormattedDate,
+        CaseData: [],
       };
       const id = index + 1;
 
@@ -288,6 +289,7 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
     console.log("Summary Case selext ids:", projectId, caseId);
     setProjectId(projectId);
     setCaseId(caseId);
+    scrollToCase();
   };
 
   const RemoveProject = (e) => {
@@ -389,6 +391,13 @@ const Summary = ({ NewTemplate, setProjectId, setCaseId }) => {
   const handleCaseNameChange = (e) => {
     e.preventDefault();
     setCaseCaseName(e.target.value);
+  };
+
+  const scrollToCase = () => {
+    window.scrollTo({
+      top: 850,
+      behavior: "smooth", // Optional: Smooth scrolling animation
+    });
   };
   // console.log("caseCaseName", caseCaseName);
 
