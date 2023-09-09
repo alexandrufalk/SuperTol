@@ -44,6 +44,8 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
   const [isDataCaseDimFiltred, setIsDataCaseDimFilttred] = useState(false);
   const [viewsign, setViewSign] = useState(false);
 
+  console.log("Case-databaseProjects", databaseProjects);
+
   console.log("dataCaseDimFiltred", dataCaseDimFiltred);
   console.log("isDataCaseDimFiltred", isDataCaseDimFiltred);
 
@@ -229,14 +231,28 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
   ];
 
   const databaseProjectIsupdate = () => {
-    if (databaseProjects.length > 0 && projectId !== null && caseId !== null) {
+    if (
+      databaseProjects.length > 0 &&
+      projectId !== null &&
+      caseId !== null &&
+      databaseProjects[projectId - 1] &&
+      databaseProjects[projectId - 1].DataCase &&
+      databaseProjects[projectId - 1].DataCase[caseId - 1] &&
+      databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData
+    ) {
       setDatabaseSummryUpdate(databaseProjects);
       console.log("Dimensions from selected project:");
+
       if (databaseProjects[projectId - 1].DatabaseDim.length > 0) {
         setDataCaseFiltered(databaseProjects[projectId - 1].DatabaseDim);
       } else {
         setDataCaseFiltered([]);
       }
+
+      console.log(
+        "Check CaseData:",
+        databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData
+      );
 
       if (
         databaseProjects[projectId - 1].DataCase[caseId - 1].CaseData.length > 0
@@ -248,9 +264,9 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
       } else {
         setDataCaseDimFilttred([]);
       }
-      // DatabaseCaseFilter();
     }
   };
+
   console.log("dataCaseFiltered:", dataCaseFiltered);
 
   useEffect(() => {
@@ -569,6 +585,22 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
         theme: "dark",
       });
     }
+  };
+
+  const RemoveCaseDim = (e) => {
+    let obj = dataCaseDimFiltred.find((o) => o.ID === e);
+
+    let index = dataCaseDimFiltred.indexOf(obj);
+    console.log("RemovecaseDIm-index:", index);
+    let update = dataCaseDimFiltred;
+    const caseDimID = e;
+
+    if (index > -1) {
+      update.splice(index, 1);
+    }
+
+    setDataCaseDimFilttred(update);
+    removeCaseDim(projectId, caseId, caseDimID);
   };
 
   const handleNrSamples = (e) => {
@@ -974,10 +1006,9 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
                         <Button
                           type="button"
                           variant="outline-danger"
-                          // onClick={() => {
-                          //   RemoveCase(n.Index);
-                          //   forceUpdate();
-                          // }}
+                          onClick={() => {
+                            RemoveCaseDim(n.ID);
+                          }}
                         >
                           X
                         </Button>
