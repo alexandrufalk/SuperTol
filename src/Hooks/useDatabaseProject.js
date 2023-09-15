@@ -9,6 +9,7 @@ import {
   httpDeleteDim,
   httpAddNewCaseDim,
   httpDeleteCaseDim,
+  httpAddNewImage,
 } from "./requests";
 
 function useDatabaseProjects() {
@@ -156,6 +157,22 @@ function useDatabaseProjects() {
     [getDatabaseProjects]
   );
 
+  const addImage = useCallback(
+    async (id, idDim, file) => {
+      try {
+        const response = await httpAddNewImage(id, idDim, file);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Image wasn't added");
+        }
+      } catch (error) {
+        console.error("Error adding new image:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
   return {
     databaseProjects,
     addNewProject,
@@ -166,6 +183,7 @@ function useDatabaseProjects() {
     removeDim,
     addNewCaeDim,
     removeCaseDim,
+    addImage,
   };
 }
 

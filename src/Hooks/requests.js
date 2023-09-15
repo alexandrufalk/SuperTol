@@ -135,6 +135,24 @@ async function httpDeleteCaseDim(id, idCase, caseDimID) {
   }
 }
 
+//Add image to Dimension
+
+async function httpAddNewImage(id, idDim, file) {
+  try {
+    const formData = new FormData();
+    formData.append("img", file);
+
+    return await fetch(`${API_URL}/image/${id}/${idDim}`, {
+      method: "POST",
+      body: formData,
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
 export {
   httpGetAllProjects,
   httpAddNewProject,
@@ -145,4 +163,5 @@ export {
   httpDeleteDim,
   httpAddNewCaseDim,
   httpDeleteCaseDim,
+  httpAddNewImage,
 };

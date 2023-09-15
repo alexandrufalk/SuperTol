@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import CropperImage from "antd-cropper-img";
 import { message, Upload } from "antd";
 import type { UploadChangeParam } from "antd/es/upload";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
+// import Figure from "react-bootstrap/Figure";
+import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     const reader = new FileReader();
@@ -22,13 +24,28 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     return isJpgOrPng && isLt2M;
   };
 
-  const ImportImage=()=>{
+  const ImportImage=({ projectID, dimID,image }: { projectID: number; dimID: number;image:string })=>{
+    const { addImage} = useDatabaseProjects();
     const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
+  const [isImage,setIsImage]=useState(false)
+
+  console.log("projectID,dimID,image:",projectID,dimID,image,isImage)
+  
+
+  const IsImages=()=>{
+    if (image.length>0){
+      setIsImage(true)
+    }
+  }
+  useEffect(() => {
+    IsImages();
+  }, [image]);
 
   const handleChange: UploadProps["onChange"] = (
     info: UploadChangeParam<UploadFile>
   ) => {
+    addImage(projectID, dimID, info.file.originFileObj as RcFile)
     console.log("Upload info",info);
     if (info.file.status === "uploading") {
       setLoading(true);
@@ -39,6 +56,9 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
       getBase64(info.file.originFileObj as RcFile, (url) => {
         setLoading(false);
         setImageUrl(url);
+
+        // addImage(projectID, dimID, info.file.originFileObj as RcFile)
+          
       });
     }
   };
@@ -82,6 +102,18 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
             {uploadButton}
           </Upload>
         </CropperImage>
+        {/* {isImage&&<CropperImage>
+     <Figure style={{ width: 100, height: 100 }}>
+                <Figure.Image
+                  width={100}
+                  height={100}
+                  alt="PDF"
+                  src={image[0].Link}
+                  className="rounded"
+                />
+              </Figure>
+    </CropperImage>} */}
+
         
         
       </header>
