@@ -24,13 +24,14 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     return isJpgOrPng && isLt2M;
   };
 
-  const ImportImage=({ projectID, dimID,image }: { projectID: number; dimID: number;image:string })=>{
-    const { addImage} = useDatabaseProjects();
+  const ImportImage=({ projectID, dimID,image,CallDatabasesFilter}: { projectID: number; dimID: number;image:string[];CallDatabasesFilter: () => void; })=>{
+    const { addImage,getDatabaseProjects} = useDatabaseProjects();
     const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
   const [isImage,setIsImage]=useState(false)
+  const [hasUploaded, setHasUploaded] = useState(false); // Track whether an image has been uploaded
 
-  console.log("projectID,dimID,image:",projectID,dimID,image,isImage)
+  // console.log("projectID,dimID,image:",projectID,dimID,image,isImage)
   
 
   const IsImages=()=>{
@@ -45,22 +46,42 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
   const handleChange: UploadProps["onChange"] = (
     info: UploadChangeParam<UploadFile>
   ) => {
-    addImage(projectID, dimID, info.file.originFileObj as RcFile)
-    console.log("Upload info",info);
-    if (info.file.status === "uploading") {
-      setLoading(true);
+
+    if (hasUploaded) {
+      // If an image has already been uploaded, prevent further uploads
       return;
     }
-    if (info.file.status === "done") {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj as RcFile, (url) => {
-        setLoading(false);
-        setImageUrl(url);
+    getBase64(info.file.originFileObj as RcFile, (url) => {
+      setLoading(false);
+      setImageUrl(url);
 
-        // addImage(projectID, dimID, info.file.originFileObj as RcFile)
+      // Set the hasUploaded flag to prevent further uploads
+      setHasUploaded(true);
+
+      
+        
+    });
+    addImage(projectID, dimID, info.file.originFileObj as RcFile)
+    getDatabaseProjects()
+    CallDatabasesFilter()
+    console.log("Upload info",info);
+    // if (info.file.status === "uploading") {
+    //   setLoading(true);
+    //   return;
+    // }
+    // if (info.file.status === "done") {
+    //   // Get this url from response in real world.
+    //   getBase64(info.file.originFileObj as RcFile, (url) => {
+    //     setLoading(false);
+    //     setImageUrl(url);
+
+    //     // Set the hasUploaded flag to prevent further uploads
+    //     setHasUploaded(true);
+
+    //     addImage(projectID, dimID, info.file.originFileObj as RcFile);
           
-      });
-    }
+    //   });
+    // }
   };
   const onPreview = async (file: UploadFile) => {
     let src = file.url as string;
@@ -94,7 +115,11 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
             listType="picture-card"
             className="avatar-uploader"
             showUploadList={{showRemoveIcon:true}}
-            action="./supertol/test"
+            // showUploadList={{
+            //   showPreviewIcon: false, // Hide preview icon
+            //   showRemoveIcon: false, // Hide remove icon
+            // }}
+            // action="./supertol/test"
             beforeUpload={beforeUpload}
             onChange={handleChange}
             onPreview={onPreview}
@@ -102,20 +127,8 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
             {uploadButton}
           </Upload>
         </CropperImage>
-        {/* {isImage&&<CropperImage>
-     <Figure style={{ width: 100, height: 100 }}>
-                <Figure.Image
-                  width={100}
-                  height={100}
-                  alt="PDF"
-                  src={image[0].Link}
-                  className="rounded"
-                />
-              </Figure>
-    </CropperImage>} */}
+       
 
-        
-        
       </header>
     </div>
   );

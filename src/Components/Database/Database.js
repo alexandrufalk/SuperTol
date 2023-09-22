@@ -6,17 +6,20 @@ import Container from "react-bootstrap/esm/Container";
 import Button from "react-bootstrap/esm/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./database.css";
 
 import ImportImage from "../ImportImage/ImportImage.tsx";
+import ImageUpload from "../ImportImage/ImageUpload";
 import AddComponent from "../AddComponent/AddComponent";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 import useTemplate from "../../Hooks/useTemplate";
+import ImageComponent from "./ImageComponent";
 
 const Database = ({ CloseDatabase }) => {
-  const { databaseProjects, removeDim } = useDatabaseProjects();
+  const { databaseProjects, removeDim, removeImg } = useDatabaseProjects();
   const [viewAddComponentData, setViewAddComponentData] = useState(false);
 
   const [databaseFiltered, setDatabaseFiltered] = useState([]);
@@ -29,6 +32,7 @@ const Database = ({ CloseDatabase }) => {
   const [templateUpdate, setTemplateUpdate] = useState([]);
   const [isTemplate, setIsTemplate] = useState(false);
   const [componentData, setComponentData] = useState();
+  const [isHovered, setIsHovered] = useState(false);
 
   // console.log("Database", Database);
 
@@ -84,6 +88,13 @@ const Database = ({ CloseDatabase }) => {
         theme: "dark",
       });
     }
+  };
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
   };
 
   const SetViewAddCancel = () => {
@@ -142,6 +153,20 @@ const Database = ({ CloseDatabase }) => {
     setDatabaseFiltered(update);
     removeDim(projectId, dimId);
   };
+
+  const CallDatabasesFilter = () => {
+    setDatabaseUpdate(databaseProjects);
+    DatabasesFilter(selectProjectData);
+  };
+
+  const handleClick = (projectId, dimId, idImg) => {
+    removeImg(projectId, dimId, idImg);
+    // Call your function here with the imageID
+    console.log(
+      `Clicked on image with ID: ${idImg}, projectID ${projectId}, dimID ${dimId} `
+    );
+  };
+
   return (
     <Row className="border border-success-subtle rounded justify-content-between shadow-lg opacity-85 mb-1">
       <Row>
@@ -425,20 +450,54 @@ const Database = ({ CloseDatabase }) => {
                       <th>Drawing</th>
                       {databaseFiltered[0].DatabaseDim.map((n) => (
                         <td key={n.ID + "Drawing"}>
-                          <div className="addImage">
-                            {/* <AddImage index={n.ID} /> */}
-                            {/* <Image
+                          <td>
+                            <div className="addImage">
+                              {/* <AddImage index={n.ID} /> */}
+                              {/* <Image
                             width={150}
                             src={
                               "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
                             }
                           /> */}
-                            <ImportImage
-                              image={n.Image}
-                              projectID={databaseFiltered[0].ID}
-                              dimID={n.ID}
-                            />
-                          </div>
+                              <ImportImage
+                                image={n.Image}
+                                projectID={databaseFiltered[0].ID}
+                                dimID={n.ID}
+                                ProjectName={selectProjectData}
+                                CallDatabasesFilter={CallDatabasesFilter}
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            {n.Image.map((i) => (
+                              <ImageComponent
+                                key={i.ID}
+                                i={i}
+                                handleClick={() => {
+                                  handleClick(
+                                    databaseFiltered[0].ID,
+                                    n.ID,
+                                    i.ID
+                                  );
+                                }}
+                              />
+                              // <td>
+                              //   <Button
+                              //     variant="outline-danger "
+                              //     type="button"
+                              //     className="bg-transparent text-center "
+                              //     // onClick={CloseDatabase}
+                              //   >
+                              //     <img
+                              //       src={i.Link}
+                              //       alt={`Image for ${i.ID}`}
+                              //       style={{ width: "120px", height: "80px" }}
+                              //     />
+                              //     X
+                              //   </Button>
+                              // </td>
+                            ))}
+                          </td>
                         </td>
                       ))}
                     </tr>

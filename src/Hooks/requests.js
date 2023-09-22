@@ -153,6 +153,19 @@ async function httpAddNewImage(id, idDim, file) {
   }
 }
 
+// Delete dimension
+async function httpDeleteImg(id, dimId, idImg) {
+  try {
+    return await fetch(`${API_URL}/image/${id}/${dimId}/${idImg}`, {
+      method: "delete",
+    });
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
 export {
   httpGetAllProjects,
   httpAddNewProject,
@@ -164,4 +177,5 @@ export {
   httpAddNewCaseDim,
   httpDeleteCaseDim,
   httpAddNewImage,
+  httpDeleteImg,
 };

@@ -10,6 +10,7 @@ import {
   httpAddNewCaseDim,
   httpDeleteCaseDim,
   httpAddNewImage,
+  httpDeleteImg,
 } from "./requests";
 
 function useDatabaseProjects() {
@@ -160,6 +161,7 @@ function useDatabaseProjects() {
   const addImage = useCallback(
     async (id, idDim, file) => {
       try {
+        console.log("addImage check");
         const response = await httpAddNewImage(id, idDim, file);
         if (response) {
           getDatabaseProjects();
@@ -173,7 +175,24 @@ function useDatabaseProjects() {
     [getDatabaseProjects]
   );
 
+  const removeImg = useCallback(
+    async (projectId, dimId, idImg) => {
+      try {
+        const response = await httpDeleteImg(projectId, dimId, idImg);
+        if (response) {
+          getDatabaseProjects();
+        } else {
+          console.log("Dimension wasn't deleted");
+        }
+      } catch (error) {
+        console.error("Error deleting dimension:", error);
+      }
+    },
+    [getDatabaseProjects]
+  );
+
   return {
+    getDatabaseProjects,
     databaseProjects,
     addNewProject,
     removeProject,
@@ -184,6 +203,7 @@ function useDatabaseProjects() {
     addNewCaeDim,
     removeCaseDim,
     addImage,
+    removeImg,
   };
 }
 
