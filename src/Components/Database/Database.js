@@ -66,6 +66,7 @@ const Database = ({ CloseDatabase }) => {
   };
   useEffect(() => {
     databaseProjectIsupdate();
+    console.log("database is updated");
   }, [databaseProjects]);
 
   useEffect(() => {
@@ -76,6 +77,8 @@ const Database = ({ CloseDatabase }) => {
       DatabasesFilter(selectProjectData);
     }
   }, [DatabaseUpdate]);
+
+  console.log("Database databaseProjects:", databaseProjects);
 
   const SetViewAdd = () => {
     if (selectProjectData !== "Select project name") {
@@ -88,13 +91,6 @@ const Database = ({ CloseDatabase }) => {
         theme: "dark",
       });
     }
-  };
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
   };
 
   const SetViewAddCancel = () => {

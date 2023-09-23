@@ -25,6 +25,7 @@ import "./case.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 import ImageUpload from "../ImportImage/ImageUpload";
 import ImageCropper from "../ImportImage/ImageCropper";
+import ImageCropper2 from "../ImportImage/ImageCropper2";
 
 const Case = ({ projectId, caseId, ViewDatabase }) => {
   const [histData, setHistData] = useState([]);
@@ -1120,6 +1121,8 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
       )}
       {/* <ImageUpload /> */}
       <ImageCropper />
+      <ImageCropper2 />
+      {/* <Crop /> */}
 
       {/* <Canvas2 /> */}
     </>
