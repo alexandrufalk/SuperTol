@@ -30,6 +30,8 @@ function useDatabaseProjects() {
 
   const [databaseProjects, saveDatabaseProjects] = useState([]);
 
+  console.log("useDatabaseProject databaseProjects:", databaseProjects);
+
   const addNewProject = useCallback(
     async (project) => {
       try {

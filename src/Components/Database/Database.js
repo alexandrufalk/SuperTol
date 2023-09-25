@@ -17,6 +17,7 @@ import AddComponent from "../AddComponent/AddComponent";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 import useTemplate from "../../Hooks/useTemplate";
 import ImageComponent from "./ImageComponent";
+import ImageCropper2 from "../ImportImage/ImageCropper2";
 
 const Database = ({ CloseDatabase }) => {
   const { databaseProjects, removeDim, removeImg } = useDatabaseProjects();
@@ -113,6 +114,7 @@ const Database = ({ CloseDatabase }) => {
   const handleSelectProjectnameData = (e) => {
     setSelectprojectData(e);
   };
+
   console.log("databaseFiltered", databaseFiltered);
 
   const TemplateComponentFiltered = () => {
@@ -455,12 +457,18 @@ const Database = ({ CloseDatabase }) => {
                               "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
                             }
                           /> */}
-                              <ImportImage
+                              {/* <ImportImage
                                 image={n.Image}
                                 projectID={databaseFiltered[0].ID}
                                 dimID={n.ID}
                                 ProjectName={selectProjectData}
                                 CallDatabasesFilter={CallDatabasesFilter}
+                              /> */}
+                              <ImageCropper2
+                                projectID={databaseFiltered[0].ID}
+                                dimID={n.ID}
+                                setDatabaseFiltered={setDatabaseFiltered}
+                                databaseFiltered={databaseFiltered}
                               />
                             </div>
                           </td>

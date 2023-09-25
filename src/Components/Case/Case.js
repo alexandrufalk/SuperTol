@@ -23,8 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
-import ImageUpload from "../ImportImage/ImageUpload";
-import ImageCropper from "../ImportImage/ImageCropper";
+
 import ImageCropper2 from "../ImportImage/ImageCropper2";
 
 const Case = ({ projectId, caseId, ViewDatabase }) => {
@@ -1120,7 +1119,7 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
         </div>
       )}
       {/* <ImageUpload /> */}
-      <ImageCropper />
+
       <ImageCropper2 />
       {/* <Crop /> */}
 
