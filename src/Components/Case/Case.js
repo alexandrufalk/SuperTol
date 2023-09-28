@@ -23,10 +23,11 @@ import "react-toastify/dist/ReactToastify.css";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
+import { useReactToPrint } from "react-to-print";
 
 import ImageCropper2 from "../ImportImage/ImageCropper2";
 
-const Case = ({ projectId, caseId, ViewDatabase }) => {
+const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
@@ -618,7 +619,7 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
   };
 
   return (
-    <>
+    <div ref={ref}>
       <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
       <Form.Group controlId="formGridState" className="col col-sm-6">
         <Form.Label>Select gap Cpk</Form.Label>
@@ -1124,8 +1125,8 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
       {/* <Crop /> */}
 
       {/* <Canvas2 /> */}
-    </>
+    </div>
   );
-};
+});
 
 export default Case;

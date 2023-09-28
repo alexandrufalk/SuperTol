@@ -7,11 +7,25 @@ import "./Nav.css";
 import Button from "react-bootstrap/Button";
 import Figure from "react-bootstrap/Figure";
 import Logo3 from "./Icons/Logo3.png";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import { useProfile } from "../GoogleLoginButton/profileContext";
+import { googleLogout } from "@react-oauth/google";
 import { Row } from "react-bootstrap";
 
-const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
-  const { profile } = useProfile();
+const NaviBar = ({
+  isMinSize2,
+  isBurgherClickedEvent,
+  ShowPage,
+  setViewLogIn,
+}) => {
+  const { profile, setProfile } = useProfile();
+
+  const logOut = () => {
+    googleLogout();
+    setProfile(null);
+    ShowPage();
+    setViewLogIn(true);
+  };
 
   console.log("Profile from NaviBar", profile);
   console.log("isMinSize2 for NaviBar", isMinSize2);
@@ -56,7 +70,16 @@ const NaviBar = ({ isMinSize2, isBurgherClickedEvent }) => {
               {profile && (
                 <>
                   <Navbar.Collapse className="justify-content-end">
-                    <Nav.Link href="#signin">SignIn as {profile.name}</Nav.Link>
+                    {/* <Nav.Link href="#signin">SignIn as {profile.name}</Nav.Link> */}
+                    <NavDropdown
+                      id="nav-dropdown-dark-example"
+                      title={`SignIn as ${profile.name}`}
+                      menuVariant="dark"
+                    >
+                      <NavDropdown.Item href="#action/3.1" onClick={logOut}>
+                        Log out
+                      </NavDropdown.Item>
+                    </NavDropdown>
                   </Navbar.Collapse>
                   <Figure.Image
                     width={30}

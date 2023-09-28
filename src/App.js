@@ -8,7 +8,7 @@ import Template from "./Components/Template/Template";
 // import React, { useState, useEffect } from "react";
 // import Button from "react-bootstrap/Button";
 // import Offcanvas from "react-bootstrap/Offcanvas";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SideNav from "./Components/Nav/SideNav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -16,6 +16,7 @@ import NaviBar from "./Components/Nav/NaviBar";
 import NavBarS from "./Components/Nav/NavBarS";
 import { Container } from "react-bootstrap";
 import NavBarSMenu from "./Components/Nav/NavBarSMenu";
+import { useReactToPrint } from "react-to-print";
 
 // import GoogleLoginB from "./Components/GoogleLoginButton/GoogleLoginB";
 import GoogleLoginB2 from "./Components/GoogleLoginButton/GoogleLogInB2";
@@ -32,6 +33,7 @@ function App() {
   const { profile } = useProfile();
   const [projectId, setProjectId] = useState(null);
   const [caseId, setCaseId] = useState(null);
+  const [viewLogIn, setViewLogIn] = useState(true);
 
   console.log("Profile from App", profile);
 
@@ -85,6 +87,11 @@ function App() {
 
   console.log("showPage", showPage);
 
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
     <Container fluid>
       <Row>
@@ -97,7 +104,9 @@ function App() {
           {isMinSize2 && <SideNav />}
         </Col> */}
 
-        <GoogleLoginB2 ShowPage={ShowPage} />
+        {viewLogIn && (
+          <GoogleLoginB2 ShowPage={ShowPage} setViewLogIn={setViewLogIn} />
+        )}
 
         {showPage && (
           <Col className="p-2 ">
@@ -106,6 +115,8 @@ function App() {
                 isMinSize2={isMinSize2}
                 // profile={profile}
                 isBurgherClickedEvent={isBurgherClickedEvent}
+                ShowPage={ShowPage}
+                setViewLogIn={setViewLogIn}
               />
             </Row>
 
@@ -117,6 +128,7 @@ function App() {
                       isBurgherClicked={isBurgherClicked}
                       ViewAddTemplate={ViewAddTemplate}
                       ViewDatabase={ViewDatabase}
+                      handlePrint={handlePrint}
                     />
                   )}
                 </Row>
@@ -131,11 +143,19 @@ function App() {
                 {viewAddTemplate && <Template CloseTemplate={CloseTemplate} />}
                 {viewDatabase && <Database CloseDatabase={CloseDatabase} />}
                 {/* <AddComponent /> */}
-                <Case
-                  projectId={projectId}
-                  caseId={caseId}
-                  ViewDatabase={ViewDatabase}
-                />
+                <div>
+                  {/* <ReactToPrint
+                    trigger={() => <button>Print this out!</button>}
+                    content={() => componentRef.current}
+                  /> */}
+                  <Case
+                    projectId={projectId}
+                    caseId={caseId}
+                    ViewDatabase={ViewDatabase}
+                    ref={componentRef}
+                  />
+                  <button onClick={handlePrint}>Print this out!</button>
+                </div>
               </Col>
             </Row>
           </Col>

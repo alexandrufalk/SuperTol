@@ -9,7 +9,12 @@ import TemplateImg from "./Icons/TemplateImg.png";
 import AddImg from "./Icons/AddImg.png";
 import PDFImg from "./Icons/PDFImg.png";
 
-const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
+const NavBarSMenu = ({
+  isBurgherClicked,
+  ViewAddTemplate,
+  ViewDatabase,
+  handlePrint,
+}) => {
   // to change burger classes
   //   const [burger_class, setBurgerClass] = useState("burger-bar unclicked");
   //   const [menu_class, setMenuClass] = useState("menu hidden");
@@ -110,6 +115,7 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
             <Button
               variant="danger"
               className="sidebutonscompresed button1 shadow-lg"
+              onClick={handlePrint}
             >
               <Figure style={{ width: 30, height: 15 }}>
                 <Figure.Image
@@ -154,7 +160,11 @@ const NavBarSMenu = ({ isBurgherClicked, ViewAddTemplate, ViewDatabase }) => {
               >
                 Add Case
               </Button>
-              <Button variant="danger" className="sidebutonscompresed button1">
+              <Button
+                variant="danger"
+                className="sidebutonscompresed button1"
+                onClick={handlePrint}
+              >
                 PDF Gen.
               </Button>
             </div>
