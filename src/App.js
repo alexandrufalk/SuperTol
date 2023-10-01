@@ -17,6 +17,7 @@ import NavBarS from "./Components/Nav/NavBarS";
 import { Container } from "react-bootstrap";
 import NavBarSMenu from "./Components/Nav/NavBarSMenu";
 import { useReactToPrint } from "react-to-print";
+import Button from "react-bootstrap/esm/Button";
 
 // import GoogleLoginB from "./Components/GoogleLoginButton/GoogleLoginB";
 import GoogleLoginB2 from "./Components/GoogleLoginButton/GoogleLogInB2";
@@ -34,6 +35,7 @@ function App() {
   const [projectId, setProjectId] = useState(null);
   const [caseId, setCaseId] = useState(null);
   const [viewLogIn, setViewLogIn] = useState(true);
+  const [viewCase, setViewCase] = useState(false);
 
   console.log("Profile from App", profile);
 
@@ -154,7 +156,13 @@ function App() {
                     ViewDatabase={ViewDatabase}
                     ref={componentRef}
                   />
-                  <button onClick={handlePrint}>Print this out!</button>
+                  <Button
+                    variant="danger"
+                    onClick={handlePrint}
+                    className="sidebutonscompresed button1 shadow-lg"
+                  >
+                    Print this out!
+                  </Button>
                 </div>
               </Col>
             </Row>

@@ -10,6 +10,32 @@ import {
   VictoryLine,
   VictoryArea,
 } from "victory";
+
+// import { Bar, Line } from "react-chartjs-2";
+// import Chart from "chart.js/auto"; // Import Chart.js
+
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Legend,
+// } from "chart.js";
+
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+import { Chart } from "react-google-charts";
+
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -26,11 +52,16 @@ import useDatabaseProjects from "../../Hooks/useDatabaseProject";
 import { useReactToPrint } from "react-to-print";
 
 import ImageCropper2 from "../ImportImage/ImageCropper2";
+import { get } from "use-between";
 
 const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
+  const [pdfData2, setPdfData2] = useState([]);
+  const [genNumChart, setGenNumChart] = useState([]);
+  const [histogramDataGoogle, setHistogramDataGoogle] = useState([]);
+  const [pdfDataGoogle, setPdfDataGoogle] = useState([]);
   const [addComponent, setAddComponent] = useState("Select Dimension");
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
@@ -299,10 +330,11 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
   const WorstCaseTolerance = DatabaseCalculation.map(
     (n) => (n.UpperTolerance - n.LowerTolerance) / 2
   ).reduce((accumulator, current) => accumulator + current, 0);
+
   console.log("WorstCaseNominal", WorstCaseNominal);
   console.log("WorstCaseTolerance", WorstCaseTolerance);
   console.log("DatabaseCalculation", DatabaseCalculation);
-  console.log("DatabaseCases", DatabaseCases[0].Data[0].CaseData);
+  // console.log("DatabaseCases", DatabaseCases[0].Data[0].CaseData);
 
   console.log("histData", histData);
   console.log("histBinData", histBinData);
@@ -395,13 +427,14 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
 
     //arras/objects for chart
     const genNum = [];
-    const genNumHist = [];
 
     for (let i = 0; i < samplenum; i += 1) {
       genNum.push(
         Math.round(getNormallyDistributedRandomNumber(mean, stddev) * 100) / 100
       );
     }
+
+    const genNumHist = [];
 
     for (let i = 0; i < samplenum; i += 1) {
       genNumHist.push({
@@ -506,11 +539,136 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
       PDFdataGraph.push({ x: genNum[i], y: PDFdata[i] });
     }
 
+    //{ date: "1", value: 35.98 },
+    console.log("check genNum", genNum);
+    const genNumChart = [];
+    const sortedGenNum = genNum.sort();
+
+    for (let i = 0; i < genNum.length; i++) {
+      genNumChart.push({ value: sortedGenNum[i] });
+    }
+
+    const PDFdataChart = [];
+
+    for (let i = 0; i < genNum.length; i += 1) {
+      PDFdataChart.push(
+        // (1 / (stddev * Math.sqrt(2.0 * Math.PI))) *
+        //   (Math.E ^ -(((genNum[i] - mean) ^ 2) / ((2 * stddev) ^ 2)))
+        {
+          value: sortedGenNum[i],
+          pdf:
+            Math.exp(
+              -Math.pow(sortedGenNum[i] - mean, 2) / (2 * Math.pow(stddev, 2))
+            ) /
+            (stddev * Math.sqrt(2 * Math.PI)),
+        }
+        // (1 / (stddev * Math.sqrt(2 * Math.PI))) *
+        //   Math.exp(-((sortedGenNum[i] - mean) ** 2) / (2 * stddev ** 2))
+      );
+    }
+
+    // const PDFdataGraph2 = [];
+    // for (let i = 0; i < genNum.length; i += 1) {
+    //   PDFdataGraph2.push({ date: sortedGenNum[i], value: sortedPDFdata[i] });
+    // }
+
+    console.log("genNumChart", genNumChart);
+    console.log("PDFdataChart", PDFdataChart);
+
+    //Google charts
+
+    // Calculate histogram data
+    const histogramBins = samplenum / 10; // Number of bins for the histogram
+    const histogram = Array.from({ length: histogramBins }, () => 0);
+
+    genNum.forEach((value) => {
+      const binIndex = Math.floor((value - mean) / stddev + histogramBins / 2);
+      if (binIndex >= 0 && binIndex < histogramBins) {
+        histogram[binIndex] += 1;
+      }
+    });
+
+    const histogramChartData = [["Value", "Frequency"]];
+    const binWidth = (2 * stddev) / histogramBins;
+    for (let i = 0; i < histogramBins; i++) {
+      const binStart = mean - stddev + i * binWidth;
+      histogramChartData.push([
+        `${binStart.toFixed(2)}-${(binStart + binWidth).toFixed(2)}`,
+        histogram[i],
+      ]);
+    }
+
+    //  setHistogramData(histogramChartData);
+
+    // Calculate PDF data
+    const pdfChartData = [["Value", "Probability"]];
+    for (let i = 0; i < histogramBins; i++) {
+      const binStart = mean - stddev + i * binWidth;
+      const probability = histogram[i] / (samplenum * binWidth);
+      pdfChartData.push([
+        `${binStart.toFixed(2)}-${(binStart + binWidth).toFixed(2)}`,
+        probability,
+      ]);
+    }
+
+    console.log(
+      "histogramChartData,pdfChartData",
+      histogramChartData,
+      pdfChartData
+    );
+
+    const frequencyObj = {};
+
+    // Count the frequency of each value
+    genNum.forEach((value) => {
+      if (frequencyObj[value]) {
+        frequencyObj[value]++;
+      } else {
+        frequencyObj[value] = 1;
+      }
+    });
+
+    // Convert the frequency object into an array of arrays
+    const frequencyArray = [];
+
+    for (const value in frequencyObj) {
+      frequencyArray.push([value.toString(), frequencyObj[value]]);
+    }
+
+    console.log("frequencyArray", frequencyArray);
+
+    const histogramData = [
+      ["Value", "Frequency"],
+      ...frequencyArray.map(([value, frequency]) => [value, frequency]),
+    ];
+
+    const probabilityArray = [["Value", "Probability"]];
+
+    for (const value in frequencyObj) {
+      // Convert the value to a number
+      const numericValue = parseFloat(value);
+
+      // Calculate the probability using the formula you provided
+      const probability =
+        Math.exp(
+          -Math.pow(numericValue - mean, 2) / (2 * Math.pow(stddev, 2))
+        ) /
+        (stddev * Math.sqrt(2 * Math.PI));
+
+      // Push the value and calculated probability into the array
+      probabilityArray.push([numericValue, probability]);
+    }
+    //  setPdfData(pdfChartData);
+
     setTimeout(() => {
       setHistData(genNumHist);
       setHistBinData(histBinNum);
       setPdfData(PDFdataGraph);
+      setPdfData2(PDFdataChart);
+      setGenNumChart(genNumChart);
       setIsSpinner(false);
+      setHistogramDataGoogle(histogramData);
+      setPdfDataGoogle(probabilityArray);
     }, 1000); // Simulate a 5-second delay
     setIsStatistic(true);
   };
@@ -617,6 +775,194 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
       behavior: "smooth", // Optional: Smooth scrolling animation
     });
   };
+
+  //react schart
+
+  // let res = [
+  //   { date: "1", value: 35.98 },
+  //   { date: "2", value: 147.49 },
+  //   { date: "3", value: 146.93 },
+  //   { date: "4", value: 139.89 },
+  //   { date: "5", value: 125.6 },
+  //   { date: "6", value: 108.13 },
+  //   { date: "7", value: 115 },
+  //   { date: "8", value: 118.8 },
+  //   { date: "9", value: 124.66 },
+  //   { date: "10", value: 113.44 },
+  //   { date: "11", value: 5.78 },
+  //   { date: "12", value: 113.46 },
+  //   { date: "13", value: 122 },
+  //   { date: "14", value: 118.68 },
+  //   { date: "15", value: 117.45 },
+  //   { date: "16", value: 118.7 },
+  //   { date: "17", value: 119.8 },
+  //   { date: "18", value: 115.81 },
+  //   { date: "19", value: 118.76 },
+  //   { date: "20", value: 125.3 },
+  //   { date: "21", value: 118.68 },
+  //   { date: "22", value: 117.45 },
+  //   { date: "23", value: 118.7 },
+  //   { date: "24", value: 119.8 },
+  //   { date: "25", value: 115.81 },
+  //   { date: "26", value: 118.76 },
+  //   { date: "27", value: 125.3 },
+  //   { date: "28", value: 125.25 },
+  //   { date: "29", value: 124.5 },
+  //   { date: "30", value: 14.5 },
+  //   { date: "31", value: 1.5 },
+  //   { date: "32", value: 140.5 },
+  //   { date: "33", value: 4.5 },
+  //   { date: "34", value: 1.5 },
+  //   { date: "35", value: 140.5 },
+  //   { date: "36", value: 1.5 },
+  //   { date: "37", value: 4.5 },
+  //   { date: "38", value: 144.5 },
+  //   { date: "39", value: 14.5 },
+  //   { date: "40", value: 144.5 },
+  //   { date: "41", value: 114.5 },
+  //   { date: "42", value: 14.5 },
+  //   { date: "43", value: 141.5 },
+  //   { date: "44", value: 14.5 },
+  //   { date: "45", value: 141.5 },
+  //   { date: "46", value: 14.5 },
+  //   { date: "47", value: 111.5 },
+  //   { date: "48", value: 14.5 },
+  //   { date: "49", value: 141.5 },
+  //   { date: "50", value: 114.5 },
+  // ];
+
+  // let res = pdfData2;
+  // console.log("res for PDF", res);
+
+  // ChartJS.register(
+  //   CategoryScale,
+  //   LinearScale,
+  //   PointElement,
+  //   LineElement,
+  //   Legend
+  // );
+
+  // const data = {
+  //   labels: sortedGenNum,
+  //   datasets: [
+  //     {
+  //       label: "First dataset",
+  //       data: pdfData2,
+  //       fill: true,
+  //       backgroundColor: "rgba(75,192,192,0.2)",
+  //       borderColor: "black",
+  //     },
+  //   ],
+  // };
+  // const data = {
+  //   labels: res.map((e) => e.data),
+  //   datasets: [
+  //     {
+  //       label: "First dataset",
+  //       data: res.map((e) => e.value),
+  //       fill: true,
+  //       backgroundColor: "rgba(75,192,192,0.2)",
+  //       borderColor: "rgba(75,192,192,1)",
+  //     },
+  //   ],
+  // };
+  // const data = {
+  //   labels: [0, 1, 2, 3, 4, 5],
+  //   datasets: [
+  //     {
+  //       label: "First dataset",
+  //       data: [0.05, 0.1, 0.2, 0.3, 0.15, 0.1],
+  //       fill: true,
+  //       backgroundColor: "rgba(75,192,192,0.2)",
+  //       borderColor: "rgba(75,192,192,1)",
+  //     },
+  //   ],
+  // };
+
+  // const options = {
+  //   scales: {
+  //     xAxes: [
+  //       {
+  //         stacked: true,
+  //       },
+  //     ],
+  //     yAxes: [
+  //       {
+  //         stacked: true,
+  //       },
+  //     ],
+  //     min: WorstCaseNominal - WorstCaseTolerance, // Set minimum x-value
+  //     max: WorstCaseNominal + WorstCaseTolerance, // Set maximum x-value
+  //   },
+  //   pan: {
+  //     enabled: true,
+  //     mode: "x",
+  //   },
+  //   zoom: {
+  //     enabled: true,
+  //     mode: "x",
+  //     sensitivity: 0.5,
+  //   },
+  // };
+
+  // const options = {
+  //   scales: {
+  //     y: {
+  //       beginAtZero: true,
+  //       title: {
+  //         display: true,
+  //         text: "Probability Density",
+  //       },
+  //     },
+  //     x: {
+  //       title: {
+  //         display: true,
+  //         text: "X-values",
+  //       },
+  //       min: WorstCaseNominal - WorstCaseTolerance, // Set minimum x-value
+  //       max: WorstCaseNominal + WorstCaseTolerance, // Set maximum x-value
+  //     },
+  //   },
+  // };
+
+  // Function to generate random data for the histogram
+
+  // Function to generate normally distributed random data
+
+  // Function to generate normally distributed random data
+
+  // const generateNormalDistributionData = (mean, stdDev, count) => {
+  //   const engine = Random.engines.mt19937().seed(0); // Use MersenneTwister19937
+  //   const normal = Random.normal(mean, stdDev, true)(engine);
+  //   const data = Array.from({ length: count }, () => ({ value: normal() }));
+  //   return data;
+  // };
+
+  // const [normalData, setNormalData] = useState([]);
+  // const [pdfData3, setPDFData] = useState([]);
+
+  // useEffect(() => {
+  //   // Generate normally distributed random data with mean 0 and standard deviation 1
+  //   const data = generateNormalDistributionData(0, 1, 1000);
+  //   setNormalData(data);
+
+  //   // Calculate PDF for the generated data
+  //   const pdf = calculatePDF(data);
+  //   setPDFData(pdf);
+  // }, []);
+
+  // // Function to calculate PDF values for a given dataset
+  // const calculatePDF = (data) => {
+  //   const pdfData = [];
+  //   const values = data.map((item) => item.value);
+
+  //   for (let i = Math.min(...values); i <= Math.max(...values); i += 0.1) {
+  //     const count = values.filter((value) => Math.abs(value - i) < 0.1).length;
+  //     pdfData.push({ value: i, pdf: count / (data.length * 0.1) });
+  //   }
+
+  //   return pdfData;
+  // };
 
   return (
     <div ref={ref}>
@@ -746,51 +1092,74 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
                   />
                 </VictoryChart>
               </div>
-              {/* <div className="boxgraph overlaygraph ">
-                <VictoryChart>
-                  <VictoryArea
-                    data={[
-                      {
-                        x: 23,
-                        y: statisticalForm.Max,
-                        y0: 0,
-                      },
-                      {
-                        x: 25,
-                        y: statisticalForm.Max,
-                        y0: 0,
-                      },
-                    ]}
-                  />
-                  <VictoryAxis
-                    domain={histBinData}
-                    // theme={VictoryTheme.material}
-
-                    standalone={false}
-                  />
-                </VictoryChart>
-              </div> */}
-
-              {/* <div className="boxgraph overlaygraph ">
-                <VictoryChart domainPadding={{ x: 50, y: 25 }}>
-                  <VictoryLine
-                    data={[
-                      { x: statisticalForm.meanS - statisticalForm.LTS, y: 0 },
-                      {
-                        x: statisticalForm.meanS - statisticalForm.LTS,
-                        y: statisticalForm.Max,
-                      },
-                    ]}
-                  />
-                  <VictoryAxis
-                    domain={histBinData}
-                    // theme={VictoryTheme.material}
-
-                    standalone={false}
-                  />
-                </VictoryChart>
-              </div> */}
             </div>
+
+            {/*Google Chart*/}
+
+            {isStatistic && (
+              <div>
+                <h2>Histogram</h2>
+                <Chart
+                  width={"500px"}
+                  height={"300px"}
+                  chartType="ColumnChart"
+                  loader={<div>Loading Chart</div>}
+                  data={histogramDataGoogle}
+                  options={{
+                    title: "Histogram Example",
+                    legend: { position: "none" },
+                  }}
+                />
+
+                <h2>Probability Density Function (PDF)</h2>
+                <Chart
+                  width={"500px"}
+                  height={"300px"}
+                  chartType="AreaChart"
+                  loader={<div>Loading Chart</div>}
+                  data={pdfDataGoogle}
+                  options={{
+                    title: "PDF Example",
+                    legend: { position: "none" },
+                  }}
+                />
+              </div>
+            )}
+
+            <div>
+              {/* <Line data={data} options={options} /> */}
+              {/* <Line
+                data={data}
+                options={{
+                  responsive: true,
+                }}
+              /> */}
+            </div>
+
+            {/* <div>
+                <h1>Histogram Chart</h1>
+                <BarChart width={600} height={300} data={genNumChart}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="value" domain={[-3, 3]} />{" "}
+                  
+                  <YAxis domain={["auto", "auto"]} /> 
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+
+                <h1>Probability Density Function Chart</h1>
+                <LineChart width={600} height={300} data={pdfData2}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="value" domain={[0, 5]} />{" "}
+                  
+                  <YAxis /> 
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="pdf" stroke="#82ca9d" />
+                </LineChart>
+              </div>
+             */}
 
             {/* <Col xs={12} md={6}>
               <VictoryChart

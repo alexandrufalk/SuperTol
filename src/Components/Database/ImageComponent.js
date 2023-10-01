@@ -46,7 +46,9 @@ function ImageComponent({ i, handleClick }) {
               cursor: "pointer",
             }}
           >
-            <span onClick={() => handleClick(i.ID)}>Delete</span>
+            <span className="text-danger" onClick={() => handleClick(i.ID)}>
+              Delete
+            </span>
             <span
               onClick={handlePreviewClick}
               style={{
