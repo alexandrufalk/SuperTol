@@ -1108,6 +1108,8 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
                   options={{
                     title: "Histogram Example",
                     legend: { position: "none" },
+                    series: { 0: { color: "#e2431e" } },
+                    backgroundColor: { fill: "transparent" },
                   }}
                 />
 
@@ -1115,12 +1117,33 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
                 <Chart
                   width={"500px"}
                   height={"300px"}
-                  chartType="AreaChart"
+                  chartType="Line"
                   loader={<div>Loading Chart</div>}
                   data={pdfDataGoogle}
                   options={{
                     title: "PDF Example",
                     legend: { position: "none" },
+                    series: { 0: { color: "#e2431e" } },
+                    backgroundColor: { fill: "transparent" },
+                  }}
+                />
+
+                <Chart
+                  width={"500px"}
+                  height={"300px"}
+                  chartType="ComboChart"
+                  loader={<div>Loading Chart</div>}
+                  data={[...histogramDataGoogle, ...pdfDataGoogle]}
+                  options={{
+                    backgroundColor: { fill: "transparent" },
+                    title: "Dual-Axis Chart",
+                    seriesType: "bars", // Use bars for the bar chart
+                    series: { 1: { type: "Line" } }, // Use line for the second series
+                    vAxes: {
+                      0: { title: "Bar Chart Data" },
+                      1: { title: "Line Chart Data" },
+                    },
+                    legend: { position: "top" },
                   }}
                 />
               </div>
