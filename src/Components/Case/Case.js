@@ -62,6 +62,8 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
   const [genNumChart, setGenNumChart] = useState([]);
   const [histogramDataGoogle, setHistogramDataGoogle] = useState([]);
   const [pdfDataGoogle, setPdfDataGoogle] = useState([]);
+  const [maxValue, setMaxValue] = useState();
+  const [dualAxisChart, setDualAxisChart] = useState([]);
   const [addComponent, setAddComponent] = useState("Select Dimension");
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
@@ -82,6 +84,7 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
 
   console.log("dataCaseDimFiltred", dataCaseDimFiltred);
   console.log("isDataCaseDimFiltred", isDataCaseDimFiltred);
+  console.log("maxValue", maxValue);
 
   // const [isGraph, setIsGraph] = useState(false);
 
@@ -660,6 +663,29 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
     }
     //  setPdfData(pdfChartData);
 
+    const dualAxisChart = [["X", "Frequency", "Probability"]];
+
+    for (const value in frequencyObj) {
+      // Convert the value to a number
+      const numericValue = parseFloat(value);
+
+      // Calculate the probability using the formula you provided
+      const probability =
+        Math.exp(
+          -Math.pow(numericValue - mean, 2) / (2 * Math.pow(stddev, 2))
+        ) /
+        (stddev * Math.sqrt(2 * Math.PI));
+
+      // Push the value and calculated probability into the array
+      dualAxisChart.push([value * 1, frequencyObj[value], probability]);
+    }
+
+    console.log("dualAxisChart", dualAxisChart);
+
+    const maxDataValue = Math.max(
+      ...frequencyArray.map(([value, frequency]) => frequency)
+    );
+
     setTimeout(() => {
       setHistData(genNumHist);
       setHistBinData(histBinNum);
@@ -669,6 +695,8 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
       setIsSpinner(false);
       setHistogramDataGoogle(histogramData);
       setPdfDataGoogle(probabilityArray);
+      setMaxValue(maxDataValue);
+      setDualAxisChart(dualAxisChart);
     }, 1000); // Simulate a 5-second delay
     setIsStatistic(true);
   };
@@ -776,193 +804,7 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
     });
   };
 
-  //react schart
-
-  // let res = [
-  //   { date: "1", value: 35.98 },
-  //   { date: "2", value: 147.49 },
-  //   { date: "3", value: 146.93 },
-  //   { date: "4", value: 139.89 },
-  //   { date: "5", value: 125.6 },
-  //   { date: "6", value: 108.13 },
-  //   { date: "7", value: 115 },
-  //   { date: "8", value: 118.8 },
-  //   { date: "9", value: 124.66 },
-  //   { date: "10", value: 113.44 },
-  //   { date: "11", value: 5.78 },
-  //   { date: "12", value: 113.46 },
-  //   { date: "13", value: 122 },
-  //   { date: "14", value: 118.68 },
-  //   { date: "15", value: 117.45 },
-  //   { date: "16", value: 118.7 },
-  //   { date: "17", value: 119.8 },
-  //   { date: "18", value: 115.81 },
-  //   { date: "19", value: 118.76 },
-  //   { date: "20", value: 125.3 },
-  //   { date: "21", value: 118.68 },
-  //   { date: "22", value: 117.45 },
-  //   { date: "23", value: 118.7 },
-  //   { date: "24", value: 119.8 },
-  //   { date: "25", value: 115.81 },
-  //   { date: "26", value: 118.76 },
-  //   { date: "27", value: 125.3 },
-  //   { date: "28", value: 125.25 },
-  //   { date: "29", value: 124.5 },
-  //   { date: "30", value: 14.5 },
-  //   { date: "31", value: 1.5 },
-  //   { date: "32", value: 140.5 },
-  //   { date: "33", value: 4.5 },
-  //   { date: "34", value: 1.5 },
-  //   { date: "35", value: 140.5 },
-  //   { date: "36", value: 1.5 },
-  //   { date: "37", value: 4.5 },
-  //   { date: "38", value: 144.5 },
-  //   { date: "39", value: 14.5 },
-  //   { date: "40", value: 144.5 },
-  //   { date: "41", value: 114.5 },
-  //   { date: "42", value: 14.5 },
-  //   { date: "43", value: 141.5 },
-  //   { date: "44", value: 14.5 },
-  //   { date: "45", value: 141.5 },
-  //   { date: "46", value: 14.5 },
-  //   { date: "47", value: 111.5 },
-  //   { date: "48", value: 14.5 },
-  //   { date: "49", value: 141.5 },
-  //   { date: "50", value: 114.5 },
-  // ];
-
-  // let res = pdfData2;
-  // console.log("res for PDF", res);
-
-  // ChartJS.register(
-  //   CategoryScale,
-  //   LinearScale,
-  //   PointElement,
-  //   LineElement,
-  //   Legend
-  // );
-
-  // const data = {
-  //   labels: sortedGenNum,
-  //   datasets: [
-  //     {
-  //       label: "First dataset",
-  //       data: pdfData2,
-  //       fill: true,
-  //       backgroundColor: "rgba(75,192,192,0.2)",
-  //       borderColor: "black",
-  //     },
-  //   ],
-  // };
-  // const data = {
-  //   labels: res.map((e) => e.data),
-  //   datasets: [
-  //     {
-  //       label: "First dataset",
-  //       data: res.map((e) => e.value),
-  //       fill: true,
-  //       backgroundColor: "rgba(75,192,192,0.2)",
-  //       borderColor: "rgba(75,192,192,1)",
-  //     },
-  //   ],
-  // };
-  // const data = {
-  //   labels: [0, 1, 2, 3, 4, 5],
-  //   datasets: [
-  //     {
-  //       label: "First dataset",
-  //       data: [0.05, 0.1, 0.2, 0.3, 0.15, 0.1],
-  //       fill: true,
-  //       backgroundColor: "rgba(75,192,192,0.2)",
-  //       borderColor: "rgba(75,192,192,1)",
-  //     },
-  //   ],
-  // };
-
-  // const options = {
-  //   scales: {
-  //     xAxes: [
-  //       {
-  //         stacked: true,
-  //       },
-  //     ],
-  //     yAxes: [
-  //       {
-  //         stacked: true,
-  //       },
-  //     ],
-  //     min: WorstCaseNominal - WorstCaseTolerance, // Set minimum x-value
-  //     max: WorstCaseNominal + WorstCaseTolerance, // Set maximum x-value
-  //   },
-  //   pan: {
-  //     enabled: true,
-  //     mode: "x",
-  //   },
-  //   zoom: {
-  //     enabled: true,
-  //     mode: "x",
-  //     sensitivity: 0.5,
-  //   },
-  // };
-
-  // const options = {
-  //   scales: {
-  //     y: {
-  //       beginAtZero: true,
-  //       title: {
-  //         display: true,
-  //         text: "Probability Density",
-  //       },
-  //     },
-  //     x: {
-  //       title: {
-  //         display: true,
-  //         text: "X-values",
-  //       },
-  //       min: WorstCaseNominal - WorstCaseTolerance, // Set minimum x-value
-  //       max: WorstCaseNominal + WorstCaseTolerance, // Set maximum x-value
-  //     },
-  //   },
-  // };
-
-  // Function to generate random data for the histogram
-
-  // Function to generate normally distributed random data
-
-  // Function to generate normally distributed random data
-
-  // const generateNormalDistributionData = (mean, stdDev, count) => {
-  //   const engine = Random.engines.mt19937().seed(0); // Use MersenneTwister19937
-  //   const normal = Random.normal(mean, stdDev, true)(engine);
-  //   const data = Array.from({ length: count }, () => ({ value: normal() }));
-  //   return data;
-  // };
-
-  // const [normalData, setNormalData] = useState([]);
-  // const [pdfData3, setPDFData] = useState([]);
-
-  // useEffect(() => {
-  //   // Generate normally distributed random data with mean 0 and standard deviation 1
-  //   const data = generateNormalDistributionData(0, 1, 1000);
-  //   setNormalData(data);
-
-  //   // Calculate PDF for the generated data
-  //   const pdf = calculatePDF(data);
-  //   setPDFData(pdf);
-  // }, []);
-
-  // // Function to calculate PDF values for a given dataset
-  // const calculatePDF = (data) => {
-  //   const pdfData = [];
-  //   const values = data.map((item) => item.value);
-
-  //   for (let i = Math.min(...values); i <= Math.max(...values); i += 0.1) {
-  //     const count = values.filter((value) => Math.abs(value - i) < 0.1).length;
-  //     pdfData.push({ value: i, pdf: count / (data.length * 0.1) });
-  //   }
-
-  //   return pdfData;
-  // };
+  console.log("check dualaxis", dualAxisChart);
 
   return (
     <div ref={ref}>
@@ -1096,56 +938,101 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
 
             {/*Google Chart*/}
 
-            {isStatistic && (
-              <div>
-                <h2>Histogram</h2>
-                <Chart
-                  width={"500px"}
-                  height={"300px"}
-                  chartType="ColumnChart"
-                  loader={<div>Loading Chart</div>}
-                  data={histogramDataGoogle}
-                  options={{
-                    title: "Histogram Example",
-                    legend: { position: "none" },
-                    series: { 0: { color: "#e2431e" } },
-                    backgroundColor: { fill: "transparent" },
-                  }}
-                />
+            {isStatistic && maxValue && (
+              <div className="containergraph ">
+                <div className="boxgraph ">
+                  <Chart
+                    width={"500px"}
+                    height={"300px"}
+                    chartType="ColumnChart"
+                    loader={<div>Loading Chart</div>}
+                    data={histogramDataGoogle}
+                    options={{
+                      title: "Histogram Example",
+                      legend: { position: "none" },
+                      series: { 0: { color: "#7CD163" } },
+                      backgroundColor: { fill: "transparent" },
+                      animation: {
+                        startup: true,
+                        easing: "linear",
+                        duration: 1500,
+                      },
+                      vAxis: {
+                        ticks: [
+                          0,
+                          (0.25 * maxValue).toFixed(0),
+                          (0.5 * maxValue).toFixed(0),
+                          (0.75 * maxValue).toFixed(0),
+                          maxValue,
+                        ], // Set custom tick values to enforce the maximum value
+                      },
+                    }}
+                  />
+                </div>
 
-                <h2>Probability Density Function (PDF)</h2>
-                <Chart
-                  width={"500px"}
-                  height={"300px"}
-                  chartType="Line"
-                  loader={<div>Loading Chart</div>}
-                  data={pdfDataGoogle}
-                  options={{
-                    title: "PDF Example",
-                    legend: { position: "none" },
-                    series: { 0: { color: "#e2431e" } },
-                    backgroundColor: { fill: "transparent" },
-                  }}
-                />
+                <div className="boxgraph overlaygraph ">
+                  <Chart
+                    width={"500px"}
+                    height={"300px"}
+                    chartType="LineChart"
+                    loader={<div>Loading Chart</div>}
+                    data={pdfDataGoogle}
+                    options={{
+                      legend: { position: "none" },
+                      series: { 0: { color: "#7CD163" } },
+                      backgroundColor: { fill: "transparent" },
+                      animation: {
+                        startup: true,
+                        easing: "linear",
+                        duration: 1500,
+                      },
+                      hAxis: {
+                        textPosition: "none", // Hide x-axis labels and ticks
+                      },
+                      vAxis: {
+                        textPosition: "none", // Hide y-axis labels and ticks
+                      },
+                    }}
+                  />
+                </div>
 
-                <Chart
+                {/* <Chart
                   width={"500px"}
                   height={"300px"}
-                  chartType="ComboChart"
+                  chartType="LineChart"
                   loader={<div>Loading Chart</div>}
-                  data={[...histogramDataGoogle, ...pdfDataGoogle]}
+                  data={dualAxisChart}
                   options={{
-                    backgroundColor: { fill: "transparent" },
-                    title: "Dual-Axis Chart",
-                    seriesType: "bars", // Use bars for the bar chart
-                    series: { 1: { type: "Line" } }, // Use line for the second series
-                    vAxes: {
-                      0: { title: "Bar Chart Data" },
-                      1: { title: "Line Chart Data" },
+                    title: "Line Chart",
+                    legend: { position: "none" },
+                    vAxis: {
+                      maxValue: maxValue, // Set the maximum value on the y-axis
                     },
-                    legend: { position: "top" },
+                    // Additional line chart options
                   }}
-                />
+                  chartEvents={[
+                    {
+                      eventName: "ready",
+                      callback: ({ chartWrapper }) => {
+                        // Adjust line chart's position to align with the bar chart
+                        const barChartBounds = chartWrapper
+                          .getChart()
+                          .getChartLayoutInterface()
+                          .getBoundingBox("barChart#0#0");
+                        const lineChartWrapper = chartWrapper.getChart();
+                        const lineChartBounds = lineChartWrapper
+                          .getChartLayoutInterface()
+                          .getBoundingBox("lineChart#0#0");
+                        const xOffset =
+                          barChartBounds.left - lineChartBounds.left;
+                        const yOffset =
+                          barChartBounds.top - lineChartBounds.top;
+                        lineChartWrapper.container.style.left = `${xOffset}px`;
+                        lineChartWrapper.container.style.top = `${yOffset}px`;
+                      },
+                    },
+                  ]}
+                /> */}
               </div>
             )}
 
