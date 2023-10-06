@@ -859,7 +859,7 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
       <div className="d-flex shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85">
         <Container fluid>
           <Row>
-            <div className="containergraph ">
+            {/* <div className="containergraph ">
               <div className="boxgraph ">
                 <VictoryChart domainPadding={{ x: 50, y: 25 }}>
                   <VictoryHistogram
@@ -934,106 +934,117 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
                   />
                 </VictoryChart>
               </div>
-            </div>
+            </div> */}
 
             {/*Google Chart*/}
 
             {isStatistic && maxValue && (
-              <div className="containergraph ">
-                <div className="boxgraph ">
-                  <Chart
-                    width={"500px"}
-                    height={"300px"}
-                    chartType="ColumnChart"
-                    loader={<div>Loading Chart</div>}
-                    data={histogramDataGoogle}
-                    options={{
-                      title: "Histogram Example",
-                      legend: { position: "none" },
-                      series: { 0: { color: "#7CD163" } },
-                      backgroundColor: { fill: "transparent" },
-                      animation: {
-                        startup: true,
-                        easing: "linear",
-                        duration: 1500,
-                      },
-                      vAxis: {
-                        ticks: [
-                          0,
-                          (0.25 * maxValue).toFixed(0),
-                          (0.5 * maxValue).toFixed(0),
-                          (0.75 * maxValue).toFixed(0),
-                          maxValue,
-                        ], // Set custom tick values to enforce the maximum value
-                      },
-                    }}
-                  />
-                </div>
+              <Row className="justify-content-md-center p-4 ">
+                <div className="container horizontal-scrollable"></div>
+                <Col md="auto">
+                  <div className="containergraph ">
+                    <div className="boxgraph ">
+                      <Chart
+                        width={"750px"}
+                        height={"450px"}
+                        chartType="ColumnChart"
+                        loader={<div>Loading Chart</div>}
+                        data={histogramDataGoogle}
+                        options={{
+                          title: "Histogram Example",
+                          legend: { position: "none" },
+                          series: { 0: { color: "#7CD163" } },
+                          backgroundColor: { fill: "#38403f" },
+                          animation: {
+                            startup: true,
+                            easing: "linear",
+                            duration: 1500,
+                          },
+                          hAxis: {
+                            textStyle: {
+                              color: "#cef2ed", // Set the text color for x-axis labels
+                            },
+                          },
+                          vAxis: {
+                            textStyle: { color: "#cef2ed" },
+                            ticks: [
+                              0,
+                              (0.25 * maxValue).toFixed(0),
+                              (0.5 * maxValue).toFixed(0),
+                              (0.75 * maxValue).toFixed(0),
+                              maxValue,
+                            ], // Set custom tick values to enforce the maximum value
+                          },
+                        }}
+                      />
+                    </div>
 
-                <div className="boxgraph overlaygraph ">
-                  <Chart
-                    width={"500px"}
-                    height={"300px"}
-                    chartType="LineChart"
-                    loader={<div>Loading Chart</div>}
-                    data={pdfDataGoogle}
-                    options={{
-                      legend: { position: "none" },
-                      series: { 0: { color: "#7CD163" } },
-                      backgroundColor: { fill: "transparent" },
-                      animation: {
-                        startup: true,
-                        easing: "linear",
-                        duration: 1500,
-                      },
-                      hAxis: {
-                        textPosition: "none", // Hide x-axis labels and ticks
-                      },
-                      vAxis: {
-                        textPosition: "none", // Hide y-axis labels and ticks
-                      },
-                    }}
-                  />
-                </div>
+                    <div className="boxgraph overlaygraph ">
+                      <Chart
+                        width={"750px"}
+                        height={"450px"}
+                        chartType="LineChart"
+                        loader={<div>Loading Chart</div>}
+                        data={pdfDataGoogle}
+                        options={{
+                          legend: { position: "none" },
+                          series: { 0: { color: "#7CD163" } },
+                          backgroundColor: { fill: "transparent" },
+                          animation: {
+                            startup: true,
+                            easing: "linear",
+                            duration: 1500,
+                          },
+                          hAxis: {
+                            textPosition: "none", // Hide x-axis labels and ticks
+                          },
+                          vAxis: {
+                            textPosition: "none", // Hide y-axis labels and ticks
+                          },
+                        }}
+                      />
+                    </div>
 
-                {/* <Chart
-                  width={"500px"}
-                  height={"300px"}
-                  chartType="LineChart"
-                  loader={<div>Loading Chart</div>}
-                  data={dualAxisChart}
-                  options={{
-                    title: "Line Chart",
-                    legend: { position: "none" },
-                    vAxis: {
-                      maxValue: maxValue, // Set the maximum value on the y-axis
+                    {/* <Chart
+                width={"500px"}
+                height={"300px"}
+                chartType="LineChart"
+                loader={<div>Loading Chart</div>}
+                data={dualAxisChart}
+                options={{
+                  title: "Line Chart",
+                  legend: { position: "none" },
+                  vAxis: {
+                    maxValue: maxValue, // Set the maximum value on the y-axis
+                  },
+                  // Additional line chart options
+                }}
+                chartEvents={[
+                  {
+                    eventName: "ready",
+                    callback: ({ chartWrapper }) => {
+                      // Adjust line chart's position to align with the bar chart
+                      const barChartBounds = chartWrapper
+                        .getChart()
+                        .getChartLayoutInterface()
+                        .getBoundingBox("barChart#0#0");
+                      const lineChartWrapper = chartWrapper.getChart();
+                      const lineChartBounds = lineChartWrapper
+                        .getChartLayoutInterface()
+                        .getBoundingBox("lineChart#0#0");
+                      const xOffset =
+                        barChartBounds.left - lineChartBounds.left;
+                      const yOffset =
+                        barChartBounds.top - lineChartBounds.top;
+                      lineChartWrapper.container.style.left = `${xOffset}px`;
+                      lineChartWrapper.container.style.top = `${yOffset}px`;
                     },
-                    // Additional line chart options
-                  }}
-                  chartEvents={[
-                    {
-                      eventName: "ready",
-                      callback: ({ chartWrapper }) => {
-                        // Adjust line chart's position to align with the bar chart
-                        const barChartBounds = chartWrapper
-                          .getChart()
-                          .getChartLayoutInterface()
-                          .getBoundingBox("barChart#0#0");
-                        const lineChartWrapper = chartWrapper.getChart();
-                        const lineChartBounds = lineChartWrapper
-                          .getChartLayoutInterface()
-                          .getBoundingBox("lineChart#0#0");
-                        const xOffset =
-                          barChartBounds.left - lineChartBounds.left;
-                        const yOffset =
-                          barChartBounds.top - lineChartBounds.top;
-                        lineChartWrapper.container.style.left = `${xOffset}px`;
-                        lineChartWrapper.container.style.top = `${yOffset}px`;
-                      },
-                    },
-                  ]}
-                /> */}
-              </div>
+                  },
+                ]}
+              /> */}
+                  </div>
+                </Col>
+              </Row>
             )}
 
             <div>
@@ -1099,7 +1110,7 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
               </VictoryChart>
             </Col> */}
 
-            <Col>
+            <Col className="p-5">
               <Row>
                 <Col>
                   <div className="container-fluid tabelCase text-light ">
