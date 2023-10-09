@@ -27,7 +27,7 @@ import { useProfile } from "./Components/GoogleLoginButton/profileContext";
 function App() {
   const [isMinSize2, setIsMinSize2] = useState(true);
   const [viewAddTemplate, setViewAddTemplate] = useState(false);
-  const [viewDatabase, setViewDatabase] = useState(true);
+  const [viewDatabase, setViewDatabase] = useState(false);
   const [isBurgherClicked, setIsBurgherClicked] = useState(true);
   const [isTemplate, setIsTemlate] = useState(false);
   const [showPage, setShowPage] = useState(false);

@@ -941,71 +941,77 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
             {isStatistic && maxValue && (
               <Row className="justify-content-md-center p-4 ">
                 <div className="container horizontal-scrollable"></div>
-                <Col md="auto">
-                  <div className="containergraph ">
-                    <div className="boxgraph ">
-                      <Chart
-                        width={"750px"}
-                        height={"450px"}
-                        chartType="ColumnChart"
-                        loader={<div>Loading Chart</div>}
-                        data={histogramDataGoogle}
-                        options={{
-                          title: "Histogram Example",
-                          legend: { position: "none" },
-                          series: { 0: { color: "#7CD163" } },
-                          backgroundColor: { fill: "#38403f" },
-                          animation: {
-                            startup: true,
-                            easing: "linear",
-                            duration: 1500,
-                          },
-                          hAxis: {
-                            textStyle: {
-                              color: "#cef2ed", // Set the text color for x-axis labels
-                            },
-                          },
-                          vAxis: {
-                            textStyle: { color: "#cef2ed" },
-                            ticks: [
-                              0,
-                              (0.25 * maxValue).toFixed(0),
-                              (0.5 * maxValue).toFixed(0),
-                              (0.75 * maxValue).toFixed(0),
-                              maxValue,
-                            ], // Set custom tick values to enforce the maximum value
-                          },
-                        }}
-                      />
-                    </div>
 
-                    <div className="boxgraph overlaygraph ">
-                      <Chart
-                        width={"750px"}
-                        height={"450px"}
-                        chartType="LineChart"
-                        loader={<div>Loading Chart</div>}
-                        data={pdfDataGoogle}
-                        options={{
-                          legend: { position: "none" },
-                          series: { 0: { color: "#7CD163" } },
-                          backgroundColor: { fill: "transparent" },
-                          animation: {
-                            startup: true,
-                            easing: "linear",
-                            duration: 1500,
+                <div className="containergraph ">
+                  <div
+                    className="boxgraph "
+                    style={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Chart
+                      width={"750px"}
+                      height={"450px"}
+                      chartType="ColumnChart"
+                      loader={<div>Loading Chart</div>}
+                      data={histogramDataGoogle}
+                      options={{
+                        title: "Histogram Example",
+                        legend: { position: "none" },
+                        series: { 0: { color: "#7CD163" } },
+                        backgroundColor: { fill: "#38403f" },
+                        animation: {
+                          startup: true,
+                          easing: "linear",
+                          duration: 1500,
+                        },
+                        hAxis: {
+                          textStyle: {
+                            color: "#cef2ed", // Set the text color for x-axis labels
                           },
-                          hAxis: {
-                            textPosition: "none", // Hide x-axis labels and ticks
-                          },
-                          vAxis: {
-                            textPosition: "none", // Hide y-axis labels and ticks
-                          },
-                        }}
-                      />
-                    </div>
+                        },
+                        vAxis: {
+                          textStyle: { color: "#cef2ed" },
+                          ticks: [
+                            0,
+                            (0.25 * maxValue).toFixed(0),
+                            (0.5 * maxValue).toFixed(0),
+                            (0.75 * maxValue).toFixed(0),
+                            maxValue,
+                          ], // Set custom tick values to enforce the maximum value
+                        },
+                      }}
+                    />
+                  </div>
 
-                    {/* <Chart
+                  <div
+                    className="boxgraph overlaygraph "
+                    style={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Chart
+                      width={"750px"}
+                      height={"450px"}
+                      chartType="LineChart"
+                      loader={<div>Loading Chart</div>}
+                      data={pdfDataGoogle}
+                      options={{
+                        legend: { position: "none" },
+                        series: { 0: { color: "#7CD163" } },
+                        backgroundColor: { fill: "transparent" },
+                        animation: {
+                          startup: true,
+                          easing: "linear",
+                          duration: 1500,
+                        },
+                        hAxis: {
+                          textPosition: "none", // Hide x-axis labels and ticks
+                        },
+                        vAxis: {
+                          textPosition: "none", // Hide y-axis labels and ticks
+                        },
+                      }}
+                    />
+                  </div>
+
+                  {/* <Chart
                 width={"500px"}
                 height={"300px"}
                 chartType="LineChart"
@@ -1042,8 +1048,7 @@ const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
                   },
                 ]}
               /> */}
-                  </div>
-                </Col>
+                </div>
               </Row>
             )}
 
