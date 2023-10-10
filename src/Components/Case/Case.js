@@ -10,6 +10,32 @@ import {
   VictoryLine,
   VictoryArea,
 } from "victory";
+
+// import { Bar, Line } from "react-chartjs-2";
+// import Chart from "chart.js/auto"; // Import Chart.js
+
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Legend,
+// } from "chart.js";
+
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
+import { Chart } from "react-google-charts";
+
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -23,11 +49,21 @@ import "react-toastify/dist/ReactToastify.css";
 // import Canvas2 from "../Canvas/Canvas2";
 import "./case.css";
 import useDatabaseProjects from "../../Hooks/useDatabaseProject";
+import { useReactToPrint } from "react-to-print";
 
-const Case = ({ projectId, caseId, ViewDatabase }) => {
+import ImageCropper2 from "../ImportImage/ImageCropper2";
+import { get } from "use-between";
+
+const Case = React.forwardRef(({ projectId, caseId, ViewDatabase }, ref) => {
   const [histData, setHistData] = useState([]);
   const [histBinData, setHistBinData] = useState([]);
   const [pdfData, setPdfData] = useState([]);
+  const [pdfData2, setPdfData2] = useState([]);
+  const [genNumChart, setGenNumChart] = useState([]);
+  const [histogramDataGoogle, setHistogramDataGoogle] = useState([]);
+  const [pdfDataGoogle, setPdfDataGoogle] = useState([]);
+  const [maxValue, setMaxValue] = useState();
+  const [dualAxisChart, setDualAxisChart] = useState([]);
   const [addComponent, setAddComponent] = useState("Select Dimension");
   const [meanStatistic, setMeanStatistic] = useState("");
   const [gapCpk, setGapCpk] = useState("Gap Cpk");
@@ -48,6 +84,7 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
 
   console.log("dataCaseDimFiltred", dataCaseDimFiltred);
   console.log("isDataCaseDimFiltred", isDataCaseDimFiltred);
+  console.log("maxValue", maxValue);
 
   // const [isGraph, setIsGraph] = useState(false);
 
@@ -296,10 +333,11 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
   const WorstCaseTolerance = DatabaseCalculation.map(
     (n) => (n.UpperTolerance - n.LowerTolerance) / 2
   ).reduce((accumulator, current) => accumulator + current, 0);
+
   console.log("WorstCaseNominal", WorstCaseNominal);
   console.log("WorstCaseTolerance", WorstCaseTolerance);
   console.log("DatabaseCalculation", DatabaseCalculation);
-  console.log("DatabaseCases", DatabaseCases[0].Data[0].CaseData);
+  // console.log("DatabaseCases", DatabaseCases[0].Data[0].CaseData);
 
   console.log("histData", histData);
   console.log("histBinData", histBinData);
@@ -392,13 +430,14 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
 
     //arras/objects for chart
     const genNum = [];
-    const genNumHist = [];
 
     for (let i = 0; i < samplenum; i += 1) {
       genNum.push(
         Math.round(getNormallyDistributedRandomNumber(mean, stddev) * 100) / 100
       );
     }
+
+    const genNumHist = [];
 
     for (let i = 0; i < samplenum; i += 1) {
       genNumHist.push({
@@ -503,11 +542,161 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
       PDFdataGraph.push({ x: genNum[i], y: PDFdata[i] });
     }
 
+    //{ date: "1", value: 35.98 },
+    console.log("check genNum", genNum);
+    const genNumChart = [];
+    const sortedGenNum = genNum.sort();
+
+    for (let i = 0; i < genNum.length; i++) {
+      genNumChart.push({ value: sortedGenNum[i] });
+    }
+
+    const PDFdataChart = [];
+
+    for (let i = 0; i < genNum.length; i += 1) {
+      PDFdataChart.push(
+        // (1 / (stddev * Math.sqrt(2.0 * Math.PI))) *
+        //   (Math.E ^ -(((genNum[i] - mean) ^ 2) / ((2 * stddev) ^ 2)))
+        {
+          value: sortedGenNum[i],
+          pdf:
+            Math.exp(
+              -Math.pow(sortedGenNum[i] - mean, 2) / (2 * Math.pow(stddev, 2))
+            ) /
+            (stddev * Math.sqrt(2 * Math.PI)),
+        }
+        // (1 / (stddev * Math.sqrt(2 * Math.PI))) *
+        //   Math.exp(-((sortedGenNum[i] - mean) ** 2) / (2 * stddev ** 2))
+      );
+    }
+
+    // const PDFdataGraph2 = [];
+    // for (let i = 0; i < genNum.length; i += 1) {
+    //   PDFdataGraph2.push({ date: sortedGenNum[i], value: sortedPDFdata[i] });
+    // }
+
+    console.log("genNumChart", genNumChart);
+    console.log("PDFdataChart", PDFdataChart);
+
+    //Google charts
+
+    // Calculate histogram data
+    const histogramBins = samplenum / 10; // Number of bins for the histogram
+    const histogram = Array.from({ length: histogramBins }, () => 0);
+
+    genNum.forEach((value) => {
+      const binIndex = Math.floor((value - mean) / stddev + histogramBins / 2);
+      if (binIndex >= 0 && binIndex < histogramBins) {
+        histogram[binIndex] += 1;
+      }
+    });
+
+    const histogramChartData = [["Value", "Frequency"]];
+    const binWidth = (2 * stddev) / histogramBins;
+    for (let i = 0; i < histogramBins; i++) {
+      const binStart = mean - stddev + i * binWidth;
+      histogramChartData.push([
+        `${binStart.toFixed(2)}-${(binStart + binWidth).toFixed(2)}`,
+        histogram[i],
+      ]);
+    }
+
+    //  setHistogramData(histogramChartData);
+
+    // Calculate PDF data
+    const pdfChartData = [["Value", "Probability"]];
+    for (let i = 0; i < histogramBins; i++) {
+      const binStart = mean - stddev + i * binWidth;
+      const probability = histogram[i] / (samplenum * binWidth);
+      pdfChartData.push([
+        `${binStart.toFixed(2)}-${(binStart + binWidth).toFixed(2)}`,
+        probability,
+      ]);
+    }
+
+    console.log(
+      "histogramChartData,pdfChartData",
+      histogramChartData,
+      pdfChartData
+    );
+
+    const frequencyObj = {};
+
+    // Count the frequency of each value
+    genNum.forEach((value) => {
+      if (frequencyObj[value]) {
+        frequencyObj[value]++;
+      } else {
+        frequencyObj[value] = 1;
+      }
+    });
+
+    // Convert the frequency object into an array of arrays
+    const frequencyArray = [];
+
+    for (const value in frequencyObj) {
+      frequencyArray.push([value.toString(), frequencyObj[value]]);
+    }
+
+    console.log("frequencyArray", frequencyArray);
+
+    const histogramData = [
+      ["Value", "Frequency"],
+      ...frequencyArray.map(([value, frequency]) => [value, frequency]),
+    ];
+
+    const probabilityArray = [["Value", "Probability"]];
+
+    for (const value in frequencyObj) {
+      // Convert the value to a number
+      const numericValue = parseFloat(value);
+
+      // Calculate the probability using the formula you provided
+      const probability =
+        Math.exp(
+          -Math.pow(numericValue - mean, 2) / (2 * Math.pow(stddev, 2))
+        ) /
+        (stddev * Math.sqrt(2 * Math.PI));
+
+      // Push the value and calculated probability into the array
+      probabilityArray.push([numericValue, probability]);
+    }
+    //  setPdfData(pdfChartData);
+
+    const dualAxisChart = [["X", "Frequency", "Probability"]];
+
+    for (const value in frequencyObj) {
+      // Convert the value to a number
+      const numericValue = parseFloat(value);
+
+      // Calculate the probability using the formula you provided
+      const probability =
+        Math.exp(
+          -Math.pow(numericValue - mean, 2) / (2 * Math.pow(stddev, 2))
+        ) /
+        (stddev * Math.sqrt(2 * Math.PI));
+
+      // Push the value and calculated probability into the array
+      dualAxisChart.push([value * 1, frequencyObj[value], probability]);
+    }
+
+    console.log("dualAxisChart", dualAxisChart);
+
+    const maxDataValue = Math.max(
+      ...frequencyArray.map(([value, frequency]) => frequency)
+    );
+
     setTimeout(() => {
       setHistData(genNumHist);
       setHistBinData(histBinNum);
       setPdfData(PDFdataGraph);
+      setPdfData2(PDFdataChart);
+      setGenNumChart(genNumChart);
       setIsSpinner(false);
+      setHistogramDataGoogle(histogramData);
+      setPdfDataGoogle(probabilityArray);
+      setMaxValue(maxDataValue);
+      setDualAxisChart(dualAxisChart);
     }, 1000); // Simulate a 5-second delay
     setIsStatistic(true);
   };
@@ -615,8 +804,10 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
     });
   };
 
+  console.log("check dualaxis", dualAxisChart);
+
   return (
-    <>
+    <div ref={ref}>
       <p className="fs-3 border border-success-subtle p-2 rounded ">Case nr.</p>
       <Form.Group controlId="formGridState" className="col col-sm-6">
         <Form.Label>Select gap Cpk</Form.Label>
@@ -668,7 +859,7 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
       <div className="d-flex shadow-lg p-3 mb-5 bg-body-tertiary rounded opacity-85">
         <Container fluid>
           <Row>
-            <div className="containergraph ">
+            {/* <div className="containergraph ">
               <div className="boxgraph ">
                 <VictoryChart domainPadding={{ x: 50, y: 25 }}>
                   <VictoryHistogram
@@ -743,51 +934,158 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
                   />
                 </VictoryChart>
               </div>
-              {/* <div className="boxgraph overlaygraph ">
-                <VictoryChart>
-                  <VictoryArea
-                    data={[
-                      {
-                        x: 23,
-                        y: statisticalForm.Max,
-                        y0: 0,
-                      },
-                      {
-                        x: 25,
-                        y: statisticalForm.Max,
-                        y0: 0,
-                      },
-                    ]}
-                  />
-                  <VictoryAxis
-                    domain={histBinData}
-                    // theme={VictoryTheme.material}
+            </div> */}
 
-                    standalone={false}
-                  />
-                </VictoryChart>
-              </div> */}
+            {/*Google Chart*/}
 
-              {/* <div className="boxgraph overlaygraph ">
-                <VictoryChart domainPadding={{ x: 50, y: 25 }}>
-                  <VictoryLine
-                    data={[
-                      { x: statisticalForm.meanS - statisticalForm.LTS, y: 0 },
-                      {
-                        x: statisticalForm.meanS - statisticalForm.LTS,
-                        y: statisticalForm.Max,
-                      },
-                    ]}
-                  />
-                  <VictoryAxis
-                    domain={histBinData}
-                    // theme={VictoryTheme.material}
+            {isStatistic && maxValue && (
+              <Row className="justify-content-md-center p-4 ">
+                <div className="container horizontal-scrollable"></div>
 
-                    standalone={false}
-                  />
-                </VictoryChart>
-              </div> */}
+                <div className="containergraph ">
+                  <div
+                    className="boxgraph "
+                    style={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Chart
+                      width={"750px"}
+                      height={"450px"}
+                      chartType="ColumnChart"
+                      loader={<div>Loading Chart</div>}
+                      data={histogramDataGoogle}
+                      options={{
+                        title: "Histogram Example",
+                        legend: { position: "none" },
+                        series: { 0: { color: "#7CD163" } },
+                        backgroundColor: { fill: "#38403f" },
+                        animation: {
+                          startup: true,
+                          easing: "linear",
+                          duration: 1500,
+                        },
+                        hAxis: {
+                          textStyle: {
+                            color: "#cef2ed", // Set the text color for x-axis labels
+                          },
+                        },
+                        vAxis: {
+                          textStyle: { color: "#cef2ed" },
+                          ticks: [
+                            0,
+                            (0.25 * maxValue).toFixed(0),
+                            (0.5 * maxValue).toFixed(0),
+                            (0.75 * maxValue).toFixed(0),
+                            maxValue,
+                          ], // Set custom tick values to enforce the maximum value
+                        },
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    className="boxgraph overlaygraph "
+                    style={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Chart
+                      width={"750px"}
+                      height={"450px"}
+                      chartType="LineChart"
+                      loader={<div>Loading Chart</div>}
+                      data={pdfDataGoogle}
+                      options={{
+                        legend: { position: "none" },
+                        series: { 0: { color: "#7CD163" } },
+                        backgroundColor: { fill: "transparent" },
+                        animation: {
+                          startup: true,
+                          easing: "linear",
+                          duration: 1500,
+                        },
+                        hAxis: {
+                          textPosition: "none", // Hide x-axis labels and ticks
+                        },
+                        vAxis: {
+                          textPosition: "none", // Hide y-axis labels and ticks
+                        },
+                      }}
+                    />
+                  </div>
+
+                  {/* <Chart
+                width={"500px"}
+                height={"300px"}
+                chartType="LineChart"
+                loader={<div>Loading Chart</div>}
+                data={dualAxisChart}
+                options={{
+                  title: "Line Chart",
+                  legend: { position: "none" },
+                  vAxis: {
+                    maxValue: maxValue, // Set the maximum value on the y-axis
+                  },
+                  // Additional line chart options
+                }}
+                chartEvents={[
+                  {
+                    eventName: "ready",
+                    callback: ({ chartWrapper }) => {
+                      // Adjust line chart's position to align with the bar chart
+                      const barChartBounds = chartWrapper
+                        .getChart()
+                        .getChartLayoutInterface()
+                        .getBoundingBox("barChart#0#0");
+                      const lineChartWrapper = chartWrapper.getChart();
+                      const lineChartBounds = lineChartWrapper
+                        .getChartLayoutInterface()
+                        .getBoundingBox("lineChart#0#0");
+                      const xOffset =
+                        barChartBounds.left - lineChartBounds.left;
+                      const yOffset =
+                        barChartBounds.top - lineChartBounds.top;
+                      lineChartWrapper.container.style.left = `${xOffset}px`;
+                      lineChartWrapper.container.style.top = `${yOffset}px`;
+                    },
+                  },
+                ]}
+              /> */}
+                </div>
+              </Row>
+            )}
+
+            <div>
+              {/* <Line data={data} options={options} /> */}
+              {/* <Line
+                data={data}
+                options={{
+                  responsive: true,
+                }}
+              /> */}
             </div>
+
+            {/* <div>
+                <h1>Histogram Chart</h1>
+                <BarChart width={600} height={300} data={genNumChart}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="value" domain={[-3, 3]} />{" "}
+                  
+                  <YAxis domain={["auto", "auto"]} /> 
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+
+                <h1>Probability Density Function Chart</h1>
+                <LineChart width={600} height={300} data={pdfData2}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="value" domain={[0, 5]} />{" "}
+                  
+                  <YAxis /> 
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="pdf" stroke="#82ca9d" />
+                </LineChart>
+              </div>
+             */}
 
             {/* <Col xs={12} md={6}>
               <VictoryChart
@@ -817,7 +1115,7 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
               </VictoryChart>
             </Col> */}
 
-            <Col>
+            <Col className="p-5">
               <Row>
                 <Col>
                   <div className="container-fluid tabelCase text-light ">
@@ -1116,10 +1414,14 @@ const Case = ({ projectId, caseId, ViewDatabase }) => {
           <Canvas canvasDatabse={DatabaseCalculation} />
         </div>
       )}
+      {/* <ImageUpload /> */}
+
+      <ImageCropper2 />
+      {/* <Crop /> */}
 
       {/* <Canvas2 /> */}
-    </>
+    </div>
   );
-};
+});
 
 export default Case;

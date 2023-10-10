@@ -6,7 +6,7 @@ const Canvas = ({ canvasDatabse }) => {
   const [ctx, setCtx] = useState(null); // State to hold the context
   const [canvasInitialized, setCanvasInitialized] = useState(false); // Flag to track initialization
 
-  console.log("CanvasDatabase", canvasDatabse, typeof canvasDatabse);
+  console.log("CanvasDatabase", canvasDatabse.length, typeof canvasDatabse);
   const handleResizeCanvas = () => {
     setCanvaswidth(window.innerWidth);
   };
@@ -31,6 +31,7 @@ const Canvas = ({ canvasDatabse }) => {
 
   console.log("plusValues", plusValues);
   console.log("minusValues", minusValues);
+  console.log("window.innerHeight", window.innerHeight);
 
   const clearCanvas = () => {
     if (ctx) {
@@ -46,7 +47,8 @@ const Canvas = ({ canvasDatabse }) => {
     // canvasEle.height = canvasEle.clientHeight;
 
     // canvasEle.width = window.innerWidth;
-    canvasEle.height = window.innerHeight;
+    const nrDim = canvasDatabse.length;
+    canvasEle.height = 50 * nrDim;
 
     // get context of the canvas
 
@@ -58,7 +60,7 @@ const Canvas = ({ canvasDatabse }) => {
     const context = canvasEle.getContext("2d");
     setCtx(context); // Set the context in state
     setCanvasInitialized(true); // Set the initialization flag
-  }, [canvaswidth]);
+  }, [canvaswidth, canvasDatabse]);
 
   // useEffect(() => {
   //   drawLine({

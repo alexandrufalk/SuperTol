@@ -10,7 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useProfile } from "./profileContext";
 
-function GoogleLoginB2({ ShowPage }) {
+function GoogleLoginB2({ ShowPage, setViewLogIn }) {
   const [user, setUser] = useState([]);
   //   const [profile, setProfile] = useState(null);
   const { profile, setProfile } = useProfile(null);
@@ -39,17 +39,18 @@ function GoogleLoginB2({ ShowPage }) {
         )
         .then((res) => {
           setProfile(res.data);
+          setViewLogIn(false);
         })
         .catch((err) => console.log(err));
     }
   }, [user]);
 
   // log out function to log the user out of google and set the profile array to null
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-    ShowPage();
-  };
+  // const logOut = () => {
+  //   googleLogout();
+  //   setProfile(null);
+  //   ShowPage();
+  // };
 
   return (
     <Container className="text-center">
@@ -57,13 +58,13 @@ function GoogleLoginB2({ ShowPage }) {
       <br />
       {profile ? (
         <div>
-          <img src={profile.picture} alt="user image" />
+          {/* <img src={profile.picture} alt="user image" />
           <h3>User Logged in</h3>
           <p>Name: {profile.name}</p>
           <p>Email Address: {profile.email}</p>
           <br />
           <br />
-          <button onClick={logOut}>Log out</button>
+          <button onClick={logOut}>Log out</button> */}
         </div>
       ) : (
         <>
